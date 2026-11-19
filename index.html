@@ -320,7 +320,20 @@ const PUZZLES=[
  {g:"Tenth grade",q:"What does f(5) return?",c:"def f(n):\n    return n if n < 2 else f(n-1) + f(n-2)",o:["3","5","8","13"],a:1},
  {g:"Eleventh grade",q:"Which data structure is first in, first out?",o:["Stack","Queue","Tree","Array"],a:1},
  {g:"Twelfth grade",q:"What does DNS do?",o:["Encrypts passwords","Turns site names into IP addresses","Speeds up Wi-Fi","Stores your emails"],a:1},
- {g:"College",q:"How fast is binary search on a sorted list of n items?",o:["O(n)","O(n²)","O(log n)","O(1)"],a:2}
+ {g:"College",q:"How fast is binary search on a sorted list of n items?",o:["O(n)","O(n²)","O(log n)","O(1)"],a:2},
+ {g:"First grade",q:"Which part of a computer do you use to type words?",o:["Keyboard","Mouse","Speaker","Screen"],a:0},
+ {g:"Second grade",q:"Pattern: red, green, red, green, red, … What comes next?",o:["Red","Yellow","Blue","Green"],a:3},
+ {g:"Third grade",q:"A robot goes up 2 steps, then up 3 more steps. How many steps up in all?",o:["4","6","5","1"],a:2},
+ {g:"Fourth grade",q:"Which of these is an input device (you use it to send information in)?",o:["Printer","Keyboard","Monitor","Speaker"],a:1},
+ {g:"Fifth grade",q:"What is an algorithm?",o:["A computer virus","A kind of keyboard","A web browser","A list of steps to solve a problem"],a:3},
+ {g:"Sixth grade",q:"What does this code print?",c:"for n in 1 to 3:\n    print(n * 2)",o:["1 2 3","2 4 8","2 4 6","6"],a:2},
+ {g:"Seventh grade",q:"What does this code print? (% gives the remainder.)",c:"x = 10 % 3\nprint(x)",o:["1","3","0","3.33"],a:0},
+ {g:"Eighth grade",q:"What is the decimal number 13 in binary?",o:["1011","1110","1001","1101"],a:3},
+ {g:"Ninth grade",q:"What is wrong with this loop?",c:"x = 3\nwhile x > 0:\n    print(x)",o:["It never stops","It prints nothing","Syntax error","x is a string"],a:0},
+ {g:"Tenth grade",q:"What does f(4) return?",c:"def f(n):\n    return 1 if n == 0 else n * f(n-1)",o:["10","16","24","120"],a:2},
+ {g:"Eleventh grade",q:"Which data structure is last in, first out?",o:["Queue","Stack","Graph","Set"],a:1},
+ {g:"Twelfth grade",q:"What does HTTPS add compared with HTTP?",o:["Faster images","More ads","Encryption","Bigger pages"],a:2},
+ {g:"College",q:"On average, how fast is looking up a key in a hash table?",o:["O(n)","O(1)","O(log n)","O(n²)"],a:1}
 ];
 const COLORS=["#3B82F6","#FACC15","#FB923C","#22C55E","#EF4444","#A855F7"];
 const TXT=["#fff","#1B2440","#1B2440","#1B2440","#fff","#fff"];
@@ -594,6 +607,177 @@ PICS.push(
   ['<path d="M14,134 C14,100 56,88 96,96 C130,102 152,124 168,128 C150,150 120,168 84,168 C40,168 14,158 14,134 Z"/>',6,60,118],
   ['<path d="M22,140 C40,154 80,160 120,154 C140,150 154,142 162,130 C120,136 60,136 22,140 Z"/>',3,92,148]]}
 );
+PICS.push(
+ {name:"Ice cream",r:[
+  ['<rect x="0" y="0" width="200" height="200"/>',1,18,18],
+  ['<rect x="0" y="172" width="200" height="28"/>',4,24,187],
+  ['<circle cx="168" cy="28" r="17"/>',2,168,28],
+  ['<polygon points="68,112 132,112 100,186"/>',3,100,140],
+  ['<circle cx="100" cy="92" r="32"/>',5,100,106],
+  ['<circle cx="100" cy="56" r="26"/>',2,100,64],
+  ['<ellipse cx="66" cy="102" rx="8" ry="12"/>',5,66,102],
+  ['<circle cx="100" cy="20" r="10"/>',5,100,20],
+  ['<circle cx="84" cy="46" r="8"/>',6,84,46],
+  ['<circle cx="118" cy="48" r="8"/>',4,118,48]]},
+ {name:"Pizza",r:[
+  ['<rect x="0" y="0" width="200" height="200"/>',1,18,18],
+  ['<circle cx="100" cy="100" r="94"/>',3,100,14],
+  ['<circle cx="100" cy="100" r="76"/>',2,100,86],
+  ['<circle cx="64" cy="70" r="13"/>',5,64,70],
+  ['<circle cx="136" cy="70" r="13"/>',5,136,70],
+  ['<circle cx="60" cy="124" r="13"/>',5,60,124],
+  ['<circle cx="140" cy="124" r="13"/>',5,140,124],
+  ['<circle cx="100" cy="118" r="13"/>',5,100,118],
+  ['<circle cx="100" cy="42" r="9"/>',6,100,42],
+  ['<circle cx="40" cy="98" r="9"/>',6,40,98],
+  ['<circle cx="160" cy="98" r="9"/>',6,160,98],
+  ['<ellipse cx="100" cy="152" rx="15" ry="8"/>',4,100,152]]},
+ {name:"Snowman",r:[
+  ['<rect x="0" y="0" width="200" height="200"/>',6,18,18],
+  ['<rect x="0" y="170" width="200" height="30"/>',1,100,186],
+  ['<circle cx="172" cy="28" r="16"/>',2,172,28],
+  ['<polygon points="14,170 32,128 50,170"/>',4,32,156],
+  ['<polygon points="150,170 170,122 190,170"/>',4,170,156],
+  ['<circle cx="100" cy="138" r="32"/>',2,100,152],
+  ['<circle cx="100" cy="86" r="26"/>',2,82,102],
+  ['<circle cx="100" cy="46" r="22"/>',2,88,36],
+  ['<ellipse cx="58" cy="84" rx="22" ry="6" transform="rotate(-20 58 84)"/>',3,52,86],
+  ['<ellipse cx="142" cy="84" rx="22" ry="6" transform="rotate(20 142 84)"/>',3,148,86],
+  ['<polygon points="82,28 118,28 114,6 86,6"/>',5,100,17],
+  ['<rect x="78" y="64" width="44" height="12"/>',5,100,70],
+  ['<polygon points="98,42 122,48 98,54"/>',3,106,48],
+  ['<circle cx="100" cy="90" r="7"/>',6,100,90],
+  ['<circle cx="100" cy="108" r="7"/>',6,100,108]]},
+ {name:"Cactus",r:[
+  ['<rect x="0" y="0" width="200" height="200"/>',1,18,18],
+  ['<rect x="0" y="160" width="200" height="40"/>',3,22,184],
+  ['<ellipse cx="140" cy="178" rx="46" ry="14"/>',2,140,178],
+  ['<circle cx="170" cy="32" r="18"/>',2,170,32],
+  ['<polygon points="24,160 38,142 52,160"/>',6,38,154],
+  ['<rect x="88" y="50" width="24" height="125" rx="12"/>',4,100,100],
+  ['<rect x="62" y="84" width="18" height="50" rx="9"/>',4,71,100],
+  ['<rect x="62" y="120" width="38" height="16" rx="8"/>',4,86,128],
+  ['<rect x="122" y="60" width="18" height="55" rx="9"/>',4,131,82],
+  ['<rect x="108" y="102" width="32" height="14" rx="7"/>',4,118,109],
+  ['<circle cx="100" cy="46" r="11"/>',5,100,46],
+  ['<circle cx="131" cy="58" r="8"/>',5,131,58]]},
+ {name:"Turtle",r:[
+  ['<rect x="0" y="0" width="200" height="200"/>',1,100,12],
+  ['<circle cx="24" cy="28" r="12"/>',2,24,28],
+  ['<circle cx="176" cy="28" r="12"/>',2,176,28],
+  ['<ellipse cx="42" cy="100" rx="10" ry="7"/>',3,40,100],
+  ['<circle cx="158" cy="100" r="17"/>',4,164,100],
+  ['<ellipse cx="58" cy="60" rx="17" ry="8" transform="rotate(-35 58 60)"/>',3,58,60],
+  ['<ellipse cx="142" cy="60" rx="17" ry="8" transform="rotate(35 142 60)"/>',3,142,60],
+  ['<ellipse cx="58" cy="140" rx="17" ry="8" transform="rotate(35 58 140)"/>',3,58,140],
+  ['<ellipse cx="142" cy="140" rx="17" ry="8" transform="rotate(-35 142 140)"/>',3,142,140],
+  ['<ellipse cx="30" cy="168" rx="9" ry="19"/>',5,30,168],
+  ['<ellipse cx="170" cy="168" rx="9" ry="19"/>',5,170,168],
+  ['<ellipse cx="100" cy="100" rx="54" ry="42"/>',4,100,68],
+  ['<polygon points="100,82 116,91 116,109 100,118 84,109 84,91"/>',2,100,100],
+  ['<circle cx="72" cy="100" r="9"/>',3,72,100],
+  ['<circle cx="128" cy="100" r="9"/>',3,128,100],
+  ['<circle cx="80" cy="124" r="9"/>',6,80,124],
+  ['<circle cx="120" cy="124" r="9"/>',6,120,124]]},
+ {name:"Cupcake",r:[
+  ['<rect x="0" y="0" width="200" height="200"/>',6,100,12],
+  ['<rect x="0" y="178" width="200" height="22"/>',3,24,190],
+  ['<circle cx="24" cy="36" r="12"/>',2,24,36],
+  ['<circle cx="176" cy="36" r="12"/>',2,176,36],
+  ['<polygon points="56,126 144,126 130,178 70,178"/>',1,100,156],
+  ['<ellipse cx="100" cy="122" rx="56" ry="18"/>',5,100,135],
+  ['<circle cx="76" cy="121" r="9"/>',2,76,121],
+  ['<circle cx="124" cy="121" r="9"/>',4,124,121],
+  ['<ellipse cx="100" cy="98" rx="42" ry="14"/>',3,100,98],
+  ['<circle cx="100" cy="66" r="22"/>',5,100,68],
+  ['<circle cx="100" cy="36" r="10"/>',2,100,36]]}
+);
+PICS.push(
+ {name:"Cat",r:[
+  ['<rect x="0" y="0" width="200" height="200"/>',1,18,18],
+  ['<rect x="0" y="168" width="200" height="32"/>',2,24,184],
+  ['<circle cx="170" cy="28" r="16"/>',2,170,28],
+  ['<ellipse cx="166" cy="140" rx="11" ry="28" transform="rotate(20 166 140)"/>',3,166,142],
+  ['<circle cx="30" cy="146" r="15"/>',5,30,146],
+  ['<polygon points="62,58 56,16 94,38"/>',5,66,36],
+  ['<polygon points="138,58 144,16 106,38"/>',5,134,36],
+  ['<ellipse cx="100" cy="132" rx="50" ry="40"/>',3,66,150],
+  ['<ellipse cx="100" cy="142" rx="26" ry="28"/>',2,100,144],
+  ['<ellipse cx="76" cy="168" rx="14" ry="8"/>',2,76,168],
+  ['<ellipse cx="124" cy="168" rx="14" ry="8"/>',2,124,168],
+  ['<circle cx="100" cy="72" r="38"/>',3,100,50],
+  ['<circle cx="86" cy="70" r="8"/>',4,86,70],
+  ['<circle cx="114" cy="70" r="8"/>',4,114,70],
+  ['<polygon points="92,84 108,84 100,96"/>',5,100,86]]},
+ {name:"Robot",r:[
+  ['<rect x="0" y="0" width="200" height="200"/>',1,18,18],
+  ['<rect x="0" y="176" width="200" height="24"/>',6,100,189],
+  ['<circle cx="172" cy="26" r="14"/>',2,172,26],
+  ['<circle cx="28" cy="50" r="14"/>',3,28,50],
+  ['<circle cx="100" cy="14" r="9"/>',5,100,14],
+  ['<rect x="68" y="26" width="64" height="48" rx="8"/>',3,100,36],
+  ['<circle cx="86" cy="54" r="9"/>',2,86,54],
+  ['<circle cx="114" cy="54" r="9"/>',2,114,54],
+  ['<rect x="84" y="64" width="32" height="9" rx="3"/>',5,100,68],
+  ['<rect x="38" y="96" width="18" height="54" rx="6"/>',6,47,123],
+  ['<rect x="144" y="96" width="18" height="54" rx="6"/>',6,153,123],
+  ['<rect x="62" y="84" width="76" height="68" rx="8"/>',2,100,93],
+  ['<rect x="80" y="104" width="40" height="32" rx="4"/>',4,100,120],
+  ['<rect x="72" y="152" width="22" height="24" rx="3"/>',6,83,164],
+  ['<rect x="106" y="152" width="22" height="24" rx="3"/>',6,117,164]]},
+ {name:"Whale",r:[
+  ['<rect x="0" y="0" width="200" height="200"/>',2,100,12],
+  ['<rect x="0" y="100" width="200" height="100"/>',1,100,192],
+  ['<circle cx="172" cy="34" r="18"/>',3,172,34],
+  ['<polygon points="84,72 82,40 92,52 96,34 100,52 110,40 108,72"/>',1,96,62],
+  ['<polygon points="150,100 190,66 190,130"/>',6,178,100],
+  ['<ellipse cx="100" cy="106" rx="58" ry="28"/>',6,106,94],
+  ['<ellipse cx="98" cy="128" rx="36" ry="11"/>',2,98,128],
+  ['<circle cx="66" cy="102" r="8"/>',2,66,102],
+  ['<ellipse cx="36" cy="158" rx="34" ry="10"/>',1,36,158],
+  ['<ellipse cx="100" cy="166" rx="40" ry="10"/>',1,100,166],
+  ['<ellipse cx="166" cy="158" rx="34" ry="10"/>',1,166,158]]},
+ {name:"Lighthouse",r:[
+  ['<rect x="0" y="0" width="200" height="200"/>',3,24,100],
+  ['<rect x="0" y="160" width="200" height="40"/>',1,30,190],
+  ['<circle cx="168" cy="96" r="17"/>',5,168,96],
+  ['<polygon points="84,42 8,22 8,62"/>',2,38,42],
+  ['<polygon points="116,42 192,22 192,62"/>',2,162,42],
+  ['<ellipse cx="100" cy="176" rx="64" ry="16"/>',6,44,176],
+  ['<polygon points="80,68 120,68 122,96 78,96"/>',2,100,82],
+  ['<polygon points="78,96 122,96 130,172 70,172"/>',5,100,114],
+  ['<rect x="76" y="54" width="48" height="12"/>',6,100,60],
+  ['<rect x="88" y="30" width="24" height="24"/>',2,100,42],
+  ['<polygon points="84,30 100,10 116,30"/>',5,100,24],
+  ['<rect x="91" y="136" width="18" height="36" rx="9"/>',6,100,152]]},
+ {name:"Train",r:[
+  ['<rect x="0" y="0" width="200" height="200"/>',1,16,16],
+  ['<circle cx="40" cy="36" r="15"/>',2,40,36],
+  ['<circle cx="164" cy="28" r="10"/>',2,164,28],
+  ['<circle cx="142" cy="38" r="10"/>',2,142,38],
+  ['<polygon points="30,166 66,48 102,166"/>',3,64,72],
+  ['<polygon points="86,166 142,56 198,166"/>',3,162,124],
+  ['<rect x="0" y="166" width="200" height="34"/>',4,100,190],
+  ['<polygon points="146,164 184,164 184,130"/>',2,174,154],
+  ['<rect x="128" y="66" width="22" height="44"/>',3,139,88],
+  ['<rect x="66" y="104" width="98" height="52" rx="14"/>',6,118,128],
+  ['<rect x="26" y="96" width="44" height="58"/>',5,46,138],
+  ['<rect x="18" y="82" width="60" height="12"/>',3,48,88],
+  ['<rect x="36" y="98" width="22" height="16"/>',1,47,106],
+  ['<circle cx="46" cy="158" r="12"/>',3,46,158],
+  ['<circle cx="94" cy="158" r="12"/>',3,94,158],
+  ['<circle cx="133" cy="158" r="12"/>',3,133,158]]},
+ {name:"Sailboat",r:[
+  ['<rect x="0" y="0" width="200" height="200"/>',2,18,18],
+  ['<rect x="0" y="130" width="200" height="70"/>',1,100,194],
+  ['<circle cx="156" cy="78" r="30"/>',3,170,66],
+  ['<polygon points="100,40 100,128 58,128"/>',6,88,106],
+  ['<polygon points="106,66 106,128 150,128"/>',4,128,112],
+  ['<polygon points="98,14 98,32 120,24"/>',5,106,24],
+  ['<polygon points="50,130 152,130 140,164 62,164"/>',5,100,148],
+  ['<ellipse cx="42" cy="176" rx="36" ry="10"/>',1,42,176],
+  ['<ellipse cx="152" cy="178" rx="38" ry="11"/>',1,152,178]]}
+);
 let lang="en";
 const UI={
  en:{title:"Unlock & Color",sub:"Solve a puzzle from first grade up to college. Each win unlocks a color-by-number picture.",ok:"Correct! Unlocking your picture…",no:"Not quite. Try another answer.",unlocked:"Unlocked:",names:["Bird","Fish","House","Rocket","Flower"],pick:"Pick a color, then tap its number. {0} of {1} filled.",done:"Finished! Great work.",wrong:"That space is number {0}. Pick color {0}.",next:"Next puzzle",again:"Play again",color:"Color",college:"College"},
@@ -734,7 +918,7 @@ TOS.hi="<p><em>अंतिम अपडेट: 17 नवंबर 2026</em></p>
 TOS.ru="<p><em>Последнее обновление: 17 ноября 2026 г.</em></p><p>Настоящие условия применяются к использованию тобой Unlock &amp; Color («Игра»), которую предоставляет Techno Creative Company («мы»). Используя Игру, ты с ними соглашаешься. Если тебе нет 18 лет, попроси родителя или опекуна прочитать их вместе с тобой.</p><h3>1. Что такое Игра</h3><p>Unlock &amp; Color — бесплатная образовательная игра. Игроки решают задачи от первого класса до университетского уровня, и каждый правильный ответ открывает картинку-раскраску по номерам. В Игре могут быть виртуальные монеты. Монеты — это просто игровые очки для развлечения: они не имеют денежной стоимости, их нельзя купить, продать, передать или обменять на деньги или что-либо ещё, и они могут быть обнулены или удалены в любой момент. Игра предназначена для развлечения и общего обучения, а не как школьная программа или тест.</p><h3>2. Кто может ею пользоваться</h3><p>Игра предназначена для любого возраста. Игрокам младше 18 лет следует пользоваться ею с разрешения родителя или опекуна. Аккаунт для игры не нужен: можно играть как гость. По желанию можно создать аккаунт (через электронную почту, Google или Apple), чтобы сохранять прогресс и статистику.</p><h3>3. Твои данные</h3><ul><li>Ты можешь играть как гость, не сообщая никаких личных данных. Если ты создаёшь аккаунт, Игра сохраняет твоё имя, адрес электронной почты (или идентификатор пользователя, который предоставляет Google или Apple), необязательное фото профиля (только для аккаунтов, не для гостей), а также твой прогресс, монеты и статистику. В этой версии Игры всё это сохраняется только на твоём устройстве, в локальном хранилище браузера, и не отправляется на наши серверы. Персональные данные обрабатываются в соответствии с Федеральным законом Швейцарии о защите данных (FADP).</li><li>Если ты входишь через Google или Apple, тебя перенаправляют к этому провайдеру, который обрабатывает вход согласно собственной политике конфиденциальности и сообщает Игре твоё имя, адрес электронной почты и идентификатор пользователя. Мы никогда не видим твой пароль от Google или Apple. Для аккаунтов с электронной почтой пароль хранится только на твоём устройстве в зашифрованном (хешированном) виде.</li><li>Ты можешь выйти или удалить свой аккаунт со всеми сохранёнными данными в любой момент на экране статистики. Очистка данных браузера тоже их удаляет.</li><li>Твой браузер может сохранять на твоём устройстве (в локальном хранилище) количество монет и твоё согласие с этими условиями. Это нужно только для работы Игры и запоминания твоего выбора. Ты можешь очистить это в любой момент в настройках браузера.</li><li>Игра размещена у стороннего веб-хостинг-провайдера, который может собирать технические данные, такие как твой IP-адрес, согласно собственной политике конфиденциальности. Это может включать обработку за пределами Швейцарии.</li></ul><h3>4. Допустимое использование</h3><p>Пожалуйста, не пытайся ломать Игру, перегружать её или мешать её работе, копировать её и выдавать за свою работу или использовать её в противоправных целях. Имена пользователей не должны содержать расистских, оскорбительных или дискриминационных выражений; мы можем отклонять или удалять такие имена. Ты можешь играть, делиться ссылкой и использовать Игру в классе или дома в некоммерческих целях.</p><h3>5. Права собственности</h3><p>Код, задачи, картинки и дизайн Игры принадлежат Techno Creative Company, за исключением сторонних инструментов, которые принадлежат их владельцам. Ты не вправе продавать Игру или её содержимое без нашего письменного разрешения.</p><h3>6. Точность</h3><p>Мы стараемся делать задачи правильными и справедливыми, но ошибки возможны. Игра не заменяет профессиональное обучение или консультацию.</p><h3>7. Отсутствие гарантий</h3><p>Игра предоставляется «как есть» и «по мере доступности», без обещаний, что она всегда будет работать, будет без ошибок или доступна. Мы можем изменить, приостановить или удалить её в любой момент.</p><h3>8. Ограничение ответственности</h3><p>В той мере, в какой это допускает швейцарское право, мы не несём ответственности за любые потери или ущерб от использования Игры, которая предоставляется бесплатно. Мы по-прежнему отвечаем за ущерб, причинённый умышленно или по грубой неосторожности, за вред жизни или здоровью, а также во всех случаях, когда ответственность нельзя исключить или ограничить в силу императивных норм (например, швейцарского Закона об ответственности за качество продукции).</p><h3>9. Изменения</h3><p>Мы можем время от времени обновлять эти условия. Если ты продолжаешь пользоваться Игрой после обновления, ты принимаешь новые условия. Если какая-либо часть этих условий окажется недействительной или неисполнимой, остальные положения сохраняют силу.</p><h3>10. Применимое право</h3><p>К этим условиям применяется материальное право Швейцарии, за исключением его коллизионных норм и Конвенции ООН о договорах международной купли-продажи товаров (CISG). Если императивные нормы не предусматривают иное (в частности, для потребителей, которые могут предъявить иск по месту своего жительства), исключительную юрисдикцию имеют суды по месту нахождения нашей компании в Швейцарии.</p><h3>11. Контакты</h3><p>Есть вопросы? Свяжись с Techno Creative Company, Швейцария, по адресу technocreativecompany@gmail.com.</p>";
 TOS.jam="<p><em>Last update: November 17, 2026</em></p><p>Dem Terms ya apply to how yuh use Unlock &amp; Color (di “Game”), weh Techno Creative Company (“wi”, “us”) provide. When yuh use di Game, yuh agree to dem. If yuh under 18, please ask yuh parent or guardian fi read dem wid yuh.</p><h3>1. Wah di Game be</h3><p>Unlock &amp; Color a a free educational game. Players solve puzzle dem from Grade 1 go up to college level, an every right answer unlock a color-by-number picture. Di Game might have virtual coin dem. Coin dem a jus a fun score inside di Game: dem nuh have no money value, yuh cyaan buy, sell, transfer or swap dem fi money or anything else, an dem can reset or tek weh any time. Di Game a fi fun an general learning, nuh a school curriculum or a test.</p><h3>2. Who can use it</h3><p>Di Game a fi all ages. Players under 18 should use it wid permission from a parent or guardian. Yuh nuh need no account fi play: yuh can play as a guest. If yuh want, yuh can mek an account (wid email, Google or Apple) fi save yuh progress an stats.</p><h3>3. Yuh information</h3><ul><li>Yuh can play as a guest without giving no personal information. If yuh mek an account, di Game store yuh name, yuh email address (or di user ID weh Google or Apple give), a profile picture if yuh want (accounts only, nuh guests), an yuh progress, coins an statistics. Inna dis version a di Game, all a dis save pon yuh own device only, inna yuh browser local storage; it nuh send go to wi servers. Any personal data handle inna line wid di Swiss Federal Act on Data Protection (FADP).</li><li>If yuh sign in wid Google or Apple, yuh get tek go to dat provider, weh handle yuh login under dem own privacy policy an tell di Game yuh name, email address an a user ID. Wi never see yuh Google or Apple password. Fi email account dem, yuh password save pon yuh device only inna scramble (hashed) form.</li><li>Yuh can log out, or delete yuh account an all a its saved data, any time from di Stats screen. If yuh clear yuh browser data, it gone too.</li><li>Yuh browser might save yuh coin score an di fact seh yuh accept dem Terms ya pon yuh own device (local storage). Dis only use fi mek di Game work an remember yuh choices. Yuh can clear it any time inna yuh browser settings.</li><li>Di Game host by a third-party web host, weh might collect technical information like yuh IP address under dem own privacy policy. Dis might involve processing outside a Switzerland.</li></ul><h3>4. Acceptable use</h3><p>Please nuh try fi break, overload, or interfere wid di Game, copy it an show it as yuh own work, or use it fi anything unlawful. Usernames mustn’t have racist, hateful or discriminatory language; wi can reject or remove dem kind a name ya. Yuh can play it, share di link, an use it inna classroom or at home fi non-commercial purposes.</p><h3>5. Ownership</h3><p>Di Game code, puzzle dem, picture dem, an design belong to Techno Creative Company, except fi third-party tool dem, weh belong to dem owner. Yuh cyaan sell di Game or its content without wi written permission.</p><h3>6. Accuracy</h3><p>Wi try fi mek di puzzle dem correct an fair, but mistake can happen. Di Game nuh replace professional teaching or advice.</p><h3>7. No warranty</h3><p>Di Game provide “as is” an “as available”, wid no promise seh it will always work, be error-free, or be available. Wi can change, pause, or remove it any time.</p><h3>8. Limit a liability</h3><p>As far as Swiss law allow, wi nuh liable fi any loss or damage from using di Game, weh offer free a charge. Wi still liable fi damage cause by unlawful intent or gross negligence, fi injury to life or health, an anywhere liability cyaan be exclude or limit under mandatory law (fi example, di Swiss Product Liability Act).</p><h3>9. Changes</h3><p>Wi might update dem Terms ya from time to time. If yuh keep use di Game after an update, yuh accept di new Terms. If any part a dem Terms ya invalid or unenforceable, di rest stay inna force.</p><h3>10. Governing law</h3><p>Dem Terms ya govern by Swiss substantive law, excluding its conflict-of-law rules an di UN Convention on Contracts fi di International Sale a Goods (CISG). Unless mandatory law say otherwise (especially fi consumers, who might be able fi bring a claim where dem live), di courts at wi registered seat inna Switzerland have exclusive jurisdiction.</p><h3>11. Contact</h3><p>Questions? Contact Techno Creative Company, Switzerland, at technocreativecompany@gmail.com.</p>";
 function setAv(el,name,pic){el.textContent="";if(pic){const im=document.createElement("img");im.alt="";im.src=pic;el.appendChild(im)}else el.textContent=(String(name||"").trim().charAt(0)||"?").toUpperCase()}
-function T(n){return Object.assign({},PUZZLES[n],PZ[lang]&&PZ[lang][n])}
+function T(n){const l=PZ[lang],b=n%13,e=l&&l[n];return Object.assign({},PUZZLES[n],e,!e&&l&&l[b]&&l[b].g?{g:l[b].g}:null)}
 function pidx(n){const L=PICS.length;return((((D.lap|0)*PUZZLES.length+n)%L)+L)%L}
 function nextLbl(){$("next").textContent=i>=PUZZLES.length?U().again:U().next}
 let i=0,sel=1,total=0,filled=0,locked=false,coins=0,wrongs=0;
@@ -799,7 +983,7 @@ function tap(el,lbl){
 }
 $("next").onclick=()=>{if(i>=PUZZLES.length){i=0;D.lap=(D.lap|0)+1}D.i=i;persist();showPuzzle();window.scrollTo({top:0,behavior:"smooth"})};
 function applyLang(){
- document.documentElement.lang=lang;document.documentElement.dir=lang==="ar"?"rtl":"ltr";applyChrome();
+ document.documentElement.lang=lang;document.documentElement.dir=/^ar(-|$)/.test(lang)?"rtl":"ltr";applyChrome();
  $("h1").textContent=U().title;$("shoplbl").textContent=PT("shop");$("liblbl").textContent=PT("lib");$("sub").textContent=U().sub;
  if($("puzzle").classList.contains("hide")){
   $("title").textContent=U().unlocked+" "+(U().names[pidx(i-1)]||PICS[pidx(i-1)].name);nextLbl();
@@ -1099,8 +1283,10 @@ for(const c in NEW_NAMES){if(UI[c])UI[c].names.push(...NEW_NAMES[c])}
  const ent=Object.entries(LANGS);for(const [k] of ent)delete LANGS[k];
  for(const [k,v] of ent){LANGS[k]=v;if(k==="de")LANGS.gsw="Schwiizerdütsch"}}
 
+{const ent=Object.entries(LANGS);for(const [k] of ent)delete LANGS[k];
+ for(const [k,v] of ent){LANGS[k]=v;if(k==="ar"){LANGS["ar-MA"]="العربية (المغرب)";LANGS["ar-QA"]="العربية (قطر)"}}}
 {let s=lsGet("lang");const has=k=>Object.prototype.hasOwnProperty.call(LANGS,k);
- if(!s||!has(s)){const nl=String(navigator.language||"en").toLowerCase(),n=/^sr-latn/.test(nl)?"sr-Latn":/^pt-br/.test(nl)?"pt-BR":/^es-(mx|419|us|ar|bo|cl|co|cr|cu|do|ec|gt|hn|ni|pa|pe|pr|py|sv|uy|ve)/.test(nl)?"es-MX":/^jam/.test(nl)?"jam":/^(nb|nn|no)/.test(nl)?"no":nl.slice(0,2);s=has(n)?n:"en"}
+ if(!s||!has(s)){const nl=String(navigator.language||"en").toLowerCase(),n=/^ar-ma/.test(nl)?"ar-MA":/^ar-qa/.test(nl)?"ar-QA":/^sr-latn/.test(nl)?"sr-Latn":/^pt-br/.test(nl)?"pt-BR":/^es-(mx|419|us|ar|bo|cl|co|cr|cu|do|ec|gt|hn|ni|pa|pe|pr|py|sv|uy|ve)/.test(nl)?"es-MX":/^jam/.test(nl)?"jam":/^(nb|nn|no)/.test(nl)?"no":nl.slice(0,2);s=has(n)?n:"en"}
  lang=s}
 document.querySelectorAll(".langsel").forEach(el=>{
  el.innerHTML=Object.keys(LANGS).map(k=>`<option value="${k}">${LANGS[k]}</option>`).join("");
@@ -1266,6 +1452,12 @@ function openLib(){libSel=-1;libArm=false;renderLib();lock();$("lib").classList.
 function closeLib(){$("lib").classList.add("hide");unlock();libSel=-1;libArm=false}
 $("libbtn").onclick=openLib;$("libclose").onclick=closeLib;
 addEventListener("keydown",e=>{if(e.key==="Escape"&&!$("lib").classList.contains("hide"))closeLib()});
+
+/* ===== Arabic (Morocco, Qatar): standard Arabic base + dialect wording for the main game text ===== */
+{const DIA={
+ "ar-MA":{sub:"حل لغز من القسم الأول حتى للجامعة. كل ربح كيفتح ليك صورة تلونها بالأرقام.",ok:"جواب صحيح! كنحلو ليك الصورة…",no:"ماشي بالضبط. جرب جواب آخر.",done:"سالينا! خدمة زوينة.",wrong:"هاد الجزء رقمو {0}. اختار اللون {0}.",next:"اللغز الجاي",again:"عاود اللعب"},
+ "ar-QA":{sub:"حل لغز من الصف الأول لين الجامعة. كل فوز يفتح لك صورة تلونها بالأرقام.",ok:"إجابة صح! الحين نفتح صورتك…",no:"مب بالضبط. جرب إجابة ثانية.",done:"خلصت! شغل حلو.",wrong:"هالمنطقة رقمها {0}. اختر اللون {0}.",next:"اللغز الجاي",again:"العب مرة ثانية"}};
+ for(const c in DIA){UI[c]=Object.assign(JSON.parse(JSON.stringify(UI.ar)),DIA[c]);PZ[c]=PZ.ar;TOS[c]=TOS.ar}}
 
 applyLang();
 /* Returning player: restore the session only now, after everything above is set up */
