@@ -118,6 +118,7 @@ main{transition:opacity .45s ease,filter .45s ease}
 .fld{display:block;margin:0 0 10px;font-weight:700;font-size:.9rem}
 .fld input{display:block;width:100%;margin-top:4px;font:inherit;font-size:1rem;color:var(--ink);background:var(--bg);border:1.5px solid var(--line);border-radius:10px;padding:12px}
 .err{min-height:1.3em;margin:2px 0 0;color:var(--bad);font-weight:500;font-size:.9rem}
+.link:disabled{opacity:.55;cursor:default;text-decoration:none}#auth.verifying .seg,#auth.verifying #nrow,#auth.verifying #bg,#auth.verifying #ba,#auth.verifying .or,#auth.verifying #af,#auth.verifying #aguest,#auth.verifying .small{display:none!important}#vcode{letter-spacing:.35em;text-align:center;font-size:1.4rem;font-weight:800}
 .link{background:none;border:0;color:var(--accent);font-weight:700;padding:10px;min-height:48px;text-decoration:underline;width:100%;text-align:center}
 .small{font-size:.8rem;color:var(--muted);margin:0;text-align:center}
 .chip{display:flex;align-items:center;gap:8px;background:var(--surface);border:1px solid var(--line);border-radius:999px;padding:5px 14px 5px 6px;font-weight:700;margin:0 0 14px;max-width:100%}
@@ -254,6 +255,13 @@ main{transition:opacity .45s ease,filter .45s ease}
       <p class="err" id="aerr" role="alert"></p>
       <button class="btn" id="asubmit" type="submit" style="margin-top:4px">Create account</button>
     </form>
+    <div id="vpanel" class="hide">
+      <label class="fld"><span id="vlbl">Verification code</span><input id="vcode" type="text" inputmode="numeric" autocomplete="one-time-code" maxlength="6" pattern="[0-9]*" placeholder="000000"></label>
+      <p class="err" id="verr" role="alert"></p>
+      <button class="btn" id="vok" type="button" style="margin-top:4px">Verify</button>
+      <button class="link" id="vresend" type="button">Send a new code</button>
+      <button class="link" id="vback" type="button">Back</button>
+    </div>
     <button class="link" id="aguest" type="button">Continue as guest</button>
     <p class="small" data-i="a_dev">Accounts are saved on this device only.</p>
   </div>
@@ -996,6 +1004,8 @@ function applyLang(){
 /* To turn on real Google / Apple sign-in, fill these in (see notes). */
 const AUTH_CONFIG={googleClientId:"1069541751577-l3jflo8f78qu0u296r5b2h804u26k8g5.apps.googleusercontent.com",appleClientId:"",appleRedirectUri:""};
 /* Show the Google/Apple buttons even before they are configured (design preview). Set to false to hide unconfigured buttons. */
+/* Email verification codes are sent with EmailJS (https://www.emailjs.com, free tier). Fill these in. */
+const EMAIL_CONFIG={serviceId:"service_lnvjo97",templateId:"template_utleyof",publicKey:"VkNUzVrTbS2akgP1O"};
 const SHOW_PREVIEW=false;
 const main=document.querySelector("main");
 function blank(){return{i:0,lap:0,coins:0,lang:"",name:"",shop:{col:[],bad:[],eq:"",hints:0},lib:[],st:{answered:0,correct:0,first:0,streak:0,best:0,pics:0}}}
@@ -1073,7 +1083,7 @@ function setMode(m){
  $("asub").textContent=CH(c?"a_s1":"a_s2");
  $("bgt").textContent=CH(c?"a_su":"a_li").replace("{0}","Google");$("bat").textContent=CH(c?"a_su":"a_li").replace("{0}","Apple");
  $("nrow").classList.toggle("hide",!c);$("asubmit").textContent=CH(c?"a_tc":"a_tl");
- $("apw").setAttribute("autocomplete",c?"new-password":"current-password");err("")}
+ $("apw").setAttribute("autocomplete",c?"new-password":"current-password");err("");if(window.__vfy)vText()}
 function showAuth(){lock();setMode(authMode);$("auth").classList.remove("hide");preloadSocial();$("tabc").focus()}
 function startFlow(){const sid=lsGet("session");if(sid&&(sid==="guest"||users()[sid]))enter(sid);else showAuth()}
 
@@ -1092,12 +1102,14 @@ $("af").onsubmit=async e=>{
  try{
   if(authMode==="create"){
    const ne=nameCheck(name);if(ne)return err(ne);
+   const ee=await emailProblem(email);if(ee)return err(ee);
    if(pw.length<8)return err(CH("e_pw"));
    if(U[id])return err(PT("x_exists"));
    const h=await hashPw(pw);
-   U[id]={id,provider:"email",name,email,salt:h.salt,hash:h.hash,created:Date.now()};
-   if(!saveUsers(U))return err(PT("x_save"));
-   enter(id);offerPic()
+   vf={email,name,salt:h.salt,hash:h.hash,sends:0,last:0,tries:0};
+   const r=await sendCode();
+   if(r!=="ok"){vf=null;return err(PT(r==="setup"?"v_setup":"v_sendfail"))}
+   showVerify()
   }else{
    const u=U[id],bad=CH("e_bad");
    if(!u||!u.hash)return err(bad);
@@ -1106,6 +1118,95 @@ $("af").onsubmit=async e=>{
    enter(id)}
  }catch(_){err(PT("x_wrong"))}
  finally{btn.disabled=false}};
+
+/* ===== Email verification: strict address check + domain mail check + 6-digit code ===== */
+const DISPOSABLE=new Set("mailinator.com,guerrillamail.com,guerrillamail.net,guerrillamail.org,sharklasers.com,grr.la,10minutemail.com,10minutemail.net,tempmail.com,temp-mail.org,temp-mail.io,tempmailo.com,throwawaymail.com,yopmail.com,yopmail.net,trashmail.com,trashmail.net,getnada.com,nada.email,maildrop.cc,dispostable.com,fakeinbox.com,mintemail.com,mailnesia.com,mohmal.com,emailondeck.com,burnermail.io,spamgourmet.com,moakt.com,tmpmail.org,tmpmail.net,mytemp.email,discard.email,anonbox.net,mailcatch.com,inboxkitten.com,33mail.com,spambox.us,jetable.org,wegwerfmail.de,einrot.com".split(","));
+const TYPOS={"gmial.com":"gmail.com","gmal.com":"gmail.com","gmail.co":"gmail.com","gmail.con":"gmail.com","gamil.com":"gmail.com","gnail.com":"gmail.com","gmaill.com":"gmail.com","hotmial.com":"hotmail.com","hotmal.com":"hotmail.com","hotmail.con":"hotmail.com","yaho.com":"yahoo.com","yahoo.con":"yahoo.com","yahooo.com":"yahoo.com","outlok.com":"outlook.com","outlook.con":"outlook.com","iclod.com":"icloud.com","icloud.con":"icloud.com"};
+function emailShape(e){
+ if(e.length>120||e.length<6)return false;
+ const a=e.split("@");if(a.length!==2)return false;
+ const l=a[0],d=a[1];
+ if(!l||l.length>64||/^\.|\.$|\.\./.test(l)||!/^[a-z0-9.!#$%&'*+\/=?^_`{|}~-]+$/.test(l))return false;
+ if(d.length>253||!/^[a-z0-9](?:[a-z0-9-]*[a-z0-9])?(?:\.[a-z0-9](?:[a-z0-9-]*[a-z0-9])?)+$/.test(d))return false;
+ return /\.[a-z]{2,24}$/.test(d)}
+async function dnsQ(name,type){
+ const c=new AbortController(),t=setTimeout(()=>c.abort(),5000);
+ try{const r=await fetch("https://dns.google/resolve?name="+encodeURIComponent(name)+"&type="+type,{signal:c.signal,headers:{accept:"application/dns-json"}});if(!r.ok)throw 0;return await r.json()}
+ finally{clearTimeout(t)}}
+/* true = domain can receive mail, false = it can't, null = couldn't check (offline): the code step still protects us then */
+async function domainCanReceive(d){
+ try{
+  const j=await dnsQ(d,"MX");
+  if(j.Status===3)return false;
+  const mx=(j.Answer||[]).filter(a=>a.type===15);
+  if(mx.length)return mx.some(a=>String(a.data).trim().split(/\s+/)[1]!==".");
+  const a=await dnsQ(d,"A");
+  if(a.Status===3)return false;
+  return !!((a.Answer||[]).some(x=>x.type===1))
+ }catch(_){return null}}
+async function emailProblem(email){
+ if(!emailShape(email))return CH("e_email");
+ const d=email.split("@")[1];
+ if(DISPOSABLE.has(d))return PT("v_disp");
+ if(TYPOS[d])return PT("v_typo").replace("{0}",email.split("@")[0]+"@"+TYPOS[d]);
+ const ok=await domainCanReceive(d);
+ if(ok===false)return PT("v_nodomain");
+ return ""}
+let vf=null,vTimer=0;
+const verr=m=>{$("verr").textContent=m||"";return false};
+const sha=async x=>hex(new Uint8Array(await crypto.subtle.digest("SHA-256",new TextEncoder().encode(x))));
+function genCode(){const a=new Uint32Array(1);do{crypto.getRandomValues(a)}while(a[0]>=4294000000);return String(a[0]%1000000).padStart(6,"0")}
+async function sendCode(){
+ const c=EMAIL_CONFIG;if(!c.serviceId||!c.templateId||!c.publicKey)return"setup";
+ const code=genCode(),hsh=await sha(vf.email+":"+code);
+ try{
+  const r=await fetch("https://api.emailjs.com/api/v1.0/email/send",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({service_id:c.serviceId,template_id:c.templateId,user_id:c.publicKey,template_params:{to_email:vf.email,email:vf.email,to_name:vf.name,code:code,passcode:code,expires:"10 minutes",app_name:"Unlock & Color"}})});
+  if(!r.ok)return"fail"
+ }catch(_){return"fail"}
+ vf.codeHash=hsh;vf.exp=Date.now()+600000;vf.tries=0;vf.last=Date.now();vf.sends++;return"ok"}
+function vCool(){
+ clearInterval(vTimer);const b=$("vresend");
+ const tick=()=>{if(!vf){clearInterval(vTimer);return}const s=Math.ceil((vf.last+30000-Date.now())/1000);
+  if(s>0){b.disabled=true;b.textContent=PT("v_resend")+" ("+s+")"}else{b.disabled=false;b.textContent=PT("v_resend");clearInterval(vTimer)}};
+ tick();vTimer=setInterval(tick,1000)}
+function vText(){
+ if(!vf)return;
+ $("at").textContent=PT("v_t");$("asub").textContent=PT("v_s").replace("{0}",vf.email);
+ $("vlbl").textContent=PT("v_code");$("vok").textContent=PT("v_ok");$("vback").textContent=PT("v_back");vCool()}
+function showVerify(){
+ window.__vfy=true;$("auth").classList.add("verifying");$("vpanel").classList.remove("hide");
+ $("vcode").value="";verr("");vText();setTimeout(()=>{try{$("vcode").focus()}catch(_){}},60)}
+function endVerify(){
+ window.__vfy=false;vf=null;clearInterval(vTimer);$("vcode").value="";verr("");
+ $("auth").classList.remove("verifying");$("vpanel").classList.add("hide")}
+$("vback").onclick=()=>{endVerify();setMode(authMode)};
+$("vresend").onclick=async()=>{
+ if(!vf||$("vresend").disabled)return;
+ if(vf.sends>=5)return verr(PT("v_limit"));
+ verr("");$("vresend").disabled=true;
+ const r=await sendCode();
+ if(!vf)return;
+ if(r!=="ok"){vf.last=0;vCool();return verr(PT(r==="setup"?"v_setup":"v_sendfail"))}
+ $("vcode").value="";vCool();verr(PT("v_sent"))};
+$("vcode").oninput=()=>{$("vcode").value=$("vcode").value.replace(/\D/g,"").slice(0,6)};
+$("vcode").onkeydown=e=>{if(e.key==="Enter"){e.preventDefault();$("vok").click()}};
+$("vok").onclick=async()=>{
+ if(!vf)return;
+ const v=$("vcode").value.replace(/\D/g,"");
+ if(!vf.codeHash)return verr(PT("v_sendfail"));
+ if(Date.now()>vf.exp)return verr(PT("v_exp"));
+ if(vf.tries>=5)return verr(PT("v_many"));
+ if(v.length!==6)return verr(PT("v_bad"));
+ $("vok").disabled=true;
+ try{
+  if(await sha(vf.email+":"+v)!==vf.codeHash){vf.tries++;return verr(PT("v_bad"))}
+  const U=users(),id="email:"+vf.email;
+  if(U[id]){endVerify();setMode("login");return err(PT("x_exists"))}
+  U[id]={id,provider:"email",name:vf.name,email:vf.email,salt:vf.salt,hash:vf.hash,verified:true,created:Date.now()};
+  if(!saveUsers(U))return verr(PT("x_save"));
+  endVerify();enter(id);offerPic()
+ }catch(_){verr(PT("x_wrong"))}
+ finally{$("vok").disabled=false}};
 
 function social(provider,sub,name,email){
  const id=provider+":"+sub,U=users(),isNew=!U[id];
@@ -1452,6 +1553,16 @@ function openLib(){libSel=-1;libArm=false;renderLib();lock();$("lib").classList.
 function closeLib(){$("lib").classList.add("hide");unlock();libSel=-1;libArm=false}
 $("libbtn").onclick=openLib;$("libclose").onclick=closeLib;
 addEventListener("keydown",e=>{if(e.key==="Escape"&&!$("lib").classList.contains("hide"))closeLib()});
+
+/* ===== Email verification texts ===== */
+{const V={
+"en":{v_t:"Verify your email",v_s:"We sent a 6-digit code to {0}. Enter it below. It is valid for 10 minutes.",v_code:"Verification code",v_ok:"Verify and create account",v_back:"Back",v_resend:"Send a new code",v_sent:"A new code is on its way.",v_bad:"That code is not right. Try again.",v_exp:"That code has expired. Tap “Send a new code”.",v_many:"Too many wrong tries. Tap “Send a new code”.",v_limit:"Too many codes sent. Please try again later.",v_setup:"Email verification isn’t set up yet, so accounts can’t be created with email right now. Use Google or play as a guest.",v_sendfail:"We couldn’t send the code. Check the address and your connection, then try again.",v_disp:"Please use a real email address, not a temporary one.",v_typo:"Did you mean {0}? Please check the address.",v_nodomain:"That email domain can’t receive email. Please check the address."},
+"de":{v_t:"E-Mail bestätigen",v_s:"Wir haben einen 6-stelligen Code an {0} gesendet. Gib ihn unten ein. Er ist 10 Minuten gültig.",v_code:"Bestätigungscode",v_ok:"Bestätigen und Konto erstellen",v_back:"Zurück",v_resend:"Neuen Code senden",v_sent:"Ein neuer Code ist unterwegs.",v_bad:"Dieser Code stimmt nicht. Versuche es erneut.",v_exp:"Dieser Code ist abgelaufen. Tippe auf „Neuen Code senden“.",v_many:"Zu viele Fehlversuche. Tippe auf „Neuen Code senden“.",v_limit:"Zu viele Codes gesendet. Bitte versuche es später erneut.",v_setup:"Die E-Mail-Bestätigung ist noch nicht eingerichtet. Nutze Google oder spiele als Gast.",v_sendfail:"Der Code konnte nicht gesendet werden. Prüfe die Adresse und deine Verbindung.",v_disp:"Bitte verwende eine echte E-Mail-Adresse, keine temporäre.",v_typo:"Meintest du {0}? Bitte prüfe die Adresse.",v_nodomain:"Diese E-Mail-Domain kann keine E-Mails empfangen. Bitte prüfe die Adresse."},
+"fr":{v_t:"Vérifie ton e-mail",v_s:"Nous avons envoyé un code à 6 chiffres à {0}. Saisis-le ci-dessous. Il est valable 10 minutes.",v_code:"Code de vérification",v_ok:"Vérifier et créer le compte",v_back:"Retour",v_resend:"Envoyer un nouveau code",v_sent:"Un nouveau code est en route.",v_bad:"Ce code n’est pas correct. Réessaie.",v_exp:"Ce code a expiré. Touche « Envoyer un nouveau code ».",v_many:"Trop d’essais. Touche « Envoyer un nouveau code ».",v_limit:"Trop de codes envoyés. Réessaie plus tard.",v_setup:"La vérification par e-mail n’est pas encore configurée. Utilise Google ou joue en invité.",v_sendfail:"Impossible d’envoyer le code. Vérifie l’adresse et ta connexion.",v_disp:"Utilise une vraie adresse e-mail, pas une adresse temporaire.",v_typo:"Voulais-tu dire {0} ? Vérifie l’adresse.",v_nodomain:"Ce domaine ne peut pas recevoir d’e-mails. Vérifie l’adresse."},
+"it":{v_t:"Verifica la tua e-mail",v_s:"Abbiamo inviato un codice di 6 cifre a {0}. Inseriscilo qui sotto. È valido per 10 minuti.",v_code:"Codice di verifica",v_ok:"Verifica e crea l’account",v_back:"Indietro",v_resend:"Invia un nuovo codice",v_sent:"Un nuovo codice è in arrivo.",v_bad:"Il codice non è corretto. Riprova.",v_exp:"Il codice è scaduto. Tocca «Invia un nuovo codice».",v_many:"Troppi tentativi. Tocca «Invia un nuovo codice».",v_limit:"Troppi codici inviati. Riprova più tardi.",v_setup:"La verifica e-mail non è ancora configurata. Usa Google o gioca come ospite.",v_sendfail:"Impossibile inviare il codice. Controlla l’indirizzo e la connessione.",v_disp:"Usa un indirizzo e-mail reale, non temporaneo.",v_typo:"Intendevi {0}? Controlla l’indirizzo.",v_nodomain:"Questo dominio non può ricevere e-mail. Controlla l’indirizzo."},
+"es":{v_t:"Verifica tu correo",v_s:"Enviamos un código de 6 dígitos a {0}. Escríbelo abajo. Es válido durante 10 minutos.",v_code:"Código de verificación",v_ok:"Verificar y crear cuenta",v_back:"Atrás",v_resend:"Enviar un código nuevo",v_sent:"Un código nuevo va en camino.",v_bad:"Ese código no es correcto. Inténtalo de nuevo.",v_exp:"Ese código caducó. Toca «Enviar un código nuevo».",v_many:"Demasiados intentos. Toca «Enviar un código nuevo».",v_limit:"Se enviaron demasiados códigos. Inténtalo más tarde.",v_setup:"La verificación por correo aún no está configurada. Usa Google o juega como invitado.",v_sendfail:"No pudimos enviar el código. Revisa la dirección y tu conexión.",v_disp:"Usa un correo real, no uno temporal.",v_typo:"¿Quisiste decir {0}? Revisa la dirección.",v_nodomain:"Ese dominio no puede recibir correos. Revisa la dirección."}};
+V["es-MX"]=V.es;
+for(const c in V)if(UI[c])Object.assign(UI[c],V[c])}
 
 /* ===== Arabic (Morocco, Qatar): standard Arabic base + dialect wording for the main game text ===== */
 {const DIA={
