@@ -294,6 +294,9 @@ main{transition:opacity .45s ease,filter .45s ease}
     <p class="gs" id="who"></p>
     <div id="picrow" class="hide"><span class="av big" id="bigav" aria-hidden="true"></span><div><button class="link" id="pchange" type="button">Change picture</button><button class="link" id="premove" type="button">Remove picture</button></div><input id="pfile" type="file" accept="image/*" hidden></div>
     <p class="err" id="perr" role="alert"></p>
+    <label class="fld" style="margin:6px 0 8px"><span id="nlbl">Your name</span><input id="nedit" type="text" autocomplete="nickname" autocapitalize="words" autocorrect="off" spellcheck="false" enterkeyhint="done" maxlength="20"></label>
+    <button class="btn alt" id="nsave" type="button">Save name</button>
+    <p class="err" id="nerr" role="alert" style="min-height:1.2em"></p>
     <div class="sg" id="sg"></div>
     <button class="btn" id="sclose" type="button">Close</button>
     <button class="link" id="slogout" type="button">Log out</button>
@@ -786,6 +789,212 @@ PICS.push(
   ['<ellipse cx="42" cy="176" rx="36" ry="10"/>',1,42,176],
   ['<ellipse cx="152" cy="178" rx="38" ry="11"/>',1,152,178]]}
 );
+PICS.push(
+ {name:"Apple",r:[
+  ['<rect x="0" y="0" width="200" height="200"/>',1,18,18],
+  ['<rect x="0" y="170" width="200" height="30"/>',3,24,186],
+  ['<circle cx="170" cy="30" r="16"/>',2,170,30],
+  ['<circle cx="80" cy="118" r="50"/>',5,62,125],
+  ['<circle cx="120" cy="118" r="50"/>',5,138,125],
+  ['<rect x="95" y="52" width="10" height="34"/>',3,100,68],
+  ['<ellipse cx="128" cy="58" rx="22" ry="10" transform="rotate(-25 128 58)"/>',4,128,57]]},
+ {name:"Tree",r:[
+  ['<rect x="0" y="0" width="200" height="200"/>',1,18,18],
+  ['<rect x="0" y="160" width="200" height="40"/>',4,24,182],
+  ['<circle cx="30" cy="32" r="16"/>',2,30,32],
+  ['<rect x="88" y="100" width="24" height="65"/>',3,100,140],
+  ['<circle cx="100" cy="72" r="44"/>',4,100,45],
+  ['<circle cx="76" cy="76" r="9"/>',5,76,76],
+  ['<circle cx="124" cy="66" r="9"/>',5,124,66],
+  ['<circle cx="102" cy="96" r="9"/>',5,102,96]]},
+ {name:"Car",r:[
+  ['<rect x="0" y="0" width="200" height="200"/>',1,18,18],
+  ['<circle cx="170" cy="30" r="16"/>',2,170,30],
+  ['<rect x="0" y="150" width="200" height="50"/>',6,24,184],
+  ['<path d="M55,108 L72,72 L128,72 L148,108 Z"/>',5,100,76],
+  ['<rect x="25" y="105" width="150" height="38" rx="8"/>',5,100,128],
+  ['<polygon points="68,102 79,79 94,79 94,102"/>',1,86,92],
+  ['<polygon points="106,79 123,79 134,102 106,102"/>',1,118,92],
+  ['<circle cx="62" cy="146" r="17"/>',3,62,146],
+  ['<circle cx="140" cy="146" r="17"/>',3,140,146],
+  ['<circle cx="170" cy="118" r="7"/>',2,170,118]]},
+ {name:"Rainbow",r:[
+  ['<rect x="0" y="0" width="200" height="200"/>',1,18,18],
+  ['<circle cx="170" cy="30" r="16"/>',2,170,30],
+  ['<rect x="0" y="160" width="200" height="40"/>',4,24,182],
+  ['<path d="M10,160 A90,90 0 0 1 190,160 Z"/>',5,100,78],
+  ['<path d="M26,160 A74,74 0 0 1 174,160 Z"/>',3,100,94],
+  ['<path d="M42,160 A58,58 0 0 1 158,160 Z"/>',2,100,110],
+  ['<path d="M58,160 A42,42 0 0 1 142,160 Z"/>',4,100,126],
+  ['<path d="M74,160 A26,26 0 0 1 126,160 Z"/>',1,100,148]]},
+ {name:"Ladybug",r:[
+  ['<rect x="0" y="0" width="200" height="200"/>',4,18,18],
+  ['<circle cx="100" cy="52" r="28"/>',6,100,38],
+  ['<circle cx="100" cy="118" r="62"/>',5,100,120],
+  ['<circle cx="68" cy="106" r="13"/>',6,68,106],
+  ['<circle cx="132" cy="106" r="13"/>',6,132,106],
+  ['<circle cx="100" cy="152" r="14"/>',6,100,152],
+  ['<circle cx="86" cy="50" r="6"/>',1,86,50],
+  ['<circle cx="114" cy="50" r="6"/>',1,114,50]]},
+ {name:"Penguin",r:[
+  ['<rect x="0" y="0" width="200" height="200"/>',1,18,18],
+  ['<rect x="0" y="165" width="200" height="35"/>',6,24,184],
+  ['<ellipse cx="52" cy="112" rx="11" ry="32" transform="rotate(15 52 112)"/>',6,50,114],
+  ['<ellipse cx="148" cy="112" rx="11" ry="32" transform="rotate(-15 148 112)"/>',6,150,114],
+  ['<ellipse cx="78" cy="172" rx="16" ry="8"/>',3,78,172],
+  ['<ellipse cx="122" cy="172" rx="16" ry="8"/>',3,122,172],
+  ['<ellipse cx="100" cy="115" rx="46" ry="58"/>',6,66,100],
+  ['<ellipse cx="100" cy="130" rx="28" ry="40"/>',2,100,130],
+  ['<circle cx="100" cy="56" r="26"/>',6,100,38],
+  ['<circle cx="89" cy="52" r="7"/>',1,89,52],
+  ['<circle cx="111" cy="52" r="7"/>',1,111,52],
+  ['<polygon points="88,62 112,62 100,78"/>',3,100,67]]},
+ {name:"Teddy bear",r:[
+  ['<rect x="0" y="0" width="200" height="200"/>',1,18,18],
+  ['<rect x="0" y="172" width="200" height="28"/>',4,24,188],
+  ['<circle cx="64" cy="52" r="17"/>',3,56,44],
+  ['<circle cx="136" cy="52" r="17"/>',3,144,44],
+  ['<circle cx="68" cy="170" r="15"/>',3,60,178],
+  ['<circle cx="132" cy="170" r="15"/>',3,140,178],
+  ['<ellipse cx="100" cy="135" rx="42" ry="40"/>',3,70,148],
+  ['<circle cx="100" cy="80" r="36"/>',3,76,64],
+  ['<ellipse cx="100" cy="92" rx="17" ry="13"/>',2,100,95],
+  ['<circle cx="85" cy="72" r="6"/>',6,85,72],
+  ['<circle cx="115" cy="72" r="6"/>',6,115,72],
+  ['<path d="M100,118 L78,106 L78,130 Z M100,118 L122,106 L122,130 Z"/>',5,86,118]]},
+ {name:"Frog",r:[
+  ['<rect x="0" y="0" width="200" height="200"/>',1,18,18],
+  ['<ellipse cx="62" cy="146" rx="22" ry="11"/>',4,56,146],
+  ['<ellipse cx="138" cy="146" rx="22" ry="11"/>',4,144,146],
+  ['<ellipse cx="100" cy="118" rx="54" ry="38"/>',4,100,138],
+  ['<circle cx="72" cy="76" r="20"/>',4,64,62],
+  ['<circle cx="128" cy="76" r="20"/>',4,136,62],
+  ['<circle cx="72" cy="78" r="11"/>',2,72,78],
+  ['<circle cx="128" cy="78" r="11"/>',2,128,78],
+  ['<ellipse cx="100" cy="112" rx="30" ry="9"/>',5,100,112],
+  ['<rect x="0" y="158" width="200" height="42"/>',6,24,186],
+  ['<ellipse cx="100" cy="170" rx="80" ry="12"/>',4,100,170]]},
+ {name:"Submarine",r:[
+  ['<rect x="0" y="0" width="200" height="200"/>',1,18,18],
+  ['<path d="M0,200 L0,172 Q50,160 100,176 T200,170 L200,200 Z"/>',4,100,190],
+  ['<rect x="176" y="98" width="16" height="34"/>',5,184,115],
+  ['<rect x="104" y="44" width="10" height="28"/>',5,109,58],
+  ['<rect x="82" y="68" width="38" height="40"/>',2,100,88],
+  ['<ellipse cx="100" cy="118" rx="78" ry="32"/>',2,40,124],
+  ['<circle cx="60" cy="116" r="11"/>',1,60,116],
+  ['<circle cx="100" cy="124" r="11"/>',1,100,124],
+  ['<circle cx="140" cy="116" r="11"/>',1,140,116]]},
+ {name:"Airplane",r:[
+  ['<rect x="0" y="0" width="200" height="200"/>',1,18,18],
+  ['<circle cx="30" cy="32" r="16"/>',2,30,32],
+  ['<polygon points="90,100 130,100 100,45 75,45"/>',3,98,66],
+  ['<polygon points="90,100 130,100 100,160 70,160"/>',3,92,144],
+  ['<polygon points="32,98 52,98 36,62 20,62"/>',3,34,80],
+  ['<ellipse cx="100" cy="100" rx="82" ry="18"/>',5,56,100],
+  ['<circle cx="176" cy="100" r="9"/>',2,176,100]]},
+ {name:"Crab",r:[
+  ['<rect x="0" y="0" width="200" height="200"/>',1,18,18],
+  ['<rect x="0" y="150" width="200" height="50"/>',2,24,178],
+  ['<circle cx="170" cy="30" r="16"/>',2,170,30],
+  ['<ellipse cx="48" cy="140" rx="18" ry="7" transform="rotate(20 48 140)"/>',5,46,140],
+  ['<ellipse cx="46" cy="162" rx="18" ry="7" transform="rotate(-10 46 162)"/>',5,44,162],
+  ['<ellipse cx="152" cy="140" rx="18" ry="7" transform="rotate(-20 152 140)"/>',5,154,140],
+  ['<ellipse cx="154" cy="162" rx="18" ry="7" transform="rotate(10 154 162)"/>',5,156,162],
+  ['<ellipse cx="100" cy="125" rx="52" ry="34"/>',5,100,132],
+  ['<circle cx="34" cy="92" r="20"/>',5,34,92],
+  ['<circle cx="166" cy="92" r="20"/>',5,166,92],
+  ['<circle cx="80" cy="92" r="11"/>',1,80,92],
+  ['<circle cx="120" cy="92" r="11"/>',1,120,92]]},
+ {name:"Mushroom",r:[
+  ['<rect x="0" y="0" width="200" height="200"/>',1,18,18],
+  ['<rect x="0" y="165" width="200" height="35"/>',4,24,184],
+  ['<path d="M80,172 Q85,125 82,100 L118,100 Q115,125 120,172 Z"/>',2,100,140],
+  ['<rect x="147" y="142" width="16" height="30"/>',2,155,159],
+  ['<path d="M138,144 Q138,118 155,118 Q172,118 172,144 Z"/>',3,155,134],
+  ['<path d="M25,105 Q25,35 100,35 Q175,35 175,105 Z"/>',5,100,90],
+  ['<circle cx="65" cy="76" r="11"/>',2,65,76],
+  ['<circle cx="105" cy="55" r="11"/>',2,105,55],
+  ['<circle cx="142" cy="80" r="11"/>',2,142,80]]},
+ {name:"Snail",r:[
+  ['<rect x="0" y="0" width="200" height="200"/>',1,18,18],
+  ['<circle cx="30" cy="32" r="16"/>',2,30,32],
+  ['<rect x="0" y="160" width="200" height="40"/>',4,24,184],
+  ['<ellipse cx="95" cy="150" rx="80" ry="13"/>',2,50,152],
+  ['<ellipse cx="170" cy="126" rx="15" ry="28"/>',2,170,128],
+  ['<circle cx="160" cy="90" r="9"/>',6,160,90],
+  ['<circle cx="180" cy="90" r="9"/>',6,180,90],
+  ['<circle cx="85" cy="108" r="46"/>',3,85,70],
+  ['<circle cx="85" cy="108" r="30"/>',5,85,86],
+  ['<circle cx="85" cy="108" r="15"/>',2,85,108]]},
+ {name:"Bus",r:[
+  ['<rect x="0" y="0" width="200" height="200"/>',1,18,18],
+  ['<rect x="0" y="160" width="200" height="40"/>',6,24,184],
+  ['<rect x="15" y="68" width="170" height="90" rx="12"/>',2,100,148],
+  ['<rect x="15" y="122" width="170" height="14"/>',5,100,129],
+  ['<rect x="26" y="80" width="32" height="30"/>',1,42,95],
+  ['<rect x="64" y="80" width="32" height="30"/>',1,80,95],
+  ['<rect x="102" y="80" width="32" height="30"/>',1,118,95],
+  ['<rect x="140" y="80" width="32" height="30"/>',1,156,95],
+  ['<circle cx="52" cy="160" r="16"/>',3,52,160],
+  ['<circle cx="148" cy="160" r="16"/>',3,148,160]]},
+ {name:"Moon and stars",r:[
+  ['<rect x="0" y="0" width="200" height="200"/>',6,18,18],
+  ['<circle cx="105" cy="100" r="54"/>',2,78,108],
+  ['<circle cx="132" cy="88" r="46"/>',6,138,86],
+  ['<polygon points="38,31 42,42 54,43 45,50 48,62 38,56 28,62 31,50 22,43 34,42"/>',2,38,48],
+  ['<polygon points="168,27 172,37 182,37 174,44 177,54 168,49 159,54 162,44 154,37 164,37"/>',2,168,42],
+  ['<polygon points="172,140 177,151 189,152 180,161 183,173 172,166 161,173 164,161 155,152 167,151"/>',2,172,158],
+  ['<polygon points="56,145 60,155 70,155 62,162 65,172 56,167 47,172 50,162 42,155 52,155"/>',2,56,160]]},
+ {name:"Tent",r:[
+  ['<rect x="0" y="0" width="200" height="200"/>',1,18,18],
+  ['<circle cx="170" cy="30" r="16"/>',2,170,30],
+  ['<rect x="0" y="150" width="200" height="50"/>',4,24,182],
+  ['<polygon points="30,158 100,52 170,158"/>',5,64,140],
+  ['<polygon points="82,158 100,102 118,158"/>',3,100,142],
+  ['<polygon points="100,52 100,22 130,37"/>',2,110,37]]},
+ {name:"Windmill",r:[
+  ['<rect x="0" y="0" width="200" height="200"/>',1,18,18],
+  ['<circle cx="170" cy="30" r="16"/>',2,170,30],
+  ['<rect x="0" y="165" width="200" height="35"/>',4,24,185],
+  ['<polygon points="78,172 122,172 112,92 88,92"/>',2,100,128],
+  ['<polygon points="84,94 116,94 100,66"/>',5,100,86],
+  ['<rect x="92" y="22" width="16" height="50" transform="rotate(45 100 80)"/>',3,133,47],
+  ['<rect x="92" y="22" width="16" height="50" transform="rotate(135 100 80)"/>',3,133,113],
+  ['<rect x="92" y="22" width="16" height="50" transform="rotate(225 100 80)"/>',3,67,113],
+  ['<rect x="92" y="22" width="16" height="50" transform="rotate(315 100 80)"/>',3,67,47],
+  ['<circle cx="100" cy="80" r="10"/>',6,100,80],
+  ['<rect x="90" y="142" width="20" height="30"/>',6,100,158]]},
+ {name:"Treasure chest",r:[
+  ['<rect x="0" y="0" width="200" height="200"/>',1,18,18],
+  ['<rect x="0" y="150" width="200" height="50"/>',4,24,182],
+  ['<rect x="45" y="105" width="110" height="55"/>',3,70,140],
+  ['<path d="M45,105 Q45,62 100,62 Q155,62 155,105 Z"/>',5,100,82],
+  ['<rect x="90" y="98" width="20" height="24"/>',2,100,110],
+  ['<circle cx="24" cy="168" r="11"/>',2,24,168],
+  ['<circle cx="46" cy="184" r="11"/>',2,46,184],
+  ['<circle cx="176" cy="168" r="11"/>',2,176,168],
+  ['<circle cx="154" cy="184" r="11"/>',2,154,184]]},
+ {name:"Duck",r:[
+  ['<rect x="0" y="0" width="200" height="200"/>',1,18,18],
+  ['<polygon points="38,116 14,88 56,100"/>',2,34,103],
+  ['<ellipse cx="95" cy="128" rx="58" ry="34"/>',2,132,124],
+  ['<ellipse cx="85" cy="128" rx="28" ry="16"/>',3,85,122],
+  ['<circle cx="140" cy="78" r="28"/>',2,134,66],
+  ['<ellipse cx="172" cy="86" rx="16" ry="8"/>',3,174,86],
+  ['<circle cx="148" cy="70" r="6"/>',6,148,70],
+  ['<rect x="0" y="140" width="200" height="60"/>',6,24,175]]},
+ {name:"Hamburger",r:[
+  ['<rect x="0" y="0" width="200" height="200"/>',1,18,18],
+  ['<ellipse cx="100" cy="172" rx="84" ry="14"/>',6,100,180],
+  ['<path d="M35,146 L165,146 Q165,166 140,166 L60,166 Q35,166 35,146 Z"/>',3,100,157],
+  ['<rect x="35" y="134" width="130" height="12"/>',2,100,140],
+  ['<rect x="32" y="114" width="136" height="20" rx="10"/>',5,100,124],
+  ['<rect x="30" y="100" width="140" height="14"/>',4,100,107],
+  ['<path d="M35,100 Q35,45 100,45 Q165,45 165,100 Z"/>',3,100,90],
+  ['<circle cx="72" cy="78" r="7"/>',2,72,78],
+  ['<circle cx="100" cy="62" r="7"/>',2,100,62],
+  ['<circle cx="128" cy="78" r="7"/>',2,128,78]]}
+);
 let lang="en";
 const UI={
  en:{title:"Unlock & Color",sub:"Solve a puzzle from first grade up to college. Each win unlocks a color-by-number picture.",ok:"Correct! Unlocking your picture…",no:"Not quite. Try another answer.",unlocked:"Unlocked:",names:["Bird","Fish","House","Rocket","Flower"],pick:"Pick a color, then tap its number. {0} of {1} filled.",done:"Finished! Great work.",wrong:"That space is number {0}. Pick color {0}.",next:"Next puzzle",again:"Play again",color:"Color",college:"College"},
@@ -984,12 +1193,12 @@ function tap(el,lbl){
   const n=+el.dataset.n;
   if(n===sel||sel>6){
     const col=sel>6?SPECIAL[sel-7].c:COLORS[n-1];el.style.fill=col;curFill[+el.dataset.k]=col;el.dataset.done=1;lbl.remove();filled++;status();Music.fill(n);Music.progress(filled/total);
-    if(filled===total){Music.done();D.st.pics++;saveToLib();addCoins(1);confetti();persist();$("dhint").textContent=U().done;$("dhint").style.color="var(--good)";$("next").classList.remove("hide")}
+    if(filled===total){Music.done();D.st.pics++;saveToLib();D.cur=null;addCoins(1);confetti();persist();$("dhint").textContent=U().done;$("dhint").style.color="var(--good)";$("next").classList.remove("hide")}
   }else{
     $("dhint").textContent=U().wrong.replace(/\{0\}/g,n);$("dhint").style.color="var(--bad)";addCoins(-1);Music.no();el.classList.remove("bad");void el.getBBox;el.classList.add("bad");setTimeout(()=>el.classList.remove("bad"),420);
   }
 }
-$("next").onclick=()=>{if(i>=PUZZLES.length){i=0;D.lap=(D.lap|0)+1}D.i=i;persist();showPuzzle();window.scrollTo({top:0,behavior:"smooth"})};
+$("next").onclick=()=>{if(i>=PUZZLES.length){i=0;D.lap=(D.lap|0)+1}D.i=i;D.cur=null;persist();showPuzzle();window.scrollTo({top:0,behavior:"smooth"})};
 function applyLang(){
  document.documentElement.lang=lang;document.documentElement.dir=/^ar(-|$)/.test(lang)?"rtl":"ltr";applyChrome();
  $("h1").textContent=U().title;$("shoplbl").textContent=PT("shop");$("liblbl").textContent=PT("lib");$("sub").textContent=U().sub;
@@ -1068,10 +1277,10 @@ const err=m=>{$("aerr").textContent=m||"";return false};
 function enter(id,gname){
  keepStorage();uid=id;D=loadData(id);lsSet("session",id);
  if(id==="guest"&&gname){D.name=gname;persist()}
- if((D.i|0)>=PUZZLES.length){D.lap=(D.lap|0)+1;D.i=0;persist()}
+ if((D.i|0)>=PUZZLES.length&&!D.cur){D.lap=(D.lap|0)+1;D.i=0;persist()}
  i=(D.i|0)<0?0:(D.i|0);coins=D.coins|0;showCoins(false);
  const u=users()[id],name=id==="guest"?(D.name||"Guest"):(u&&u.name)||"Player";
- curName=name;showName();setAv($("av"),name,id==="guest"?"":u&&u.pic);
+ curName=name;showName();setAv($("av"),name,id==="guest"?(D.pic||""):u&&u.pic);
  $("auth").classList.add("hide");$("stats").classList.add("hide");
  $("puzzle").classList.remove("hide");$("draw").classList.add("hide");
  unlock();applyLang()}
@@ -1254,19 +1463,22 @@ function showStats(){
  $("who").textContent=uid==="guest"?(D.name||"Guest")+" · "+CH("s_guest"):(u.name||"Player")+(u.email?" · "+u.email:"");
  $("slogout").textContent=uid==="guest"?CH("s_acc"):CH("s_out");
  $("sdel").textContent=CH("s_del");$("sdel").dataset.arm="";
- const acct=uid!=="guest",nm=acct?(u.name||"Player"):"";
- $("picrow").classList.toggle("hide",!acct);$("perr").textContent="";
- if(acct){setAv($("bigav"),nm,u.pic);$("pchange").textContent=PT(u.pic?"pic_change":"pic_add");$("premove").textContent=PT("pic_remove");$("premove").classList.toggle("hide",!u.pic)}
+ const guest=uid==="guest",nm=guest?(D.name||"Guest"):(u.name||"Player"),pic=guest?(D.pic||""):(u.pic||"");
+ $("picrow").classList.remove("hide");$("perr").textContent="";
+ setAv($("bigav"),nm,pic);$("pchange").textContent=PT(pic?"pic_change":"pic_add");$("premove").textContent=PT("pic_remove");$("premove").classList.toggle("hide",!pic);
+ {const t=NT();$("nlbl").textContent=t.lbl;$("nsave").textContent=t.save;$("nedit").value=nm;$("nerr").textContent="";$("nerr").style.color=""}
  lock();$("stats").classList.remove("hide");$("sclose").focus()}
 function setPic(pic){
- if(uid==="guest"||!uid)return;const U=users();if(!U[uid])return;
+ if(!uid)return;
+ if(uid==="guest"){if(pic)D.pic=pic;else delete D.pic;persist();setAv($("av"),D.name||"Guest",D.pic||"");showStats();return}
+ const U=users();if(!U[uid])return;
  if(pic)U[uid].pic=pic;else delete U[uid].pic;
  if(!saveUsers(U)){$("perr").textContent=PT("pic_err");return}
  setAv($("av"),U[uid].name,U[uid].pic);showStats()}
-$("pchange").onclick=()=>{if(uid&&uid!=="guest")$("pfile").click()};
+$("pchange").onclick=()=>{if(uid)$("pfile").click()};
 $("premove").onclick=()=>setPic("");
 $("pfile").onchange=async e=>{
- const f=e.target.files&&e.target.files[0];e.target.value="";if(!f||uid==="guest")return;
+ const f=e.target.files&&e.target.files[0];e.target.value="";if(!f||!uid)return;
  $("perr").textContent="";
  try{
   if(!/^image\//.test(f.type))throw 0;
@@ -1302,9 +1514,20 @@ $("pfile3").onchange=async e=>{
 function closeStats(fromPop){$("stats").classList.add("hide");unlock();statsOpen=false;if(fromPop)statsPushed=false;else popStats()}
 window.addEventListener("popstate",()=>{if(statsOpen)closeStats(true)});
 function leave(){
- statsOpen=false;popStats();uid=null;D=blank();lsDel("session");setAv($("av"),"","");i=0;coins=0;showCoins(false);
+ flushAll();statsOpen=false;popStats();uid=null;D=blank();lsDel("session");setAv($("av"),"","");i=0;coins=0;showCoins(false);
  $("stats").classList.add("hide");$("puzzle").classList.remove("hide");$("draw").classList.add("hide");
  $("aemail").value="";$("apw").value="";$("aname").value="";applyLang();showAuth()}
+const NTX={en:{lbl:"Your name",save:"Save name",ok:"Name saved."},de:{lbl:"Dein Name",save:"Namen speichern",ok:"Name gespeichert."},fr:{lbl:"Ton nom",save:"Enregistrer le nom",ok:"Nom enregistré."},es:{lbl:"Tu nombre",save:"Guardar nombre",ok:"Nombre guardado."},it:{lbl:"Il tuo nome",save:"Salva nome",ok:"Nome salvato."}};
+function NT(){return NTX[lang]||NTX[String(lang).split("-")[0]]||NTX.en}
+$("nsave").onclick=()=>{
+ if(!uid)return;const n=$("nedit").value.trim(),e=nameCheck(n);
+ if(e){$("nerr").style.color="var(--bad)";$("nerr").textContent=e;return}
+ if(uid==="guest"){D.name=n;persist()}
+ else{const U=users();if(!U[uid])return;U[uid].name=n;if(!saveUsers(U)){$("nerr").style.color="var(--bad)";$("nerr").textContent=PT("pic_err");return}}
+ curName=n;showName();
+ const u=users()[uid]||{};setAv($("av"),n,uid==="guest"?(D.pic||""):u.pic);
+ showStats();$("nerr").style.color="var(--good)";$("nerr").textContent=NT().ok};
+$("nedit").addEventListener("keydown",e=>{if(e.key==="Enter"){e.preventDefault();$("nsave").click()}});
 $("me").onclick=()=>showStats();$("sclose").onclick=()=>closeStats();$("slogout").onclick=leave;
 $("sdel").onclick=()=>{
  const b=$("sdel");
@@ -1569,6 +1792,33 @@ for(const c in V)if(UI[c])Object.assign(UI[c],V[c])}
  "ar-MA":{sub:"حل لغز من القسم الأول حتى للجامعة. كل ربح كيفتح ليك صورة تلونها بالأرقام.",ok:"جواب صحيح! كنحلو ليك الصورة…",no:"ماشي بالضبط. جرب جواب آخر.",done:"سالينا! خدمة زوينة.",wrong:"هاد الجزء رقمو {0}. اختار اللون {0}.",next:"اللغز الجاي",again:"عاود اللعب"},
  "ar-QA":{sub:"حل لغز من الصف الأول لين الجامعة. كل فوز يفتح لك صورة تلونها بالأرقام.",ok:"إجابة صح! الحين نفتح صورتك…",no:"مب بالضبط. جرب إجابة ثانية.",done:"خلصت! شغل حلو.",wrong:"هالمنطقة رقمها {0}. اختر اللون {0}.",next:"اللغز الجاي",again:"العب مرة ثانية"}};
  for(const c in DIA){UI[c]=Object.assign(JSON.parse(JSON.stringify(UI.ar)),DIA[c]);PZ[c]=PZ.ar;TOS[c]=TOS.ar}}
+
+/* ===== Save everything when leaving (logged-in players only) ===== */
+function flushAll(){
+ if(!uid)return;
+ try{
+  D.coins=coins;D.i=i;
+  const drawing=!$("draw").classList.contains("hide");
+  D.cur=(drawing&&filled<total)?{p:curPic,f:Array.from(curFill,c=>c||null)}:null;
+  persist();
+ }catch(_){}
+}
+addEventListener("pagehide",flushAll);
+addEventListener("beforeunload",flushAll);
+document.addEventListener("visibilitychange",()=>{if(document.hidden)flushAll()});
+/* Come back to a half-colored picture exactly where you left it */
+function restoreDraw(){
+ const c=D.cur;
+ if(!c||i<1||c.p!==pidx(i-1)||!PICS[c.p])return;
+ i--;showDraw();
+ const regs=[...$("art").querySelectorAll(".reg")],labels=[...$("art").querySelectorAll("text")];
+ (c.f||[]).forEach((col,k)=>{
+  if(!col||!regs[k])return;
+  regs[k].style.fill=safeC(col);curFill[k]=col;regs[k].dataset.done=1;labels[k].remove();filled++;
+ });
+ status();Music.progress(filled/total);
+}
+{const _enter=enter;enter=function(id,gname){_enter(id,gname);try{restoreDraw()}catch(_){}}}
 
 applyLang();
 /* Returning player: restore the session only now, after everything above is set up */
