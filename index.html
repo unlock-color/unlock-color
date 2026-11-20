@@ -7,8 +7,34 @@
 <meta name="theme-color" content="#EEF1FA" media="(prefers-color-scheme: light)">
 <meta name="theme-color" content="#10162B" media="(prefers-color-scheme: dark)">
 <meta name="format-detection" content="telephone=no">
+<script>
+/* If this browser is too old to run the game, say so instead of showing a blank page (kept in plain ES5 on purpose) */
+(function(){
+ var ready=false;window.__ucReady=function(){ready=true};
+ function show(){
+  if(ready||!document.body||document.getElementById("oldbrowser"))return;
+  var d=document.createElement("div");d.id="oldbrowser";
+  d.style.cssText="position:fixed;left:0;right:0;top:0;z-index:99999;background:#FACC15;color:#1B2440;font:16px/1.4 -apple-system,Arial,sans-serif;padding:14px 44px 14px 16px;text-align:left";
+  d.appendChild(document.createTextNode("This browser looks too old to run Unlock & Color. Please update your device or open the game in the latest Safari or Chrome."));
+  var x=document.createElement("button");x.type="button";x.setAttribute("aria-label","Close");x.appendChild(document.createTextNode("\u00D7"));
+  x.style.cssText="position:absolute;right:8px;top:8px;width:32px;height:32px;border:0;background:transparent;font-size:24px;color:#1B2440";
+  x.onclick=function(){d.parentNode&&d.parentNode.removeChild(d)};
+  d.appendChild(x);document.body.appendChild(d);
+ }
+ setTimeout(show,4000);
+})();
+</script>
+
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="Unlock &amp; Color">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
 <title>Unlock &amp; Color</title>
-<style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#fff;color:#000}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}
+<style>
+/* Fallbacks for browsers without env() (iOS < 11.2, old Android WebViews) */
+.ov,#gate{padding:16px}
+main{padding-left:16px;padding-right:16px}
+:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#fff;color:#000}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}
 pre{direction:ltr;text-align:left}[dir=rtl] .gtxt ul{padding-left:0;padding-right:20px}[dir=rtl] .gbox>.langsel{align-self:flex-start}[dir=rtl] .opt{text-align:right}
 .tgrp{display:flex;align-items:center;gap:8px;flex:none}.top .langsel{min-width:0;flex:1 1 0;max-width:none}
 .shopbtn{cursor:pointer;padding:5px 14px 5px 10px;color:var(--ink)}.shopbtn:active{transform:scale(.96)}
@@ -160,6 +186,13 @@ main{transition:opacity .45s ease,filter .45s ease}
 }
 @media (min-width:700px) and (max-height:900px){
   .ov .gbox{zoom:1.2;max-height:calc(100% / 1.2)}
+}
+
+/* ===== iPad ===== */
+@media (min-width:900px) and (orientation:landscape) and (max-height:900px){
+  main{zoom:1.3;max-width:800px}
+  #draw:not(.hide){display:grid;grid-template-columns:minmax(0,1.15fr) minmax(0,1fr);grid-template-rows:auto auto auto auto 1fr;grid-template-areas:"art lock" "art dhint" "art pal" "art next" "art .";column-gap:18px;align-items:start}
+  #draw .lock{grid-area:lock}#draw #dhint{grid-area:dhint}#draw #art{grid-area:art;margin:0}#draw #pal{grid-area:pal}#draw #next{grid-area:next}
 }
 </style>
 </head>
@@ -1148,7 +1181,7 @@ function showCoins(pop){
 }
 function addCoins(n){coins+=n;D.coins=coins;persist();showCoins(true);floatCoin(n)}
 function floatCoin(n){try{const r=(!$("shop").classList.contains("hide")?$("shcoins"):$("coinbox")).getBoundingClientRect(),e=document.createElement("div");e.className="flt "+(n>0?"p":"m");e.textContent=(n>0?"+":"−")+Math.abs(n);e.style.left=(r.left+r.width/2-8)+"px";e.style.top=(r.bottom)+"px";document.body.appendChild(e);setTimeout(()=>e.remove(),950);if(n<0&&navigator.vibrate)navigator.vibrate(60)}catch(_){}}
-function confetti(){try{if(matchMedia("(prefers-reduced-motion:reduce)").matches)return;const cs=["#3B82F6","#FACC15","#FB923C","#22C55E","#EF4444","#A855F7"],x=innerWidth/2,y=innerHeight*.35;for(let k=0;k<40;k++){const e=document.createElement("div");e.className="cf";e.style.background=cs[k%6];e.style.left=x+"px";e.style.top=y+"px";const an=Math.random()*Math.PI*2,d=90+Math.random()*160;e.style.setProperty("--dx",Math.cos(an)*d+"px");e.style.setProperty("--dy",Math.sin(an)*d+140+"px");e.style.setProperty("--rot",(Math.random()*720-360)+"deg");document.body.appendChild(e);setTimeout(()=>e.remove(),1200)}}catch(_){}}
+function confetti(){try{if(matchMedia("(prefers-reduced-motion:reduce)").matches||document.documentElement.classList.contains("lite"))return;const cs=["#3B82F6","#FACC15","#FB923C","#22C55E","#EF4444","#A855F7"],x=innerWidth/2,y=innerHeight*.35;for(let k=0;k<40;k++){const e=document.createElement("div");e.className="cf";e.style.background=cs[k%6];e.style.left=x+"px";e.style.top=y+"px";const an=Math.random()*Math.PI*2,d=90+Math.random()*160;e.style.setProperty("--dx",Math.cos(an)*d+"px");e.style.setProperty("--dy",Math.sin(an)*d+140+"px");e.style.setProperty("--rot",(Math.random()*720-360)+"deg");document.body.appendChild(e);setTimeout(()=>e.remove(),1200)}}catch(_){}}
 function replay(el){el.style.animation="none";void el.offsetWidth;el.style.animation=""}
 function showPuzzle(){replay($("puzzle"));
   locked=false;wrongs=0;const p=T(i);
@@ -1266,9 +1299,10 @@ function profane(leet,sq,base){
  const raw=leet.replace(/[^a-z]/g,"").replace(/scunthorpe/g,""),pl=base.replace(/[^a-z]/g,"").replace(/scunthorpe/g,""),forms=[sq.replace(/scunthorpe/g,""),c1(raw),pl,c1(pl)];
  if(PROF_SUB.some(w=>forms.some(f=>f.includes(w)||(PROF_REV.includes(w)&&rv(f).includes(w)))))return true;
  return leet.split(/[^a-z]+/).filter(Boolean).some(t=>[t,c1(t)].some(x=>PROF_TOK.includes(x)||PROF_TOK.includes(rv(x))))}
+var NAME_RE;try{NAME_RE=new RegExp("^[\\p{L}\\p{N}][\\p{L}\\p{N} ._-]*$","u")}catch(_){NAME_RE=/^[A-Za-z0-9\u00C0-\uFFFF][A-Za-z0-9\u00C0-\uFFFF ._-]*$/}
 function nameCheck(n){
  if(n.length<3||n.length>20)return PT("n_len");
- if(!/^[\p{L}\p{N}][\p{L}\p{N} ._-]*$/u.test(n))return PT("n_chars");
+ if(!NAME_RE.test(n))return PT("n_chars");
  if(badWord(n))return PT("n_bad");
  if(/^pus(i|y|ie|ies|is)$/.test(n.toLowerCase().replace(/[^a-z]/g,"").replace(/1/g,"i")))return PT("n_bad");
  return ""}
@@ -1793,6 +1827,153 @@ for(const c in V)if(UI[c])Object.assign(UI[c],V[c])}
  "ar-QA":{sub:"حل لغز من الصف الأول لين الجامعة. كل فوز يفتح لك صورة تلونها بالأرقام.",ok:"إجابة صح! الحين نفتح صورتك…",no:"مب بالضبط. جرب إجابة ثانية.",done:"خلصت! شغل حلو.",wrong:"هالمنطقة رقمها {0}. اختر اللون {0}.",next:"اللغز الجاي",again:"العب مرة ثانية"}};
  for(const c in DIA){UI[c]=Object.assign(JSON.parse(JSON.stringify(UI.ar)),DIA[c]);PZ[c]=PZ.ar;TOS[c]=TOS.ar}}
 
+/* ===== Lite mode for older / slower phones and tablets: no animations, blur or heavy shadows ===== */
+try{
+ const slow=(navigator.hardwareConcurrency&&navigator.hardwareConcurrency<=2)||(navigator.deviceMemory&&navigator.deviceMemory<=2)||!(window.CSS&&CSS.supports&&CSS.supports("aspect-ratio","1/1"))||!window.PointerEvent;
+ if(slow)document.documentElement.classList.add("lite");
+ const ls=document.createElement("style");
+ ls.textContent="html.lite *,html.lite *::before,html.lite *::after{animation:none!important;transition:none!important;scroll-behavior:auto!important}html.lite main{filter:none!important}html.lite .gbox,html.lite #ckb,html.lite .card{box-shadow:none!important}html.lite .cf,html.lite .flt{display:none!important}";
+ document.head.appendChild(ls);
+}catch(_){}
+
+/* ===== Custom on-screen keyboard: letters, numbers and symbols only (no emoji key) ===== */
+/* Pure text-editing helpers (kept separate so they are easy to test) */
+function kbInsert(v,s,e,t,mx){if(v.length-(e-s)+t.length>mx)return null;return{v:v.slice(0,s)+t+v.slice(e),c:s+t.length}}
+function kbErase(v,s,e){if(s===e){if(s===0)return null;let k=1;const cc=v.charCodeAt(s-1);if(cc>=0xDC00&&cc<=0xDFFF&&s>1)k=2;s-=k}return{v:v.slice(0,s)+v.slice(e),c:s}}
+try{(function(){
+ if(!("inputMode" in HTMLInputElement.prototype)||!window.PointerEvent)return;
+ if(!(matchMedia("(pointer:coarse)").matches||navigator.maxTouchPoints>0))return;
+ const root=document.documentElement;
+ const T={en:{done:"Done",sys:"Phone keyboard",sp:"space",bk:"Backspace",sh:"Shift"},de:{done:"Fertig",sys:"Handy-Tastatur",sp:"Leerzeichen",bk:"Löschen",sh:"Umschalten"},fr:{done:"OK",sys:"Clavier du téléphone",sp:"espace",bk:"Effacer",sh:"Majuscule"},es:{done:"Listo",sys:"Teclado del móvil",sp:"espacio",bk:"Borrar",sh:"Mayúsculas"},it:{done:"Fatto",sys:"Tastiera del telefono",sp:"spazio",bk:"Cancella",sh:"Maiuscole"}};
+ const L=()=>T[lang]||T[String(lang).split("-")[0]]||T.en;
+ const ROWS={abc:["qwertyuiop","asdfghjkl","zxcvbnm"],num:["1234567890","@.-_+,!?#&","()/:;=%*$"],acc:["áàâäãåæçéè","êëíìîïñóòô","öõøœúùûüýÿ","ßšžčłśźżąę"]};
+ /* Only plain text / email / password boxes use it; the numeric code box keeps the phone's number pad */
+ const inputs=[...document.querySelectorAll("input")].filter(el=>/^(text|email|password)$/.test(el.type)&&el.getAttribute("inputmode")!=="numeric");
+ if(!inputs.length)return;
+ inputs.forEach(el=>{el.dataset.ckb="1";el.setAttribute("inputmode","none")});
+ const isK=el=>!!(el&&el.dataset&&el.dataset.ckb==="1");
+ const st=document.createElement("style");
+ st.textContent="#ckb{position:fixed;left:0;right:0;bottom:0;z-index:10000;background:var(--surface);border-top:1px solid var(--line);padding:4px 6px 8px;padding:4px 6px calc(8px + env(safe-area-inset-bottom,0px));box-shadow:0 -6px 24px rgba(0,0,0,.18);user-select:none;-webkit-user-select:none;-webkit-touch-callout:none;touch-action:manipulation}#ckb[hidden]{display:none}.ckbar{display:flex;justify-content:space-between;align-items:center;margin:0 2px 4px}.ckx{border:0;background:none;color:var(--accent);font:inherit;font-weight:700;font-size:.95rem;padding:6px 10px;min-height:36px;width:auto;margin:0}.ckrow{display:flex;margin:0 0 6px;justify-content:center}.ck+.ck{margin-left:5px}.ckrow.in{padding:0 5%}.ck{flex:1 1 0;min-width:0;height:44px;border:1px solid var(--line);border-radius:8px;background:var(--bg);color:var(--ink);font:inherit;font-size:1.15rem;font-weight:600;padding:0;margin:0;display:flex;align-items:center;justify-content:center;width:auto}.ck:active{background:var(--line)}.ck.w{flex:1.5 1 0}.ck.sp{flex:4 1 0}.ck.on{background:var(--accent);color:var(--on-accent)}.ck.fn{font-size:.9rem;background:var(--line)}html.kbopen body{padding-bottom:var(--kbh,0px)}html.kbopen .ov{padding-bottom:calc(var(--kbh,0px) + 12px)}html.kbopen .gbox{overflow-y:auto}@media (max-height:480px){.ck{height:34px}.ckx{min-height:30px}}@media (min-width:700px){#ckb{left:50%;right:auto;transform:translateX(-50%);width:820px;max-width:100%;border:1px solid var(--line);border-bottom:0;border-radius:16px 16px 0 0;padding:8px 14px 12px;padding:8px 14px calc(12px + env(safe-area-inset-bottom,0px))}.ck{height:58px;font-size:1.45rem;border-radius:10px}.ckrow{margin-bottom:8px}.ck+.ck{margin-left:8px}.ckx{font-size:1.1rem;min-height:44px}.ck.fn{font-size:1.05rem}}@media (min-width:700px) and (orientation:landscape) and (max-height:900px){.ck{height:50px}}";
+ document.head.appendChild(st);
+ const kb=document.createElement("div");kb.id="ckb";kb.dir="ltr";kb.hidden=true;kb.setAttribute("role","group");kb.setAttribute("aria-label","Keyboard");
+ const bar=document.createElement("div");bar.className="ckbar";
+ const bSys=document.createElement("button"),bDone=document.createElement("button");
+ for(const [b,k] of [[bSys,"sys"],[bDone,"done"]]){b.type="button";b.tabIndex=-1;b.className="ckx";b.dataset.k=k}
+ bar.append(bSys,bDone);
+ const rowsBox=document.createElement("div");
+ kb.append(bar,rowsBox);document.body.appendChild(kb);
+ let cur=null,layer="abc",shift=false,rep=null,repT=null,hw=false;
+ const mk=(label,k,v,cls,aria)=>{const b=document.createElement("button");b.type="button";b.tabIndex=-1;b.className="ck"+(cls?" "+cls:"");b.dataset.k=k;if(v!=null)b.dataset.v=v;b.textContent=label;if(aria)b.setAttribute("aria-label",aria);return b};
+ const cap=c=>shift?(c==="ß"?c:c.toUpperCase()):c;
+ function render(){
+  const t=L();bSys.textContent=t.sys;bDone.textContent=t.done;
+  rowsBox.textContent="";
+  const row=(cls)=>{const r=document.createElement("div");r.className="ckrow"+(cls?" "+cls:"");rowsBox.appendChild(r);return r};
+  const letters=(r,str)=>{for(const c of str){const v=layer==="num"?c:cap(c);r.appendChild(mk(v,"c",v))}};
+  const R=ROWS[layer];
+  if(layer==="abc"){letters(row(),R[0]);letters(row("in"),R[1]);
+   const r=row();r.appendChild(mk("⇧","sh",null,"w"+(shift?" on":""),t.sh));letters(r,R[2]);r.appendChild(mk("⌫","bk",null,"w",t.bk))}
+  else if(layer==="num"){letters(row(),R[0]);letters(row(),R[1]);const r=row();letters(r,R[2]);r.appendChild(mk("⌫","bk",null,"w",t.bk))}
+  else{R.forEach(s=>letters(row(),s))}
+  const r4=row();
+  if(layer==="acc"){r4.append(mk("abc","l","abc","w fn"),mk("123","l","num","w fn"),mk("⇧","sh",null,"w"+(shift?" on":""),t.sh),mk(t.sp,"sp",null,"sp fn"),mk("⌫","bk",null,"w",t.bk))}
+  else{r4.append(mk(layer==="abc"?"123":"abc","l",layer==="abc"?"num":"abc","w fn"),mk("áé","l","acc","w fn"),mk("@","c","@"),mk(t.sp,"sp",null,"sp fn"),mk(".","c","."))}
+ }
+ function setKbh(){root.style.setProperty("--kbh",kb.offsetHeight+"px")}
+ function autoShift(){
+  if(!cur||cur.getAttribute("autocapitalize")!=="words")return;
+  let p=cur.value.length;try{if(cur.selectionStart!=null)p=cur.selectionStart}catch(_){}
+  const pre=cur.value.slice(0,p),want=pre===""||/\s$/.test(pre);
+  if(want!==shift){shift=want;if(layer!=="num")render()}
+ }
+ function commit(r){
+  if(!r||!cur)return;
+  cur.value=r.v;try{cur.setSelectionRange(r.c,r.c)}catch(_){}
+  cur.dispatchEvent(new Event("input",{bubbles:true}));
+ }
+ function sel(){const v=cur.value;let s=v.length,e=v.length;try{if(cur.selectionStart!=null){s=cur.selectionStart;e=cur.selectionEnd}}catch(_){}return[v,s,e]}
+ function ins(t){if(!cur)return;const[v,s,e]=sel(),mx=cur.maxLength>0?cur.maxLength:1e9;commit(kbInsert(v,s,e,t,mx))}
+ function del(){if(!cur)return;const[v,s,e]=sel();commit(kbErase(v,s,e))}
+ function stopRep(){clearTimeout(repT);clearInterval(rep);repT=rep=null}
+ function show(el){
+  cur=el;kb.hidden=false;root.classList.add("kbopen");
+  if(el.getAttribute("autocapitalize")==="words"){const p=el.value;shift=p===""||/\s$/.test(p)}else shift=false;
+  layer="abc";render();setKbh();
+  requestAnimationFrame(()=>{setKbh();try{el.scrollIntoView({block:"center",behavior:"smooth"})}catch(_){}});
+ }
+ function hide(){stopRep();kb.hidden=true;root.classList.remove("kbopen");root.style.setProperty("--kbh","0px");cur=null}
+ function done(){
+  const el=cur;if(!el)return;
+  try{el.dispatchEvent(new KeyboardEvent("keydown",{key:"Enter",bubbles:true,cancelable:true}))}catch(_){}
+  hide();try{el.blur()}catch(_){}
+ }
+ function press(b){
+  const k=b.dataset.k;
+  if(k==="c"){ins(b.dataset.v);if(cur&&cur.getAttribute("autocapitalize")==="words")autoShift();else if(shift){shift=false;render()}}
+  else if(k==="sp"){ins(" ");autoShift()}
+  else if(k==="bk"){del();autoShift()}
+  else if(k==="sh"){shift=!shift;render()}
+  else if(k==="l"){layer=b.dataset.v;render();setKbh()}
+  else if(k==="done")done();
+ }
+ /* Keys act on pointerdown and never take focus away from the text box */
+ kb.addEventListener("pointerdown",e=>{
+  e.stopPropagation();
+  const b=e.target.closest("button");if(!b)return;
+  if(b.dataset.k==="sys")return;                 /* handled on click so the phone keyboard may open */
+  e.preventDefault();
+  press(b);
+  if(b.dataset.k==="bk"){stopRep();repT=setTimeout(()=>{rep=setInterval(del,60)},420)}
+ });
+ kb.addEventListener("mousedown",e=>e.preventDefault());
+ kb.addEventListener("touchstart",e=>{if(!e.target.closest('[data-k="sys"]'))e.preventDefault()},{passive:false});
+ ["pointerup","pointercancel","pointerleave"].forEach(n=>kb.addEventListener(n,stopRep));
+ addEventListener("blur",stopRep);
+ /* "Phone keyboard" lets people type other alphabets (Arabic, Chinese, Cyrillic…) with their own keyboard */
+ bSys.addEventListener("click",()=>{
+  const el=cur;if(!el)return;
+  el.dataset.sys="1";el.setAttribute("inputmode","text");
+  hide();try{el.blur();el.focus()}catch(_){}
+  const back=()=>{el.removeEventListener("blur",back);setTimeout(()=>{delete el.dataset.sys;el.setAttribute("inputmode","none")},60)};
+  el.addEventListener("blur",back);
+ });
+ document.addEventListener("focusin",e=>{
+  const t=e.target;
+  if(t&&t.closest&&t.closest("#ckb")){if(cur)try{cur.focus({preventScroll:true})}catch(_){}return}
+  if(isK(t)&&!t.dataset.sys&&!hw)show(t);
+ });
+ /* A real keyboard is attached (iPad Magic Keyboard etc.): get out of the way until the screen is touched again */
+ document.addEventListener("keydown",e=>{
+  if(!e.isTrusted||kb.hidden||!cur||e.target!==cur||e.metaKey||e.ctrlKey||e.altKey)return;
+  if(e.key&&(e.key.length===1||e.key==="Backspace")){hw=true;hide()}
+ },true);
+ document.addEventListener("pointerdown",e=>{
+  if(e.pointerType!=="touch"||!hw)return;
+  const t=e.target&&e.target.closest&&e.target.closest("input");
+  if(!t||!isK(t))return;
+  hw=false;if(document.activeElement===t&&!t.dataset.sys)setTimeout(()=>show(t),0);
+ },true);
+ document.addEventListener("focusout",()=>{
+  setTimeout(()=>{const a=document.activeElement;if(!(isK(a)&&!a.dataset.sys))hide()},220);
+ });
+ document.addEventListener("keydown",e=>{if(e.key==="Escape"&&!kb.hidden)hide()});
+ addEventListener("pagehide",hide);
+ addEventListener("orientationchange",()=>setTimeout(()=>{if(!kb.hidden)setKbh()},300));
+})()}catch(_){}
+
+/* ===== No emojis in text boxes: strip them as they are typed or pasted ===== */
+try{
+ let EMO;try{EMO=new RegExp("[\\p{Extended_Pictographic}\\p{Emoji_Modifier}\\p{Regional_Indicator}\\u200d\\ufe0f\\u20e3]","gu")}catch(_){EMO=/[\u2190-\u21FF\u2300-\u23FF\u2460-\u27BF\u2900-\u297F\u2B00-\u2BFF\u3030\u303D\u3297\u3299\uD83C-\uDBFF\uDC00-\uDFFF\u200D\uFE0F\u20E3]/g}
+ document.querySelectorAll("input").forEach(el=>{
+  if(/^(file|hidden|checkbox|radio|button|submit)$/.test(el.type))return;
+  el.addEventListener("input",()=>{
+   const v=el.value,c=v.replace(EMO,"");
+   if(c!==v){let p=null;try{p=el.selectionStart-(v.length-c.length)}catch(_){}
+    el.value=c;try{if(p!==null)el.setSelectionRange(Math.max(0,p),Math.max(0,p))}catch(_){}}
+  });
+ });
+}catch(_){}
+
 /* ===== Save everything when leaving (logged-in players only) ===== */
 function flushAll(){
  if(!uid)return;
@@ -1823,6 +2004,7 @@ function restoreDraw(){
 applyLang();
 /* Returning player: restore the session only now, after everything above is set up */
 if(window.__resume){const f=window.__resume;window.__resume=null;f()}
+if(window.__ucReady)window.__ucReady();
 </script>
 </body>
 </html>
