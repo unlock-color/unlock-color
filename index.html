@@ -1965,6 +1965,16 @@ addEventListener("keydown",e=>{
 /* ===== Unique usernames (per device) ===== */
 {const T={en:"That username already exists. Please try a new username.",de:"Dieser Benutzername ist schon vergeben. Bitte versuch einen anderen.",fr:"Ce nom d’utilisateur est déjà pris. Essaie-en un autre.",it:"Questo nome utente è già stato preso. Provane un altro.",es:"Ese nombre de usuario ya está en uso. Prueba con otro.",pt:"Esse nome de utilizador já está a ser usado. Tenta outro.",ru:"Это имя пользователя уже занято. Попробуй другое.",zh:"这个用户名已被使用，请换一个。",tr:"Bu kullanıcı adı zaten alınmış. Lütfen başka bir tane dene.",ja:"そのユーザー名はすでに使われています。別の名前を試してください。",ko:"이미 사용 중인 사용자 이름입니다. 다른 이름을 입력해 주세요.",ar:"اسم المستخدم هذا مستخدم بالفعل. جرّب اسمًا آخر.",hi:"यह उपयोगकर्ता नाम पहले से लिया जा चुका है। कृपया कोई दूसरा चुनें।"};
  for(const c in UI){const t=T[c]||T[c.split("-")[0]];if(t&&UI[c])UI[c].n_taken=t}}
+/* ===== Français (Suisse) ===== */
+{const cl=o=>Array.isArray(o)?o.map(cl):o&&typeof o==="object"?Object.fromEntries(Object.entries(o).map(([k,v])=>[k,cl(v)])):o;
+ const sw=o=>typeof o==="string"?o.replace(/soixante-dix/g,"septante").replace(/quatre-vingt-dix/g,"nonante").replace(/quatre-vingts?(?![-\w])/g,"huitante"):Array.isArray(o)?o.map(sw):o&&typeof o==="object"?Object.fromEntries(Object.entries(o).map(([k,v])=>[k,sw(v)])):o;
+ UI["fr-CH"]=sw(cl(UI.fr));if(PZ.fr)PZ["fr-CH"]=sw(cl(PZ.fr));TOS["fr-CH"]=TOS.fr;
+ const ent=Object.entries(LANGS);for(const [k] of ent)delete LANGS[k];
+ for(const [k,v] of ent){LANGS[k]=v;if(k==="fr")LANGS["fr-CH"]="Français (Suisse)"}
+ document.querySelectorAll(".langsel").forEach(el=>{el.innerHTML=Object.keys(LANGS).map(k=>`<option value="${k}">${LANGS[k]}</option>`).join("")});
+ let sl=lsGet("lang");if(sl!=="fr-CH"&&!sl&&/^fr-ch/i.test(navigator.language||""))sl="fr-CH";
+ if(sl==="fr-CH"&&lang!=="fr-CH"){lang="fr-CH";lsSet("lang",lang)}
+ applyLang()}
 $("aname").addEventListener("input",()=>{
   const v=$("aname").value.trim(),msg=PT("n_taken");
   if(authMode==="create"&&v.length>=3&&nameTaken(v))err(msg);
