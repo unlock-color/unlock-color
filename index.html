@@ -1372,7 +1372,10 @@ function nameCheck(n){
  if(!/^[\p{L}\p{N}][\p{L}\p{N} ._-]*$/u.test(n))return PT("n_chars");
  if(badWord(n))return PT("n_bad");
  if(/^pus(i|y|ie|ies|is)$/.test(n.toLowerCase().replace(/[^a-z]/g,"").replace(/1/g,"i")))return PT("n_bad");
- return ""}
+ if(nameTaken(n))return PT("n_taken");
+  return ""}
+function normName(n){return String(n).normalize("NFKC").toLowerCase().replace(/[\s._-]+/g,"")}
+function nameTaken(n){const k=normName(n);if(!k)return false;const U=users();if(!window.__ng){const g=loadData("guest").name;if(g&&normName(g)===k)return true}return Object.keys(U).some(id=>U[id]&&U[id].name&&normName(U[id].name)===k)}
 const err=m=>{$("aerr").textContent=m||"";return false};
 
 function enter(id,gname){
@@ -1400,7 +1403,7 @@ function startFlow(){const sid=lsGet("session");if(sid&&(sid==="guest"||users()[
 $("tabc").onclick=()=>setMode("create");$("tabl").onclick=()=>setMode("login");
 $("aguest").onclick=()=>{
  if(authMode!=="create"){setMode("create");err(CH("e_guest"));$("aname").focus();return}
- const n=$("aname").value.trim(),e=nameCheck(n);
+ const n=$("aname").value.trim();window.__ng=1;const e=nameCheck(n);window.__ng=0;
  if(e){err(e);$("aname").focus();return}
  enter("guest",n)};
 $("af").onsubmit=async e=>{
@@ -1511,7 +1514,8 @@ $("vok").onclick=async()=>{
  try{
   if(await sha(vf.email+":"+v)!==vf.codeHash){vf.tries++;return verr(PT("v_bad"))}
   const U=users(),id="email:"+vf.email;
-  if(U[id]){endVerify();setMode("login");return err(PT("x_exists"))}
+   if(nameTaken(vf.name)){endVerify();setMode("create");return err(PT("n_taken"))}
+   if(U[id]){endVerify();setMode("login");return err(PT("x_exists"))}
   U[id]={id,provider:"email",name:vf.name,email:vf.email,salt:vf.salt,hash:vf.hash,verified:true,created:Date.now()};
   if(!saveUsers(U))return verr(PT("x_save"));
   endVerify();enter(id);offerPic()
@@ -1957,6 +1961,14 @@ addEventListener("keydown",e=>{
   }
 });
 })();
+
+/* ===== Unique usernames (per device) ===== */
+{const T={en:"That username already exists. Please try a new username.",de:"Dieser Benutzername ist schon vergeben. Bitte versuch einen anderen.",fr:"Ce nom d’utilisateur est déjà pris. Essaie-en un autre.",it:"Questo nome utente è già stato preso. Provane un altro.",es:"Ese nombre de usuario ya está en uso. Prueba con otro.",pt:"Esse nome de utilizador já está a ser usado. Tenta outro.",ru:"Это имя пользователя уже занято. Попробуй другое.",zh:"这个用户名已被使用，请换一个。",tr:"Bu kullanıcı adı zaten alınmış. Lütfen başka bir tane dene.",ja:"そのユーザー名はすでに使われています。別の名前を試してください。",ko:"이미 사용 중인 사용자 이름입니다. 다른 이름을 입력해 주세요.",ar:"اسم المستخدم هذا مستخدم بالفعل. جرّب اسمًا آخر.",hi:"यह उपयोगकर्ता नाम पहले से लिया जा चुका है। कृपया कोई दूसरा चुनें।"};
+ for(const c in UI){const t=T[c]||T[c.split("-")[0]];if(t&&UI[c])UI[c].n_taken=t}}
+$("aname").addEventListener("input",()=>{
+  const v=$("aname").value.trim(),msg=PT("n_taken");
+  if(authMode==="create"&&v.length>=3&&nameTaken(v))err(msg);
+  else if($("aerr").textContent===msg)err("")});
 </script>
 </body>
 </html>
