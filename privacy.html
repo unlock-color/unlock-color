@@ -16,6 +16,7 @@ p,li{margin:.5rem 0}
 .meta,.nav{color:var(--muted);font-size:.95rem}
 a{color:var(--accent)}
 hr{border:0;border-top:1px solid var(--line);margin:2rem 0}
+.lang{max-width:40rem;margin:0 auto;padding:1rem 1.25rem 0;text-align:right}.lang select{font:inherit;font-size:.95rem;color:var(--fg);background:var(--bg);border:1px solid var(--line);border-radius:.4rem;padding:.25rem .5rem}
 </style>
 </head>
 <body>
@@ -27,9 +28,9 @@ hr{border:0;border-top:1px solid var(--line);margin:2rem 0}
 <h2>Playing as a guest</h2>
 <p>You can play without giving us any personal information.</p>
 <h2>If you create an account</h2>
-<p>The Game stores your name, your email address (or the user ID that Google or Apple provides), an optional profile picture (accounts only, not guests), and your progress, coins and statistics. In this version of the Game this is saved only on your own device, in your browser’s local storage. It is not sent to our servers.</p>
-<h2>Signing in with Google or Apple</h2>
-<p>If you sign in with Google or Apple, you are taken to that provider, which handles your login under its own privacy policy and tells the Game your name, email address and a user ID. We never see your Google or Apple password. For email accounts, your password is stored on your device only in scrambled (hashed) form.</p>
+<p>The Game stores your name, your email address (or the user ID that Google provides), an optional profile picture (accounts only, not guests), and your progress, coins and statistics. In this version of the Game this is saved only on your own device, in your browser’s local storage. It is not sent to our servers.</p>
+<h2>Signing in with Google</h2>
+<p>If you sign in with Google, you are taken to Google, which handles your login under its own privacy policy and tells the Game your name, email address and a user ID. We never see your Google password. For email accounts, your password is stored on your device only in scrambled (hashed) form.</p>
 <h2>Data saved in your browser</h2>
 <p>Your browser may save your language choice, your coin score, any translations you requested, and your acceptance of the Terms on your own device (local storage). This is only used to make the Game work and remember your choices. You can clear it at any time in your browser settings.</p>
 <h2>Translations</h2>
@@ -44,5 +45,71 @@ hr{border:0;border-top:1px solid var(--line);margin:2rem 0}
 <p>Questions about your data? Contact Techno Creative Company, Switzerland, at <a href="mailto:technocreativecompany@gmail.com">technocreativecompany@gmail.com</a>.</p>
 <p class="nav">See also our <a href="terms.html">Terms of Service</a>.</p>
 </main>
+<script>
+(function(){
+var T={
+'sr-Latn':[`Politika privatnosti – Unlock & Color`,`<a href="./">&larr; Nazad na Unlock &amp; Color</a>`,`Politika privatnosti`,`Poslednje ažuriranje: 18. novembar 2026.`,
+`Ova politika objašnjava šta Unlock &amp; Color („Igra“), koju pruža Techno Creative Company („mi“), radi sa vašim podacima. Lični podaci se obrađuju u skladu sa švajcarskim Saveznim zakonom o zaštiti podataka (FADP).`,
+`Igranje kao gost`,`Možete igrati bez davanja ikakvih ličnih podataka.`,
+`Ako napravite nalog`,`Igra čuva vaše ime, adresu e-pošte (ili korisnički ID koji daje Google), opcionu profilnu sliku (samo za naloge, ne za goste), kao i vaš napredak, novčiće i statistiku. U ovoj verziji Igre to se čuva samo na vašem uređaju, u lokalnom skladištu pregledača. Ne šalje se na naše servere.`,
+`Prijava preko Googlea`,`Ako se prijavite preko Googlea, bićete preusmereni na Google, koji upravlja vašom prijavom prema sopstvenoj politici privatnosti i prosleđuje Igri vaše ime, adresu e-pošte i korisnički ID. Nikada ne vidimo vašu lozinku za Google. Za naloge e-pošte, lozinka se čuva samo na vašem uređaju, i to u izmešanom (heširanom) obliku.`,
+`Podaci sačuvani u pregledaču`,`Vaš pregledač može da sačuva izbor jezika, broj novčića, prevode koje ste zatražili i vaše prihvatanje Uslova na vašem uređaju (lokalno skladište). To služi samo za rad Igre i pamćenje vaših izbora. Možete ga obrisati bilo kada u podešavanjima pregledača.`,
+`Prevodi`,`Neki jezici se automatski prevode na zahtev. Za prevođenje se šalje samo tekst same Igre. Igra nema polja za unos teksta, pa se ništa što upišete ne šalje. Usluga prevođenja može obrađivati ovaj tekst van Švajcarske.`,
+`Hosting`,`Igru hostuje spoljni veb hosting (GitHub Pages), koji može prikupljati tehničke informacije, poput vaše IP adrese, prema sopstvenoj politici privatnosti. To može uključivati obradu van Švajcarske.`,
+`Vaši izbori`,`Možete se odjaviti ili izbrisati nalog i sve sačuvane podatke u bilo kom trenutku na ekranu sa statistikom. Brisanjem podataka pregledača oni se takođe uklanjaju.`,
+`Deca`,`Igra je za sve uzraste. Igrači mlađi od 18 godina treba da je koriste uz dozvolu roditelja ili staratelja.`,
+`Kontakt`,`Pitanja o vašim podacima? Obratite se kompaniji Techno Creative Company, Švajcarska, na <a href="mailto:technocreativecompany@gmail.com">technocreativecompany@gmail.com</a>.`,
+`Pogledajte i naše <a href="terms.html">Uslove korišćenja</a>.`],
+'de':[`Datenschutzerklärung – Unlock & Color`,`<a href="./">&larr; Zurück zu Unlock &amp; Color</a>`,`Datenschutzerklärung`,`Zuletzt aktualisiert: 18. November 2026`,
+`Diese Erklärung beschreibt, was Unlock &amp; Color (das „Spiel“), bereitgestellt von der Techno Creative Company („wir“), mit Ihren Informationen macht. Personenbezogene Daten werden gemäss dem Schweizer Bundesgesetz über den Datenschutz (DSG) behandelt.`,
+`Als Gast spielen`,`Sie können spielen, ohne uns persönliche Informationen mitzuteilen.`,
+`Wenn Sie ein Konto erstellen`,`Das Spiel speichert Ihren Namen, Ihre E-Mail-Adresse (oder die von Google bereitgestellte Benutzer-ID), ein optionales Profilbild (nur für Konten, nicht für Gäste) sowie Ihren Fortschritt, Ihre Münzen und Statistiken. In dieser Version des Spiels wird dies nur auf Ihrem eigenen Gerät im lokalen Speicher Ihres Browsers gespeichert. Es wird nicht an unsere Server gesendet.`,
+`Anmeldung mit Google`,`Wenn Sie sich mit Google anmelden, werden Sie zu Google weitergeleitet, das Ihre Anmeldung nach seiner eigenen Datenschutzerklärung abwickelt und dem Spiel Ihren Namen, Ihre E-Mail-Adresse und eine Benutzer-ID mitteilt. Ihr Google-Passwort sehen wir nie. Bei E-Mail-Konten wird Ihr Passwort nur in verschlüsselter (gehashter) Form auf Ihrem Gerät gespeichert.`,
+`Im Browser gespeicherte Daten`,`Ihr Browser kann Ihre Sprachwahl, Ihren Münzstand, von Ihnen angeforderte Übersetzungen und Ihre Zustimmung zu den Nutzungsbedingungen auf Ihrem Gerät speichern (lokaler Speicher). Dies dient nur dazu, das Spiel funktionsfähig zu machen und Ihre Auswahl zu merken. Sie können es jederzeit in den Browsereinstellungen löschen.`,
+`Übersetzungen`,`Einige Sprachen werden auf Anfrage automatisch übersetzt. Dabei wird nur der eigene Text des Spiels zur Übersetzung gesendet. Das Spiel hat keine Textfelder, daher wird nichts übermittelt, was Sie eingeben. Der Übersetzungsdienst kann diesen Text ausserhalb der Schweiz verarbeiten.`,
+`Hosting`,`Das Spiel wird von einem externen Webhoster (GitHub Pages) betrieben, der technische Informationen wie Ihre IP-Adresse nach seiner eigenen Datenschutzerklärung erfassen kann. Dies kann eine Verarbeitung ausserhalb der Schweiz beinhalten.`,
+`Ihre Wahlmöglichkeiten`,`Sie können sich jederzeit abmelden oder Ihr Konto samt allen gespeicherten Daten im Statistik-Bildschirm löschen. Auch das Löschen Ihrer Browserdaten entfernt sie.`,
+`Kinder`,`Das Spiel ist für alle Altersgruppen geeignet. Spieler unter 18 Jahren sollten es mit Erlaubnis eines Elternteils oder Erziehungsberechtigten nutzen.`,
+`Kontakt`,`Fragen zu Ihren Daten? Wenden Sie sich an die Techno Creative Company, Schweiz, unter <a href="mailto:technocreativecompany@gmail.com">technocreativecompany@gmail.com</a>.`,
+`Siehe auch unsere <a href="terms.html">Nutzungsbedingungen</a>.`],'fr':[`Politique de confidentialité – Unlock & Color`,`<a href="./">&larr; Retour à Unlock &amp; Color</a>`,`Politique de confidentialité`,`Dernière mise à jour : 18 novembre 2026`,
+`Cette politique explique ce que Unlock &amp; Color (le « Jeu »), fourni par Techno Creative Company (« nous »), fait de vos informations. Les données personnelles sont traitées conformément à la loi fédérale suisse sur la protection des données (LPD).`,
+`Jouer en tant qu'invité`,`Vous pouvez jouer sans nous fournir aucune information personnelle.`,
+`Si vous créez un compte`,`Le Jeu enregistre votre nom, votre adresse e-mail (ou l'identifiant utilisateur fourni par Google), une photo de profil facultative (comptes uniquement, pas les invités), ainsi que votre progression, vos pièces et vos statistiques. Dans cette version du Jeu, ces données sont enregistrées uniquement sur votre propre appareil, dans le stockage local de votre navigateur. Elles ne sont pas envoyées à nos serveurs.`,
+`Connexion avec Google`,`Si vous vous connectez avec Google, vous êtes dirigé vers Google, qui gère votre connexion selon sa propre politique de confidentialité et communique au Jeu votre nom, votre adresse e-mail et un identifiant utilisateur. Nous ne voyons jamais votre mot de passe Google. Pour les comptes e-mail, votre mot de passe est stocké uniquement sur votre appareil, sous une forme brouillée (hachée).`,
+`Données enregistrées dans votre navigateur`,`Votre navigateur peut enregistrer votre choix de langue, votre score de pièces, les traductions demandées et votre acceptation des Conditions sur votre appareil (stockage local). Cela sert uniquement au fonctionnement du Jeu et à mémoriser vos choix. Vous pouvez l'effacer à tout moment dans les paramètres de votre navigateur.`,
+`Traductions`,`Certaines langues sont traduites automatiquement sur demande. Seul le texte propre au Jeu est envoyé pour traduction. Le Jeu ne comporte aucun champ de saisie : rien de ce que vous tapez n'est donc envoyé. Le service de traduction peut traiter ce texte en dehors de la Suisse.`,
+`Hébergement`,`Le Jeu est hébergé par un hébergeur web tiers (GitHub Pages), qui peut collecter des informations techniques telles que votre adresse IP selon sa propre politique de confidentialité. Cela peut impliquer un traitement en dehors de la Suisse.`,
+`Vos choix`,`Vous pouvez vous déconnecter ou supprimer votre compte et toutes ses données à tout moment depuis l'écran Statistiques. Effacer les données de votre navigateur les supprime également.`,
+`Enfants`,`Le Jeu est destiné à tous les âges. Les joueurs de moins de 18 ans doivent l'utiliser avec l'autorisation d'un parent ou tuteur.`,
+`Contact`,`Des questions sur vos données ? Contactez Techno Creative Company, Suisse, à <a href="mailto:technocreativecompany@gmail.com">technocreativecompany@gmail.com</a>.`,
+`Voir aussi nos <a href="terms.html">Conditions d'utilisation</a>.`],
+'it':[`Informativa sulla privacy – Unlock & Color`,`<a href="./">&larr; Torna a Unlock &amp; Color</a>`,`Informativa sulla privacy`,`Ultimo aggiornamento: 18 novembre 2026`,
+`Questa informativa spiega cosa fa Unlock &amp; Color (il «Gioco»), fornito da Techno Creative Company («noi»), con le tue informazioni. I dati personali sono trattati in conformità con la legge federale svizzera sulla protezione dei dati (LPD).`,
+`Giocare come ospite`,`Puoi giocare senza fornirci alcuna informazione personale.`,
+`Se crei un account`,`Il Gioco memorizza il tuo nome, il tuo indirizzo e-mail (o l'ID utente fornito da Google), un'immagine del profilo facoltativa (solo per gli account, non per gli ospiti) e i tuoi progressi, monete e statistiche. In questa versione del Gioco i dati sono salvati solo sul tuo dispositivo, nella memoria locale del browser. Non vengono inviati ai nostri server.`,
+`Accesso con Google`,`Se accedi con Google, vieni indirizzato a Google, che gestisce il tuo accesso secondo la propria informativa sulla privacy e comunica al Gioco il tuo nome, il tuo indirizzo e-mail e un ID utente. Non vediamo mai la tua password di Google. Per gli account e-mail, la password è memorizzata solo sul tuo dispositivo in forma codificata (hash).`,
+`Dati salvati nel browser`,`Il browser può salvare sul tuo dispositivo la lingua scelta, il punteggio in monete, le traduzioni richieste e la tua accettazione dei Termini (memoria locale). Serve solo a far funzionare il Gioco e a ricordare le tue scelte. Puoi cancellarli in qualsiasi momento dalle impostazioni del browser.`,
+`Traduzioni`,`Alcune lingue sono tradotte automaticamente su richiesta. Viene inviato per la traduzione solo il testo del Gioco stesso. Il Gioco non ha campi di testo, quindi nulla di ciò che scrivi viene inviato. Il servizio di traduzione può elaborare questo testo al di fuori della Svizzera.`,
+`Hosting`,`Il Gioco è ospitato da un provider web di terze parti (GitHub Pages), che può raccogliere informazioni tecniche come il tuo indirizzo IP secondo la propria informativa sulla privacy. Ciò può comportare un trattamento al di fuori della Svizzera.`,
+`Le tue scelte`,`Puoi disconnetterti o eliminare il tuo account e tutti i dati salvati in qualsiasi momento dalla schermata Statistiche. Anche cancellare i dati del browser li rimuove.`,
+`Bambini`,`Il Gioco è per tutte le età. I giocatori sotto i 18 anni dovrebbero usarlo con il permesso di un genitore o tutore.`,
+`Contatti`,`Domande sui tuoi dati? Contatta Techno Creative Company, Svizzera, all'indirizzo <a href="mailto:technocreativecompany@gmail.com">technocreativecompany@gmail.com</a>.`,
+`Vedi anche i nostri <a href="terms.html">Termini di servizio</a>.`]};
+var L={'en':'English','sr-Latn':'Srpski (latinica)','sr-Cyrl':'Српски (ћирилица)','de':'Deutsch','fr':'Français','it':'Italiano'};
+var els=[].slice.call(document.querySelectorAll('main>*')),en=[document.title].concat(els.map(function(e){return e.innerHTML}));
+var A='abcćčdđefghijklmnoprsštuvzž',B='абцћчдђефгхијклмнопрсштувзж',D={lj:'љ',nj:'њ',dž:'џ'};
+function ch(m){var l=m.toLowerCase(),r=D[l]||B[A.indexOf(l)]||m;return m!==l?r.toUpperCase():r}
+function cyr(s){return s.split(/(<[^>]+>|&\w+;|Unlock|Color|Techno Creative Company|Google|GitHub Pages|FADP|[\w.]+@[\w.]+|\.html)/).map(function(p,i){return i%2?p:p.replace(/lj|nj|dž|[a-zćčđšž]/gi,ch)}).join('')}
+function get(l){return l=='en'?en:l=='sr-Cyrl'?T['sr-Latn'].map(cyr):T[l]}
+function apply(l){var t=get(l);document.title=t[0];els.forEach(function(e,i){e.innerHTML=t[i+1]});document.documentElement.lang=l}
+var d=document.createElement('div');d.className='lang';
+var s=document.createElement('select');s.setAttribute('aria-label','Language');
+Object.keys(L).forEach(function(k){var o=document.createElement('option');o.value=k;o.textContent=L[k];s.appendChild(o)});
+d.appendChild(s);document.body.insertBefore(d,document.querySelector('main'));
+s.onchange=function(){apply(s.value);try{localStorage.setItem('legalLang',s.value)}catch(e){}};
+var c='en';try{c=localStorage.getItem('legalLang')||'en'}catch(e){}
+if(L[c]&&c!='en'){s.value=c;apply(c)}
+})();
+</script>
 </body>
 </html>
