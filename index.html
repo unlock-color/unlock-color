@@ -2616,6 +2616,20 @@ $("vok").onclick = function () { return __awaiter(void 0, void 0, void 0, functi
         }
     });
 }); };
+function autoName(n, email) {
+    var base = String(n || "").normalize("NFKC").replace(/[^0-9A-Za-z\u00C0-\u024F\u0370-\u1FFF ._-]/g, "").trim();
+    if (base.length < 3 && email)
+        base = String(email).split("@")[0].replace(/[^0-9A-Za-z._-]/g, "");
+    if (base.length < 3)
+        base = "Player";
+    base = base.slice(0, 16).trim();
+    var cand = base, k = 0;
+    while ((nameCheck(cand) && k < 200)) {
+        k++;
+        cand = base.slice(0, 16) + (Math.floor(Math.random() * 900) + 100);
+    }
+    return cand.slice(0, 20);
+}
 function social(provider, sub, name, email) {
     var id = provider + ":" + sub, U = users(), isNew = !U[id];
     if (!U[id]) {
@@ -2625,8 +2639,12 @@ function social(provider, sub, name, email) {
                 return err(ne);
             name = un;
         }
-        else
-            return err(PT("x_noacct"));
+        else {
+            /* Logging in with a verified Google/Apple identity on a device that has no local account yet:
+               create the account automatically instead of showing "No account found". */
+            name = autoName(name, email);
+            isNew = true;
+        }
         U[id] = { id: id, provider: provider, name: name, email: email || "", created: Date.now() };
     }
     else if (name && !U[id].name)
@@ -2634,7 +2652,7 @@ function social(provider, sub, name, email) {
     if (!saveUsers(U))
         return err(PT("x_save"));
     enter(id);
-    if (isNew && authMode === "create")
+    if (isNew)
         offerPic();
 }
 function loadScript(src) { return new Promise(function (res, rej) { var s = document.createElement("script"), t = setTimeout(function () { return rej(new Error("timeout")); }, 8000); s.src = src; s.async = true; s.onload = function () { clearTimeout(t); res(); }; s.onerror = function () { clearTimeout(t); rej(new Error("load")); }; document.head.appendChild(s); }); }
