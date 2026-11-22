@@ -1837,7 +1837,7 @@ function showCoins(pop) {
         b.classList.add("pop");
     }
 }
-function addCoins(n) { coins += n; D.coins = coins; persist(); showCoins(true); floatCoin(n); }
+function addCoins(n) { var nc = Math.max(0, coins + n), d = nc - coins; coins = nc; D.coins = coins; persist(); showCoins(true); if (d) floatCoin(d); }
 function floatCoin(n) { try {
     var r = (!$("shop").classList.contains("hide") ? $("shcoins") : $("coinbox")).getBoundingClientRect(), e_10 = document.createElement("div");
     e_10.className = "flt " + (n > 0 ? "p" : "m");
@@ -2203,7 +2203,7 @@ function enter(id, gname) {
         persist();
     }
     i = (D.i | 0) < 0 ? 0 : (D.i | 0);
-    coins = D.coins | 0;
+    coins = Math.max(0, D.coins | 0);
     showCoins(false);
     var u = users()[id], name = id === "guest" ? (D.name || "Guest") : (u && u.name) || "Player";
     curName = name;
