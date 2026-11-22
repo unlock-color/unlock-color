@@ -28,21 +28,6 @@ pre{direction:ltr;text-align:left}[dir=rtl] .gtxt ul{padding-left:0;padding-righ
 #upd .ubox{background:var(--surface);color:var(--ink);border:2px solid var(--line);border-radius:20px;max-width:420px;width:100%;max-height:85vh;overflow:auto;padding:20px}
 #upd h2{margin:0 0 4px;font-size:1.25rem}#upd .uv{color:var(--muted);font-size:.85rem;margin:0 0 10px}
 #upd ul{margin:0 0 16px;padding-left:20px;line-height:1.5}#upd li{margin:4px 0}#upd .btn{width:100%}
-#kbbtn{position:fixed;left:calc(14px + 0px);left:calc(14px + env(safe-area-inset-left,0px));bottom:calc(14px + 0px);bottom:calc(14px + env(safe-area-inset-bottom,0px));z-index:60;display:none;border:2px solid var(--line);background:var(--surface);color:var(--ink);font-size:1.3rem;border-radius:999px;width:48px;height:48px;cursor:pointer;box-shadow:0 4px 14px rgba(0,0,0,.2)}
-@media (hover:hover) and (pointer:fine){#kbbtn{display:block}}#kbbtn[aria-pressed=true]{background:var(--accent);color:#fff}
-#kb{position:fixed;left:0;right:0;bottom:0;z-index:90;display:none;flex-direction:column;gap:6px;padding:8px 8px calc(8px + 0px) 8px;padding:8px max(8px,env(safe-area-inset-right,0px)) calc(8px + env(safe-area-inset-bottom,0px)) max(8px,env(safe-area-inset-left,0px));background:var(--surface);border-top:2px solid var(--line);box-shadow:0 -6px 20px rgba(0,0,0,.2);user-select:none;-webkit-user-select:none;touch-action:manipulation}
-#kb.open{display:flex}
-#kb .kr{display:flex;justify-content:center;gap:5px}
-#kb button{flex:1 1 0;max-width:56px;min-width:0;height:46px;font:inherit;font-size:1.05rem;font-weight:700;color:var(--ink);background:var(--bg,var(--surface));border:2px solid var(--line);border-radius:10px;cursor:pointer;padding:0}
-#kb button:active{background:var(--accent);color:#fff}
-#kb button.w{flex:1.6 1 0;max-width:90px}#kb button.sp{flex:6 1 0;max-width:340px}
-#kb button.on{background:var(--accent);color:#fff}
-body.kbopen{padding-bottom:var(--kbh,240px)}body.kbopen .ov{bottom:var(--kbh,240px)}body.kbopen .ov .gbox{max-height:100%}
-/* tablets and desktops: larger keyboard */
-@media (min-width:700px){
- #kb{align-items:center}#kb .kr{width:100%;max-width:900px}
- #kb button{height:56px;font-size:1.25rem;max-width:72px}#kb button.w{max-width:110px}#kb button.sp{max-width:420px}
-}
 @media (min-width:700px) and (pointer:coarse){
  #upd .ubox{max-width:560px;padding:28px;font-size:1.15rem}#upd h2{font-size:1.6rem}
 }
@@ -113,6 +98,29 @@ body.locked main{opacity:.55;pointer-events:none;user-select:none}
 #gate{padding:calc(8px + 0px) 8px calc(8px + 0px);padding:calc(8px + env(safe-area-inset-top,0px)) 8px calc(8px + env(safe-area-inset-bottom,0px))}
 #gate .gbox{height:100%;max-height:900px;padding:14px}
 #gate .gtxt{font-size:1rem;line-height:1.45}
+/* login + terms: game visible behind, panels 40% transparent */
+body.locked main{opacity:1!important;filter:none!important}
+body.intro main{visibility:hidden}
+#bgshow{display:none;position:fixed;top:0;right:0;bottom:0;left:0;z-index:0;overflow:hidden;pointer-events:none;background:var(--bg);padding:14px;box-sizing:border-box;gap:14px;align-content:start}
+body.intro #bgshow{display:grid}
+.bt{position:relative;box-sizing:border-box;background:var(--surface);color:var(--ink);border:1px solid var(--line);border-radius:16px;padding:12px;overflow:hidden;box-shadow:0 6px 20px rgba(0,0,0,.08);transform:rotate(var(--r,0deg));transition:opacity .5s;display:flex;flex-direction:column;min-height:0}
+.bt.out{opacity:0}
+.bt .bg{align-self:flex-start;background:#FACC15;color:#1B2440;font-weight:800;font-size:.72rem;padding:3px 9px;border-radius:999px;margin-bottom:8px}
+.bt .bq{font-weight:700;font-size:.9rem;line-height:1.3;margin:0 0 8px}
+.bt .bo{display:flex;align-items:center;gap:8px;border:2px solid var(--line);border-radius:10px;padding:6px 9px;margin-bottom:6px;font-size:.82rem;transition:border-color .3s,background .3s;overflow:hidden;white-space:nowrap;text-overflow:ellipsis}
+.bt .bo i{font-style:normal;font-weight:700;color:var(--muted);font-size:.72rem;border:1.5px solid var(--line);border-radius:5px;min-width:1.5em;text-align:center;flex:none}
+.bt .bo.pick{border-color:var(--accent)}
+.bt .bo.right{border-color:var(--good);background:rgba(20,134,109,.14)}
+.bt .bo.right::after{content:"\2713";margin-left:auto;color:var(--good);font-weight:800}
+.bt .bo.dim{opacity:.55}
+.bt svg{width:100%;flex:1 1 0;min-height:0}.bt svg{border-radius:12px;overflow:hidden}
+.bt .bn{font-weight:800;font-size:.8rem;margin:0 0 4px}
+.bt .bp{display:flex;gap:6px;justify-content:center;margin-top:6px}
+.bt .bp b{width:18px;height:18px;border-radius:50%;box-shadow:0 0 0 1px var(--line);transition:transform .2s}
+.bt .bp b.on{transform:scale(1.35);box-shadow:0 0 0 2px var(--ink)}
+.bt .reg{cursor:default}
+#gate,#auth{background:transparent}body #gate,body #auth{animation-fill-mode:backwards}body #gate.out{animation-fill-mode:forwards}
+#gate .gbox,#auth .gbox{background:rgba(255,255,255,.6);background:color-mix(in srgb,var(--surface) 60%,transparent);-webkit-backdrop-filter:blur(10px);backdrop-filter:blur(10px)}
 #gate .gs{margin-bottom:6px}
 .gs{margin:0 0 10px;color:var(--muted)}
 .gtxt{overflow-y:auto;-webkit-overflow-scrolling:touch;overscroll-behavior:contain;border:1px solid var(--line);border-radius:12px;padding:12px;background:var(--bg);font-size:.9rem;min-height:0;flex:1}
@@ -243,15 +251,12 @@ pre{font-family:ui-monospace,"SF Mono",SFMono-Regular,"Cascadia Mono","Cascadia 
 html,body{max-width:100%;overflow-x:hidden}
 .gbox,#upd .ubox{box-sizing:border-box}
 @supports not (aspect-ratio:1/1){
- .tgrp,.srow,.meline,#kb,#kb .kr,.libitem{gap:0}
+ .tgrp,.srow,.meline,.libitem{gap:0}
  .tgrp>*+*,.meline>*+*{margin-left:8px}
  .srow>*+*{margin-left:10px}
- #kb .kr>*+*{margin-left:5px}
  .libitem>*+*{margin-top:8px}.libitem>*+*{margin-top:6px}
- #kb>*+*{margin-top:6px}
  [dir=rtl] .tgrp>*+*,[dir=rtl] .meline>*+*{margin-left:0;margin-right:8px}
  [dir=rtl] .srow>*+*{margin-left:0;margin-right:10px}
- [dir=rtl] #kb .kr>*+*{margin-left:0;margin-right:5px}
  [dir=rtl] .pip+.pip{margin-left:0;margin-right:4px}
  [dir=rtl] .lock>*+*,[dir=rtl] .top>*+*,[dir=rtl] .prov>*+*,[dir=rtl] .gck>*+*{margin-left:0;margin-right:10px}
  [dir=rtl] .coins>*+*,[dir=rtl] .chip>*+*{margin-left:0;margin-right:8px}
@@ -261,6 +266,7 @@ html,body{max-width:100%;overflow-x:hidden}
 </style>
 </head>
 <body class="locked">
+<div id="bgshow" aria-hidden="true"></div>
 <main>
   <div class="top">
   <div class="tgrp"><div class="coins" id="coinbox" role="status" aria-label="Coins"><span class="coin" aria-hidden="true">★&#xFE0E;</span><span id="coins">0</span></div><button class="coins shopbtn" id="shopbtn" type="button"><span aria-hidden="true">🛍️</span><span id="shoplbl">Shop</span></button></div>
@@ -848,6 +854,7 @@ var PICS = [
             ['<circle cx="130" cy="75" r="22"/>', 6, 142, 75],
             ['<circle cx="100" cy="75" r="14"/>', 2, 100, 75]
         ] }
+
 ];
 PICS.push({ name: "Butterfly", r: [
         ['<rect x="0" y="0" width="200" height="200"/>', 1, 18, 18],
@@ -1731,7 +1738,78 @@ function setAv(el, name, pic) { el.textContent = ""; if (pic) {
 else
     el.textContent = (String(name || "").trim().charAt(0) || "?").toUpperCase(); }
 function T(n) { var l = PZ[lang], b = n % 13, e = l && l[n]; return Object.assign({}, PUZZLES[n], e, !e && l && l[b] && l[b].g ? { g: l[b].g } : null); }
-function pidx(n) { var L = PICS.length; return ((((D.lap | 0) * PUZZLES.length + n) % L) + L) % L; }
+PICS.push({ name: "Bee", r: [
+        ['<rect x="0" y="0" width="200" height="200"/>', 1, 16, 16],
+        ['<circle cx="170" cy="34" r="16"/>', 2, 170, 34],
+        ['<ellipse cx="100" cy="190" rx="112" ry="22"/>', 4, 100, 192],
+        ['<ellipse cx="82" cy="70" rx="20" ry="32" transform="rotate(-25 82 70)"/>', 6, 82, 70],
+        ['<ellipse cx="118" cy="70" rx="20" ry="32" transform="rotate(25 118 70)"/>', 6, 118, 70],
+        ['<ellipse cx="100" cy="112" rx="48" ry="36"/>', 2, 100, 130],
+        ['<rect x="76" y="82" width="14" height="60"/>', 3, 83, 112],
+        ['<rect x="106" y="82" width="14" height="60"/>', 3, 113, 112],
+        ['<circle cx="152" cy="108" r="20"/>', 2, 156, 122],
+        ['<polygon points="52,112 36,104 36,120"/>', 5, 42, 112],
+        ['<circle cx="158" cy="102" r="6"/>', 1, 158, 102]
+    ] }, { name: "Strawberry", r: [
+        ['<rect x="0" y="0" width="200" height="200"/>', 1, 16, 16],
+        ['<rect x="0" y="176" width="200" height="24"/>', 3, 100, 190],
+        ['<path d="M100,176 C40,150 40,84 100,72 C160,84 160,150 100,176 Z"/>', 5, 100, 150],
+        ['<polygon points="100,58 70,44 84,64 60,70 88,78 100,70 112,78 140,70 116,64 130,44"/>', 4, 100, 62],
+        ['<rect x="96" y="32" width="8" height="22"/>', 4, 100, 43],
+        ['<circle cx="80" cy="106" r="8"/>', 2, 80, 106],
+        ['<circle cx="120" cy="106" r="8"/>', 2, 120, 106],
+        ['<circle cx="100" cy="134" r="8"/>', 2, 100, 134]
+    ] }, { name: "Snail", r: [
+        ['<rect x="0" y="0" width="200" height="200"/>', 1, 16, 16],
+        ['<circle cx="36" cy="36" r="16"/>', 2, 36, 36],
+        ['<rect x="0" y="150" width="200" height="50"/>', 4, 100, 182],
+        ['<ellipse cx="110" cy="148" rx="66" ry="14"/>', 2, 150, 150],
+        ['<ellipse cx="168" cy="122" rx="13" ry="30"/>', 2, 168, 112],
+        ['<circle cx="96" cy="108" r="44"/>', 3, 96, 72],
+        ['<circle cx="96" cy="108" r="28"/>', 5, 96, 88],
+        ['<circle cx="96" cy="108" r="12"/>', 6, 96, 108]
+    ] }, { name: "Birthday cake", r: [
+        ['<rect x="0" y="0" width="200" height="200"/>', 6, 16, 16],
+        ['<rect x="0" y="168" width="200" height="32"/>', 3, 100, 186],
+        ['<rect x="30" y="120" width="140" height="50"/>', 5, 100, 148],
+        ['<rect x="50" y="84" width="100" height="36"/>', 2, 100, 102],
+        ['<rect x="70" y="56" width="8" height="28"/>', 1, 74, 70],
+        ['<rect x="96" y="56" width="8" height="28"/>', 1, 100, 70],
+        ['<rect x="122" y="56" width="8" height="28"/>', 1, 126, 70],
+        ['<ellipse cx="74" cy="44" rx="7" ry="11"/>', 3, 74, 44],
+        ['<ellipse cx="100" cy="44" rx="7" ry="11"/>', 3, 100, 44],
+        ['<ellipse cx="126" cy="44" rx="7" ry="11"/>', 3, 126, 44]
+    ] }, { name: "Camping tent", r: [
+        ['<rect x="0" y="0" width="200" height="200"/>', 1, 16, 16],
+        ['<circle cx="164" cy="34" r="16"/>', 2, 164, 34],
+        ['<circle cx="30" cy="44" r="7"/>', 2, 30, 44],
+        ['<circle cx="62" cy="26" r="7"/>', 2, 62, 26],
+        ['<circle cx="44" cy="84" r="7"/>', 2, 44, 84],
+        ['<rect x="0" y="150" width="200" height="50"/>', 4, 100, 182],
+        ['<polygon points="120,52 52,160 188,160"/>', 3, 120, 120],
+        ['<polygon points="120,96 98,160 142,160"/>', 6, 120, 142],
+        ['<polygon points="120,52 120,32 140,40"/>', 5, 126, 40]
+    ] }, { name: "Smiling star", r: [
+        ['<rect x="0" y="0" width="200" height="200"/>', 6, 16, 16],
+        ['<polygon points="100,34 118,80 167,82 129,113 141,161 100,134 59,161 71,113 33,82 82,80"/>', 2, 100, 70],
+        ['<circle cx="84" cy="98" r="7"/>', 1, 84, 98],
+        ['<circle cx="116" cy="98" r="7"/>', 1, 116, 98],
+        ['<circle cx="68" cy="116" r="8"/>', 3, 68, 116],
+        ['<circle cx="132" cy="116" r="8"/>', 3, 132, 116],
+        ['<ellipse cx="100" cy="120" rx="13" ry="8"/>', 5, 100, 120],
+        ['<circle cx="28" cy="170" r="7"/>', 2, 28, 170],
+        ['<circle cx="176" cy="30" r="7"/>', 2, 176, 30]
+    ] });
+var PORDER = [], PNEW = { "Bee": 1, "Strawberry": 1, "Snail": 1, "Birthday cake": 1, "Camping tent": 1, "Smiling star": 1 };
+/* new pictures are mixed in after every 4th old picture so they show up early */
+function porder() { if (PORDER.length === PICS.length)
+    return PORDER; var o = [], nw = [], r = [], k; for (k = 0; k < PICS.length; k++)
+    (PNEW[PICS[k].name] ? nw : o).push(k); for (k = 0; k < o.length; k++) {
+    r.push(o[k]);
+    if (k % 4 === 3 && nw.length)
+        r.push(nw.shift());
+} return PORDER = r.concat(nw); }
+function pidx(n) { var P = porder(), L = P.length; return P[((((D.lap | 0) * PUZZLES.length + n) % L) + L) % L]; }
 function nextLbl() { $("next").textContent = i >= PUZZLES.length ? U().again : U().next; }
 var i = 0, sel = 1, total = 0, filled = 0, locked = false, coins = 0, wrongs = 0;
 var $ = function (id) { return document.getElementById(id); };
@@ -2967,6 +3045,22 @@ for (var c in NEW_NAMES) {
         _loop_8(c);
     }
 }
+/* ===== Asian languages: Vietnamese, Thai, Indonesian, Bengali (Terms stay in English; other messages fall back to English) ===== */
+{
+    var AS = {"vi": {"n": "Tiếng Việt", "g": "Lớp {n}", "t": ["Mở khóa & Tô màu", "Giải một câu đố từ lớp 1 đến đại học. Mỗi lần thắng sẽ mở khóa một bức tranh tô màu theo số.", "Chính xác! Đang mở khóa bức tranh của bạn…", "Chưa đúng lắm. Hãy thử đáp án khác.", "Đã mở khóa:", "Chọn một màu rồi chạm vào số của nó. Đã tô {0}/{1} ô.", "Hoàn thành! Làm tốt lắm.", "Ô này là số {0}. Hãy chọn màu {0}.", "Câu đố tiếp theo", "Chơi lại", "Màu", "Đại học"], "nm": ["Chim", "Cá", "Ngôi nhà", "Tên lửa", "Bông hoa", "Bướm", "Lâu đài", "Bạch tuộc", "Cú mèo", "Khinh khí cầu", "Hành tinh có vành đai", "Khủng long", "Hoàng hôn trên núi", "Rồng", "Tòa nhà chọc trời", "Thuyền buồm", "Mèo", "Rô-bốt", "Ngọn hải đăng", "Tàu hỏa", "Cá voi"], "ch": {"tos_t": "Điều khoản dịch vụ", "tos_s": "Vui lòng đọc và chấp nhận để bắt đầu chơi. (Toàn văn Điều khoản bằng tiếng Anh.)", "tos_f": "Khi chạm vào “Chấp nhận & chơi”, bạn đồng ý với các Điều khoản này (hoặc cha mẹ hay người giám hộ đã đồng ý thay bạn).", "tos_b": "Chấp nhận & chơi", "a_ct": "Tạo tài khoản của bạn", "a_wb": "Chào mừng trở lại", "a_s1": "Lưu tiến trình, xu và thống kê của bạn.", "a_s2": "Đăng nhập để chơi tiếp từ chỗ bạn đã dừng.", "a_tc": "Tạo tài khoản", "a_tl": "Đăng nhập", "a_un": "Tên người dùng", "a_ph": "3–20 ký tự", "a_hint": "Cần cho khách và tài khoản mới. Hãy chọn tên lịch sự: không có tên phân biệt chủng tộc, thù ghét hay kỳ thị.", "a_su": "Đăng ký bằng {0}", "a_li": "Đăng nhập bằng {0}", "a_or": "hoặc bằng email", "a_em": "Email", "a_pw": "Mật khẩu", "a_guest": "Tiếp tục với tư cách khách", "a_dev": "Tài khoản chỉ được lưu trên thiết bị này.", "s_t": "Thống kê của bạn", "s_chip": "Thống kê", "s_close": "Đóng", "s_out": "Đăng xuất", "s_acc": "Tạo tài khoản hoặc đăng nhập", "s_del": "Xóa tài khoản và dữ liệu", "s_del2": "Chạm lần nữa để xóa tất cả", "s_guest": "được lưu trên thiết bị này. Hãy tạo tài khoản để giữ dữ liệu dưới tên của bạn.", "t_solved": "Câu đố đã giải", "t_tried": "Số lần trả lời", "t_acc": "Độ chính xác", "t_first": "Thắng ngay lần đầu", "t_best": "Chuỗi dài nhất", "t_pics": "Tranh đã tô", "t_coins": "Xu", "t_prog": "Tiến độ", "e_guest": "Hãy chọn một tên người dùng để chơi với tư cách khách.", "e_email": "Vui lòng nhập địa chỉ email hợp lệ.", "e_pw": "Mật khẩu phải có ít nhất 8 ký tự.", "e_bad": "Email hoặc mật khẩu không đúng."}, "k": {"pic_change": "Đổi ảnh", "pic_add": "Thêm ảnh", "pic_remove": "Xóa ảnh", "pic_err": "Không dùng được ảnh đó. Hãy thử ảnh khác.", "pp_t": "Thêm ảnh đại diện?", "pp_s": "Bạn có thể đổi hoặc xóa ảnh bất cứ lúc nào trong Thống kê.", "pp_skip": "Bỏ qua lúc này", "n_len": "Tên người dùng phải có 3–20 ký tự.", "n_chars": "Chỉ dùng chữ cái, chữ số, khoảng trắng, . _ hoặc -.", "n_bad": "Tên người dùng này không được phép. Hãy chọn tên lịch sự: không có tên thù ghét hay kỳ thị.", "x_crypto": "Trình duyệt này không hỗ trợ đăng nhập bằng email.", "x_exists": "Email này đã có tài khoản. Hãy thử đăng nhập.", "x_save": "Không thể lưu tài khoản trên thiết bị này. Có phải đang bật duyệt web riêng tư?", "x_wrong": "Đã xảy ra lỗi. Vui lòng thử lại.", "x_gsetup": "Đăng nhập bằng Google chưa được thiết lập.", "x_gload": "Google vẫn đang tải. Hãy thử lại sau giây lát.", "x_gfail": "Đăng nhập bằng Google không thành công. Vui lòng thử lại.", "x_gblock": "Đăng nhập bằng Google chỉ hoạt động trên trang web đầy đủ, không phải trang này. Tạm thời hãy dùng email hoặc chơi với tư cách khách.", "shop": "Cửa hàng", "shop_s": "Dùng xu của bạn để mua đồ vui. Xu không có giá trị thực.", "sh_colors": "Màu đặc biệt", "sh_colors_d": "Dùng cho bất kỳ phần nào của bức tranh.", "sh_badges": "Huy hiệu", "sh_badges_d": "Hiển thị bên cạnh tên của bạn.", "sh_hints": "Gợi ý", "sh_hints_d": "Loại bỏ hai đáp án sai. Bạn có {0}.", "buy": "Mua", "owned": "Đã có", "equip": "Đeo", "worn": "Đang đeo", "need": "Chưa đủ xu.", "hint_btn": "Gợi ý ({0})", "c_pink": "Hồng", "c_teal": "Xanh ngọc", "c_gold": "Vàng kim", "lib": "Thư viện", "lib_s": "Những bức vẽ đã hoàn thành của bạn. Chỉ bạn xem được: chúng được lưu trên thiết bị này.", "lib_empty": "Chưa có bức vẽ nào. Hoàn thành một bức tranh và nó sẽ xuất hiện ở đây.", "lib_back": "Quay lại", "lib_del": "Xóa bức vẽ", "lib_del2": "Chạm lần nữa để xóa", "v_t": "Xác minh email của bạn", "v_s": "Chúng tôi đã gửi mã 6 chữ số đến {0}. Hãy nhập mã bên dưới. Mã có hiệu lực trong 10 phút.", "v_code": "Mã xác minh", "v_ok": "Xác minh và tạo tài khoản", "v_back": "Quay lại", "v_resend": "Gửi mã mới", "v_sent": "Mã mới đang được gửi.", "v_bad": "Mã không đúng. Hãy thử lại.", "v_exp": "Mã đã hết hạn. Chạm “Gửi mã mới”.", "v_many": "Nhập sai quá nhiều lần. Chạm “Gửi mã mới”.", "v_limit": "Đã gửi quá nhiều mã. Vui lòng thử lại sau.", "v_setup": "Chức năng xác minh email chưa được thiết lập nên hiện chưa thể tạo tài khoản bằng email. Hãy dùng Google hoặc chơi với tư cách khách.", "v_sendfail": "Không gửi được mã. Hãy kiểm tra địa chỉ và kết nối của bạn rồi thử lại.", "v_disp": "Vui lòng dùng địa chỉ email thật, không phải email tạm thời.", "v_typo": "Ý bạn là {0}? Vui lòng kiểm tra lại địa chỉ.", "v_nodomain": "Tên miền email này không thể nhận thư. Vui lòng kiểm tra lại địa chỉ."}, "pz": [["Vật nào sau đây là máy tính?", ["Quả chuối", "Chiếc giày", "Máy tính xách tay", "Cái thìa"]], ["Một rô-bốt đi 3 bước về phía trước rồi lùi 2 bước. Nó cách chỗ xuất phát bao xa?", ["1 bước", "2 bước", "3 bước", "5 bước"]], ["Rô-bốt kêu: bíp, bốp, bíp, bốp, bíp… Tiếp theo là gì?", ["Bíp", "Bốp", "Bọp", "Im lặng"]], ["“Bộ não” của máy tính được gọi là gì?", ["Màn hình", "Chuột", "Loa", "CPU"]], ["Máy tính chỉ đếm bằng 0 và 1. Cách đếm là 0, 1, 10, 11… Trong mã này, số 10 là số nào?", ["Hai", "Mười", "Mười một", "Một trăm"]], ["Vòng lặp lặp lại mã. Đoạn mã này in ra hello bao nhiêu lần?"], ["Đoạn mã này in ra gì?"], ["Số nhị phân 1011 bằng bao nhiêu trong hệ thập phân?"], ["Tìm lỗi:", ["Thiếu dấu chấm phẩy", "Nó gán giá trị thay vì so sánh", "Tên hàm sai", "Dấu ngoặc nhọn sai"]], ["f(5) trả về giá trị nào?"], ["Cấu trúc dữ liệu nào vào trước, ra trước?", ["Ngăn xếp (stack)", "Hàng đợi (queue)", "Cây (tree)", "Mảng (array)"]], ["DNS làm gì?", ["Mã hóa mật khẩu", "Chuyển tên trang web thành địa chỉ IP", "Làm Wi-Fi nhanh hơn", "Lưu email của bạn"]], ["Tìm kiếm nhị phân trên danh sách đã sắp xếp gồm n phần tử nhanh đến mức nào?"]]}, "th": {"n": "ไทย", "g": "ชั้น {n}", "t": ["ปลดล็อกและระบายสี", "ไขปริศนาตั้งแต่ชั้นประถมไปจนถึงมหาวิทยาลัย ทุกครั้งที่ชนะจะปลดล็อกภาพระบายสีตามหมายเลข", "ถูกต้อง! กำลังปลดล็อกภาพของคุณ…", "ยังไม่ใช่ ลองตอบข้ออื่นดู", "ปลดล็อกแล้ว:", "เลือกสี แล้วแตะที่หมายเลขของสีนั้น ระบายแล้ว {0} จาก {1}", "เสร็จแล้ว! เก่งมาก", "ช่องนี้คือหมายเลข {0} เลือกสี {0}", "ปริศนาถัดไป", "เล่นอีกครั้ง", "สี", "มหาวิทยาลัย"], "nm": ["นก", "ปลา", "บ้าน", "จรวด", "ดอกไม้", "ผีเสื้อ", "ปราสาท", "ปลาหมึกยักษ์", "นกฮูก", "บอลลูนลมร้อน", "ดาวเคราะห์มีวงแหวน", "ไดโนเสาร์", "พระอาทิตย์ตกเหนือภูเขา", "มังกร", "ตึกระฟ้า", "เรือใบ", "แมว", "หุ่นยนต์", "ประภาคาร", "รถไฟ", "วาฬ"], "ch": {"tos_t": "ข้อกำหนดการใช้งาน", "tos_s": "โปรดอ่านและยอมรับเพื่อเริ่มเล่น (ข้อกำหนดฉบับเต็มเป็นภาษาอังกฤษ)", "tos_f": "การแตะ “ยอมรับและเล่น” แสดงว่าคุณยอมรับข้อกำหนดเหล่านี้ (หรือพ่อแม่หรือผู้ปกครองได้ยอมรับแทนคุณแล้ว)", "tos_b": "ยอมรับและเล่น", "a_ct": "สร้างบัญชีของคุณ", "a_wb": "ยินดีต้อนรับกลับมา", "a_s1": "บันทึกความคืบหน้า เหรียญ และสถิติของคุณ", "a_s2": "เข้าสู่ระบบเพื่อเล่นต่อจากที่ค้างไว้", "a_tc": "สร้างบัญชี", "a_tl": "เข้าสู่ระบบ", "a_un": "ชื่อผู้ใช้", "a_ph": "3–20 ตัวอักษร", "a_hint": "จำเป็นสำหรับผู้เยี่ยมชมและบัญชีใหม่ โปรดตั้งชื่ออย่างสุภาพ: ไม่ใช้ชื่อที่เหยียดเชื้อชาติ แสดงความเกลียดชัง หรือเลือกปฏิบัติ", "a_su": "สมัครด้วย {0}", "a_li": "เข้าสู่ระบบด้วย {0}", "a_or": "หรือใช้อีเมล", "a_em": "อีเมล", "a_pw": "รหัสผ่าน", "a_guest": "เล่นต่อในฐานะผู้เยี่ยมชม", "a_dev": "บัญชีจะถูกบันทึกไว้ในอุปกรณ์นี้เท่านั้น", "s_t": "สถิติของคุณ", "s_chip": "สถิติ", "s_close": "ปิด", "s_out": "ออกจากระบบ", "s_acc": "สร้างบัญชีหรือเข้าสู่ระบบ", "s_del": "ลบบัญชีและข้อมูล", "s_del2": "แตะอีกครั้งเพื่อลบทั้งหมด", "s_guest": "ถูกบันทึกไว้ในอุปกรณ์นี้ สร้างบัญชีเพื่อเก็บไว้ภายใต้ชื่อของคุณ", "t_solved": "ปริศนาที่ไขได้", "t_tried": "คำตอบที่ลอง", "t_acc": "ความแม่นยำ", "t_first": "ชนะในครั้งแรก", "t_best": "ชนะติดต่อกันสูงสุด", "t_pics": "ภาพที่ระบายแล้ว", "t_coins": "เหรียญ", "t_prog": "ความคืบหน้า", "e_guest": "เลือกชื่อผู้ใช้เพื่อเล่นในฐานะผู้เยี่ยมชม", "e_email": "โปรดกรอกอีเมลที่ถูกต้อง", "e_pw": "รหัสผ่านต้องมีอย่างน้อย 8 ตัวอักษร", "e_bad": "อีเมลหรือรหัสผ่านไม่ถูกต้อง"}, "k": {"pic_change": "เปลี่ยนรูป", "pic_add": "เพิ่มรูป", "pic_remove": "ลบรูป", "pic_err": "ใช้รูปนั้นไม่ได้ ลองรูปอื่นดู", "pp_t": "เพิ่มรูปโปรไฟล์ไหม", "pp_s": "คุณเปลี่ยนหรือลบรูปได้ทุกเมื่อในหน้าสถิติ", "pp_skip": "ข้ามไปก่อน", "n_len": "ชื่อผู้ใช้ต้องมี 3–20 ตัวอักษร", "n_chars": "ใช้ได้เฉพาะตัวอักษร ตัวเลข เว้นวรรค . _ หรือ -", "n_bad": "ไม่อนุญาตให้ใช้ชื่อผู้ใช้นี้ โปรดตั้งชื่อที่สุภาพ: ไม่ใช้ชื่อที่แสดงความเกลียดชังหรือเลือกปฏิบัติ", "x_crypto": "เบราว์เซอร์นี้ไม่รองรับการเข้าสู่ระบบด้วยอีเมล", "x_exists": "อีเมลนี้มีบัญชีอยู่แล้ว ลองเข้าสู่ระบบดู", "x_save": "บันทึกบัญชีในอุปกรณ์นี้ไม่ได้ คุณเปิดโหมดส่วนตัวอยู่หรือเปล่า", "x_wrong": "เกิดข้อผิดพลาด โปรดลองอีกครั้ง", "x_gsetup": "ยังไม่ได้ตั้งค่าการเข้าสู่ระบบด้วย Google", "x_gload": "Google ยังโหลดไม่เสร็จ ลองอีกครั้งในอีกสักครู่", "x_gfail": "เข้าสู่ระบบด้วย Google ไม่สำเร็จ โปรดลองอีกครั้ง", "x_gblock": "การเข้าสู่ระบบด้วย Google ใช้ได้เฉพาะบนเว็บไซต์ฉบับเต็ม ไม่ใช่หน้านี้ ตอนนี้โปรดใช้อีเมลหรือเล่นในฐานะผู้เยี่ยมชม", "shop": "ร้านค้า", "shop_s": "ใช้เหรียญของคุณซื้อของสนุก ๆ เหรียญไม่มีมูลค่าจริง", "sh_colors": "สีพิเศษ", "sh_colors_d": "ใช้ระบายส่วนไหนของภาพก็ได้", "sh_badges": "เหรียญตรา", "sh_badges_d": "แสดงไว้ข้างชื่อของคุณ", "sh_hints": "คำใบ้", "sh_hints_d": "ตัดคำตอบที่ผิดออกสองข้อ คุณมี {0}", "buy": "ซื้อ", "owned": "มีแล้ว", "equip": "สวมใส่", "worn": "สวมอยู่", "need": "เหรียญยังไม่พอ", "hint_btn": "คำใบ้ ({0})", "c_pink": "ชมพู", "c_teal": "เขียวน้ำทะเล", "c_gold": "ทอง", "lib": "คลังภาพ", "lib_s": "ภาพวาดที่คุณทำเสร็จแล้ว มีแต่คุณที่เห็น: บันทึกไว้ในอุปกรณ์นี้", "lib_empty": "ยังไม่มีภาพวาด ระบายภาพให้เสร็จแล้วภาพจะปรากฏที่นี่", "lib_back": "กลับ", "lib_del": "ลบภาพวาด", "lib_del2": "แตะอีกครั้งเพื่อลบ", "v_t": "ยืนยันอีเมลของคุณ", "v_s": "เราส่งรหัส 6 หลักไปที่ {0} แล้ว กรอกรหัสด้านล่าง รหัสมีอายุ 10 นาที", "v_code": "รหัสยืนยัน", "v_ok": "ยืนยันและสร้างบัญชี", "v_back": "กลับ", "v_resend": "ส่งรหัสใหม่", "v_sent": "กำลังส่งรหัสใหม่ให้คุณ", "v_bad": "รหัสไม่ถูกต้อง ลองอีกครั้ง", "v_exp": "รหัสหมดอายุแล้ว แตะ “ส่งรหัสใหม่”", "v_many": "กรอกผิดหลายครั้งเกินไป แตะ “ส่งรหัสใหม่”", "v_limit": "ส่งรหัสหลายครั้งเกินไป โปรดลองใหม่ภายหลัง", "v_setup": "ยังไม่ได้ตั้งค่าการยืนยันอีเมล ตอนนี้จึงสร้างบัญชีด้วยอีเมลไม่ได้ ใช้ Google หรือเล่นในฐานะผู้เยี่ยมชมแทน", "v_sendfail": "ส่งรหัสไม่ได้ ตรวจสอบอีเมลและการเชื่อมต่อของคุณ แล้วลองอีกครั้ง", "v_disp": "โปรดใช้อีเมลจริง ไม่ใช่อีเมลชั่วคราว", "v_typo": "คุณหมายถึง {0} หรือเปล่า โปรดตรวจสอบอีเมลอีกครั้ง", "v_nodomain": "โดเมนอีเมลนี้รับอีเมลไม่ได้ โปรดตรวจสอบอีเมลอีกครั้ง"}, "pz": [["ข้อใดต่อไปนี้คือคอมพิวเตอร์", ["กล้วย", "รองเท้า", "แล็ปท็อป", "ช้อน"]], ["หุ่นยนต์เดินไปข้างหน้า 3 ก้าว แล้วถอยหลัง 2 ก้าว มันอยู่ห่างจากจุดเริ่มต้นกี่ก้าว", ["1 ก้าว", "2 ก้าว", "3 ก้าว", "5 ก้าว"]], ["หุ่นยนต์ส่งเสียง: ปิ๊บ ป๊อบ ปิ๊บ ป๊อบ ปิ๊บ… ต่อไปคืออะไร", ["ปิ๊บ", "ป๊อบ", "ป๊อป", "เงียบ"]], ["“สมอง” ของคอมพิวเตอร์เรียกว่าอะไร", ["จอภาพ", "เมาส์", "ลำโพง", "CPU"]], ["คอมพิวเตอร์นับด้วย 0 และ 1 เท่านั้น การนับคือ 0, 1, 10, 11… ในรหัสนี้ 10 คือเลขอะไร", ["สอง", "สิบ", "สิบเอ็ด", "หนึ่งร้อย"]], ["ลูปทำให้โค้ดทำซ้ำ โค้ดนี้พิมพ์ hello กี่ครั้ง"], ["โค้ดนี้พิมพ์อะไรออกมา"], ["เลขฐานสอง 1011 เท่ากับเลขฐานสิบเท่าไร"], ["หาบั๊ก:", ["ไม่มีเครื่องหมายอัฒภาค", "เป็นการกำหนดค่า ไม่ใช่การเปรียบเทียบ", "ชื่อฟังก์ชันไม่ดี", "วงเล็บปีกกาผิด"]], ["f(5) ให้ค่าเท่าไร"], ["โครงสร้างข้อมูลใดเข้าก่อน ออกก่อน", ["สแตก (stack)", "คิว (queue)", "ต้นไม้ (tree)", "อาร์เรย์ (array)"]], ["DNS ทำหน้าที่อะไร", ["เข้ารหัสรหัสผ่าน", "แปลงชื่อเว็บไซต์เป็นที่อยู่ IP", "ทำให้ Wi-Fi เร็วขึ้น", "เก็บอีเมลของคุณ"]], ["การค้นหาแบบทวิภาคในรายการที่เรียงลำดับแล้วจำนวน n รายการเร็วแค่ไหน"]]}, "id": {"n": "Bahasa Indonesia", "g": "Kelas {n}", "t": ["Buka & Warnai", "Selesaikan teka-teki dari kelas 1 sampai kuliah. Setiap kemenangan membuka gambar mewarnai berdasarkan nomor.", "Benar! Gambarmu sedang dibuka…", "Belum tepat. Coba jawaban lain.", "Terbuka:", "Pilih warna, lalu ketuk nomornya. {0} dari {1} terisi.", "Selesai! Kerja bagus.", "Kotak itu bernomor {0}. Pilih warna {0}.", "Teka-teki berikutnya", "Main lagi", "Warna", "Kuliah"], "nm": ["Burung", "Ikan", "Rumah", "Roket", "Bunga", "Kupu-kupu", "Kastil", "Gurita", "Burung hantu", "Balon udara", "Planet bercincin", "Dinosaurus", "Matahari terbenam di pegunungan", "Naga", "Gedung pencakar langit", "Perahu layar", "Kucing", "Robot", "Mercusuar", "Kereta api", "Paus"], "ch": {"tos_t": "Ketentuan Layanan", "tos_s": "Harap baca dan setujui untuk mulai bermain. (Ketentuan lengkap tersedia dalam bahasa Inggris.)", "tos_f": "Dengan mengetuk “Setuju & main”, kamu menyetujui Ketentuan ini (atau orang tua atau walimu sudah menyetujuinya untukmu).", "tos_b": "Setuju & main", "a_ct": "Buat akunmu", "a_wb": "Selamat datang kembali", "a_s1": "Simpan kemajuan, koin, dan statistikmu.", "a_s2": "Masuk untuk melanjutkan dari tempat terakhir.", "a_tc": "Buat akun", "a_tl": "Masuk", "a_un": "Nama pengguna", "a_ph": "3–20 karakter", "a_hint": "Diperlukan untuk tamu dan akun baru. Gunakan nama yang sopan: tanpa nama rasis, penuh kebencian, atau diskriminatif.", "a_su": "Daftar dengan {0}", "a_li": "Masuk dengan {0}", "a_or": "atau dengan email", "a_em": "Email", "a_pw": "Kata sandi", "a_guest": "Lanjut sebagai tamu", "a_dev": "Akun hanya disimpan di perangkat ini.", "s_t": "Statistikmu", "s_chip": "Statistik", "s_close": "Tutup", "s_out": "Keluar", "s_acc": "Buat akun atau masuk", "s_del": "Hapus akun & data", "s_del2": "Ketuk lagi untuk menghapus semuanya", "s_guest": "disimpan di perangkat ini. Buat akun agar tetap tersimpan atas namamu.", "t_solved": "Teka-teki selesai", "t_tried": "Jawaban dicoba", "t_acc": "Akurasi", "t_first": "Menang percobaan pertama", "t_best": "Rangkaian terbaik", "t_pics": "Gambar diwarnai", "t_coins": "Koin", "t_prog": "Kemajuan", "e_guest": "Pilih nama pengguna untuk bermain sebagai tamu.", "e_email": "Masukkan alamat email yang valid.", "e_pw": "Kata sandi minimal 8 karakter.", "e_bad": "Email atau kata sandi salah."}, "k": {"pic_change": "Ganti gambar", "pic_add": "Tambah gambar", "pic_remove": "Hapus gambar", "pic_err": "Gambar itu tidak bisa dipakai. Coba gambar lain.", "pp_t": "Tambah foto profil?", "pp_s": "Kamu bisa mengubah atau menghapusnya kapan saja di Statistik.", "pp_skip": "Lewati dulu", "n_len": "Nama pengguna harus 3–20 karakter.", "n_chars": "Gunakan hanya huruf, angka, spasi, . _ atau -.", "n_bad": "Nama pengguna itu tidak diizinkan. Pilih nama yang sopan: tanpa nama penuh kebencian atau diskriminatif.", "x_crypto": "Masuk dengan email tidak tersedia di browser ini.", "x_exists": "Email itu sudah punya akun. Coba masuk.", "x_save": "Akun tidak bisa disimpan di perangkat ini. Apakah mode pribadi sedang aktif?", "x_wrong": "Terjadi kesalahan. Silakan coba lagi.", "x_gsetup": "Masuk dengan Google belum disiapkan.", "x_gload": "Google masih dimuat. Coba lagi sebentar lagi.", "x_gfail": "Masuk dengan Google gagal. Silakan coba lagi.", "x_gblock": "Masuk dengan Google hanya berfungsi di situs web lengkap, bukan di halaman ini. Untuk sementara gunakan email atau main sebagai tamu.", "shop": "Toko", "shop_s": "Belanjakan koinmu untuk barang seru. Koin tidak bernilai uang sungguhan.", "sh_colors": "Warna spesial", "sh_colors_d": "Pakai di bagian mana pun pada gambar.", "sh_badges": "Lencana", "sh_badges_d": "Ditampilkan di samping namamu.", "sh_hints": "Petunjuk", "sh_hints_d": "Menghapus dua jawaban yang salah. Kamu punya {0}.", "buy": "Beli", "owned": "Dimiliki", "equip": "Pakai", "worn": "Dipakai", "need": "Koinmu belum cukup.", "hint_btn": "Petunjuk ({0})", "c_pink": "Merah muda", "c_teal": "Hijau tosca", "c_gold": "Emas", "lib": "Perpustakaan", "lib_s": "Gambar-gambar yang sudah kamu selesaikan. Hanya kamu yang bisa melihatnya: disimpan di perangkat ini.", "lib_empty": "Belum ada gambar. Selesaikan sebuah gambar dan gambar itu akan muncul di sini.", "lib_back": "Kembali", "lib_del": "Hapus gambar", "lib_del2": "Ketuk lagi untuk menghapus", "v_t": "Verifikasi emailmu", "v_s": "Kami mengirim kode 6 digit ke {0}. Masukkan di bawah. Kode berlaku selama 10 menit.", "v_code": "Kode verifikasi", "v_ok": "Verifikasi dan buat akun", "v_back": "Kembali", "v_resend": "Kirim kode baru", "v_sent": "Kode baru sedang dikirim.", "v_bad": "Kodenya salah. Coba lagi.", "v_exp": "Kode sudah kedaluwarsa. Ketuk “Kirim kode baru”.", "v_many": "Terlalu banyak percobaan salah. Ketuk “Kirim kode baru”.", "v_limit": "Terlalu banyak kode terkirim. Silakan coba lagi nanti.", "v_setup": "Verifikasi email belum disiapkan, jadi akun belum bisa dibuat dengan email saat ini. Gunakan Google atau main sebagai tamu.", "v_sendfail": "Kami tidak bisa mengirim kode. Periksa alamat dan koneksimu, lalu coba lagi.", "v_disp": "Gunakan alamat email asli, bukan email sementara.", "v_typo": "Maksudmu {0}? Silakan periksa alamatnya.", "v_nodomain": "Domain email itu tidak bisa menerima email. Silakan periksa alamatnya."}, "pz": [["Manakah dari ini yang merupakan komputer?", ["Pisang", "Sepatu", "Laptop", "Sendok"]], ["Sebuah robot melangkah 3 langkah ke depan, lalu 2 langkah ke belakang. Seberapa jauh robot itu dari titik awalnya?", ["1 langkah", "2 langkah", "3 langkah", "5 langkah"]], ["Robot berbunyi: bip, bop, bip, bop, bip… Apa yang berikutnya?", ["Bip", "Bop", "Bep", "Hening"]], ["Apa sebutan untuk “otak” komputer?", ["Monitor", "Mouse", "Speaker", "CPU"]], ["Komputer menghitung hanya dengan 0 dan 1. Hitungannya 0, 1, 10, 11… Angka berapakah 10 dalam kode ini?", ["Dua", "Sepuluh", "Sebelas", "Seratus"]], ["Perulangan mengulang kode. Berapa kali kode ini mencetak hello?"], ["Apa yang dicetak kode ini?"], ["Berapa bilangan biner 1011 dalam desimal?"], ["Temukan bug-nya:", ["Titik koma hilang", "Ini memberi nilai, bukan membandingkan", "Nama fungsi salah", "Kurung kurawal salah"]], ["Apa yang dikembalikan f(5)?"], ["Struktur data mana yang masuk pertama, keluar pertama?", ["Tumpukan (stack)", "Antrean (queue)", "Pohon (tree)", "Larik (array)"]], ["Apa fungsi DNS?", ["Mengenkripsi kata sandi", "Mengubah nama situs menjadi alamat IP", "Mempercepat Wi-Fi", "Menyimpan emailmu"]], ["Seberapa cepat pencarian biner pada daftar terurut berisi n item?"]]}, "bn": {"n": "বাংলা", "g": "শ্রেণি {n}", "t": ["আনলক করো ও রং করো", "প্রথম শ্রেণি থেকে বিশ্ববিদ্যালয় পর্যন্ত একটি ধাঁধা সমাধান করো। প্রতিটি জয়ে সংখ্যা মিলিয়ে রং করার একটি ছবি আনলক হয়।", "ঠিক! তোমার ছবি আনলক হচ্ছে…", "একদম ঠিক নয়। অন্য উত্তর চেষ্টা করো।", "আনলক হয়েছে:", "একটি রং বেছে নিয়ে তার সংখ্যায় ট্যাপ করো। {1}টির মধ্যে {0}টি ভরা হয়েছে।", "শেষ! দারুণ কাজ।", "ওই ঘরটি {0} নম্বর। {0} নম্বর রং বেছে নাও।", "পরের ধাঁধা", "আবার খেলো", "রং", "বিশ্ববিদ্যালয়"], "nm": ["পাখি", "মাছ", "বাড়ি", "রকেট", "ফুল", "প্রজাপতি", "দুর্গ", "অক্টোপাস", "পেঁচা", "গরম বাতাসের বেলুন", "বলয়যুক্ত গ্রহ", "ডাইনোসর", "পাহাড়ের ওপর সূর্যাস্ত", "ড্রাগন", "গগনচুম্বী ভবন", "পালতোলা নৌকা", "বিড়াল", "রোবট", "বাতিঘর", "ট্রেন", "তিমি"], "ch": {"tos_t": "পরিষেবার শর্তাবলি", "tos_s": "খেলা শুরু করতে অনুগ্রহ করে পড়ে সম্মতি দাও। (পূর্ণ শর্তাবলি ইংরেজিতে।)", "tos_f": "“সম্মত হয়ে খেলো” ট্যাপ করলে তুমি এই শর্তাবলিতে সম্মত হচ্ছ (অথবা তোমার বাবা-মা বা অভিভাবক তোমার হয়ে সম্মত হয়েছেন)।", "tos_b": "সম্মত হয়ে খেলো", "a_ct": "তোমার অ্যাকাউন্ট তৈরি করো", "a_wb": "আবার স্বাগতম", "a_s1": "তোমার অগ্রগতি, কয়েন ও পরিসংখ্যান সংরক্ষণ করো।", "a_s2": "যেখানে থেমেছিলে সেখান থেকে শুরু করতে লগ ইন করো।", "a_tc": "অ্যাকাউন্ট তৈরি", "a_tl": "লগ ইন", "a_un": "ব্যবহারকারীর নাম", "a_ph": "৩–২০টি অক্ষর", "a_hint": "অতিথি ও নতুন অ্যাকাউন্টের জন্য দরকার। অনুগ্রহ করে ভদ্র নাম দাও: বর্ণবাদী, বিদ্বেষপূর্ণ বা বৈষম্যমূলক নাম নয়।", "a_su": "{0} দিয়ে সাইন আপ করো", "a_li": "{0} দিয়ে লগ ইন করো", "a_or": "অথবা ইমেইল দিয়ে", "a_em": "ইমেইল", "a_pw": "পাসওয়ার্ড", "a_guest": "অতিথি হিসেবে চালিয়ে যাও", "a_dev": "অ্যাকাউন্ট শুধু এই ডিভাইসে সংরক্ষিত থাকে।", "s_t": "তোমার পরিসংখ্যান", "s_chip": "পরিসংখ্যান", "s_close": "বন্ধ করো", "s_out": "লগ আউট", "s_acc": "অ্যাকাউন্ট তৈরি করো বা লগ ইন করো", "s_del": "অ্যাকাউন্ট ও ডেটা মুছে ফেলো", "s_del2": "সব মুছতে আবার ট্যাপ করো", "s_guest": "এই ডিভাইসে সংরক্ষিত। নিজের নামে রাখতে একটি অ্যাকাউন্ট তৈরি করো।", "t_solved": "সমাধান করা ধাঁধা", "t_tried": "চেষ্টা করা উত্তর", "t_acc": "নির্ভুলতা", "t_first": "প্রথমবারে জয়", "t_best": "সেরা ধারা", "t_pics": "রং করা ছবি", "t_coins": "কয়েন", "t_prog": "অগ্রগতি", "e_guest": "অতিথি হিসেবে খেলতে একটি ব্যবহারকারীর নাম বেছে নাও।", "e_email": "অনুগ্রহ করে একটি সঠিক ইমেইল ঠিকানা দাও।", "e_pw": "পাসওয়ার্ড কমপক্ষে ৮টি অক্ষরের হতে হবে।", "e_bad": "ইমেইল বা পাসওয়ার্ড ভুল।"}, "k": {"pic_change": "ছবি বদলাও", "pic_add": "ছবি যোগ করো", "pic_remove": "ছবি সরাও", "pic_err": "ওই ছবিটি ব্যবহার করা যায়নি। অন্য একটি ছবি চেষ্টা করো।", "pp_t": "প্রোফাইল ছবি যোগ করবে?", "pp_s": "পরিসংখ্যানে গিয়ে যেকোনো সময় এটি বদলাতে বা সরাতে পারো।", "pp_skip": "এখন বাদ দাও", "n_len": "ব্যবহারকারীর নাম ৩–২০টি অক্ষরের হতে হবে।", "n_chars": "শুধু অক্ষর, সংখ্যা, স্পেস, . _ বা - ব্যবহার করো।", "n_bad": "ওই ব্যবহারকারীর নামটি অনুমোদিত নয়। অনুগ্রহ করে ভদ্র নাম দাও: বিদ্বেষপূর্ণ বা বৈষম্যমূলক নাম নয়।", "x_crypto": "এই ব্রাউজারে ইমেইল দিয়ে সাইন ইন করা যায় না।", "x_exists": "ওই ইমেইলে আগে থেকেই একটি অ্যাকাউন্ট আছে। লগ ইন করার চেষ্টা করো।", "x_save": "এই ডিভাইসে অ্যাকাউন্ট সংরক্ষণ করা যায়নি। প্রাইভেট ব্রাউজিং কি চালু আছে?", "x_wrong": "কিছু একটা ভুল হয়েছে। অনুগ্রহ করে আবার চেষ্টা করো।", "x_gsetup": "Google দিয়ে সাইন ইন এখনও সেট আপ করা হয়নি।", "x_gload": "Google এখনও লোড হচ্ছে। একটু পরে আবার চেষ্টা করো।", "x_gfail": "Google দিয়ে সাইন ইন কাজ করেনি। অনুগ্রহ করে আবার চেষ্টা করো।", "x_gblock": "Google দিয়ে সাইন ইন শুধু পূর্ণ ওয়েবসাইটে কাজ করে, এই পাতায় নয়। এখন ইমেইল ব্যবহার করো বা অতিথি হিসেবে খেলো।", "shop": "দোকান", "shop_s": "মজার জিনিসের জন্য তোমার কয়েন খরচ করো। কয়েনের কোনো বাস্তব মূল্য নেই।", "sh_colors": "বিশেষ রং", "sh_colors_d": "ছবির যেকোনো অংশে ব্যবহার করো।", "sh_badges": "ব্যাজ", "sh_badges_d": "তোমার নামের পাশে দেখানো হয়।", "sh_hints": "ইঙ্গিত", "sh_hints_d": "দুটি ভুল উত্তর সরিয়ে দেয়। তোমার কাছে {0}টি আছে।", "buy": "কেনো", "owned": "আছে", "equip": "পরো", "worn": "পরা আছে", "need": "এখনও যথেষ্ট কয়েন নেই।", "hint_btn": "ইঙ্গিত ({0})", "c_pink": "গোলাপি", "c_teal": "সবুজাভ নীল", "c_gold": "সোনালি", "lib": "লাইব্রেরি", "lib_s": "তোমার শেষ করা ছবিগুলো। শুধু তুমিই দেখতে পাও: এগুলো এই ডিভাইসে সংরক্ষিত।", "lib_empty": "এখনও কোনো ছবি নেই। একটি ছবি শেষ করলে সেটি এখানে দেখা যাবে।", "lib_back": "পিছনে", "lib_del": "ছবি মুছে ফেলো", "lib_del2": "মুছতে আবার ট্যাপ করো", "v_t": "তোমার ইমেইল যাচাই করো", "v_s": "আমরা {0} ঠিকানায় একটি ৬ অঙ্কের কোড পাঠিয়েছি। নিচে সেটি লেখো। কোডটি ১০ মিনিট বৈধ থাকবে।", "v_code": "যাচাইকরণ কোড", "v_ok": "যাচাই করো ও অ্যাকাউন্ট তৈরি করো", "v_back": "পিছনে", "v_resend": "নতুন কোড পাঠাও", "v_sent": "নতুন কোড পাঠানো হচ্ছে।", "v_bad": "কোডটি ঠিক নয়। আবার চেষ্টা করো।", "v_exp": "কোডটির মেয়াদ শেষ। “নতুন কোড পাঠাও” ট্যাপ করো।", "v_many": "অনেকবার ভুল হয়েছে। “নতুন কোড পাঠাও” ট্যাপ করো।", "v_limit": "অনেক বেশি কোড পাঠানো হয়েছে। অনুগ্রহ করে পরে আবার চেষ্টা করো।", "v_setup": "ইমেইল যাচাইকরণ এখনও সেট আপ করা হয়নি, তাই এখন ইমেইল দিয়ে অ্যাকাউন্ট তৈরি করা যাচ্ছে না। Google ব্যবহার করো বা অতিথি হিসেবে খেলো।", "v_sendfail": "আমরা কোড পাঠাতে পারিনি। ঠিকানা ও ইন্টারনেট সংযোগ দেখে আবার চেষ্টা করো।", "v_disp": "অনুগ্রহ করে আসল ইমেইল ঠিকানা ব্যবহার করো, সাময়িক ঠিকানা নয়।", "v_typo": "তুমি কি {0} বোঝাতে চেয়েছ? অনুগ্রহ করে ঠিকানাটি দেখে নাও।", "v_nodomain": "ওই ইমেইল ডোমেইনে ইমেইল গ্রহণ করা যায় না। অনুগ্রহ করে ঠিকানাটি দেখে নাও।"}, "pz": [["এগুলোর মধ্যে কোনটি কম্পিউটার?", ["কলা", "জুতা", "ল্যাপটপ", "চামচ"]], ["একটি রোবট ৩ ধাপ সামনে এগিয়ে তারপর ২ ধাপ পিছিয়ে এলো। শুরুর জায়গা থেকে সেটি কত দূরে?", ["১ ধাপ", "২ ধাপ", "৩ ধাপ", "৫ ধাপ"]], ["রোবট শব্দ করছে: বিপ, বপ, বিপ, বপ, বিপ… এর পরে কী আসবে?", ["বিপ", "বপ", "বোপ", "নীরবতা"]], ["কম্পিউটারের “মস্তিষ্ক” কী নামে পরিচিত?", ["মনিটর", "মাউস", "স্পিকার", "CPU"]], ["কম্পিউটার শুধু ০ আর ১ দিয়ে গোনে। গণনা চলে ০, ১, ১০, ১১… এই কোডে ১০ কোন সংখ্যা?", ["দুই", "দশ", "এগারো", "একশো"]], ["লুপ কোড বারবার চালায়। এই কোড কতবার hello প্রিন্ট করে?"], ["এই কোড কী প্রিন্ট করে?"], ["বাইনারি সংখ্যা 1011 দশমিকে কত?"], ["বাগটি খুঁজে বের করো:", ["সেমিকোলন নেই", "এটি তুলনা না করে মান বসায়", "ফাংশনের নাম খারাপ", "ব্রেস ভুল"]], ["f(5) কত ফেরত দেয়?"], ["কোন ডেটা স্ট্রাকচারে আগে ঢুকলে আগে বের হয়?", ["স্ট্যাক (stack)", "কিউ (queue)", "ট্রি (tree)", "অ্যারে (array)"]], ["DNS কী কাজ করে?", ["পাসওয়ার্ড এনক্রিপ্ট করে", "সাইটের নাম থেকে IP ঠিকানা তৈরি করে", "ওয়াই-ফাই দ্রুত করে", "তোমার ইমেইল জমা রাখে"]], ["n সংখ্যক আইটেমের সাজানো তালিকায় বাইনারি সার্চ কত দ্রুত?"]]}};
+    for (var c in AS) {
+        var x = AS[c], t = x.t, d = { title: t[0], sub: t[1], ok: t[2], no: t[3], unlocked: t[4], names: x.nm, pick: t[5], done: t[6], wrong: t[7], next: t[8], again: t[9], color: t[10], college: t[11], ch: x.ch };
+        for (var k in x.k)
+            d[k] = x.k[k];
+        d.x_asetup = d.x_gsetup.replace(/Google/g, "Apple");
+        d.x_aload = d.x_gload.replace(/Google/g, "Apple");
+        d.x_afail = d.x_gfail.replace(/Google/g, "Apple");
+        UI[c] = d;
+        PZ[c] = x.pz.map(function (p, n) { var o = { g: n === 12 ? t[11] : x.g.replace("{n}", n + 1), q: p[0] }; if (p[1])
+            o.o = p[1]; return o; });
+        LANGS[c] = x.n;
+    }
+}
 /* ===== Schwiizerdütsch (Swiss German, written like it is spoken, Züri-style) ===== */
 {
     var d = JSON.parse(JSON.stringify(UI.de));
@@ -3132,198 +3226,6 @@ function showUpdate() {
     d.addEventListener("keydown", function (e) { if (e.key === "Escape")
         close(); });
 }
-/* ===== Custom on-screen keyboard ===== */
-(function () {
-    var TXK = { "en": "Keyboard", "de": "Tastatur", "gsw": "Tastatur", "fr": "Clavier", "it": "Tastiera", "es": "Teclado", "sr-Latn": "Tastatura", "sr": "Тастатура", "jam": "Keyboard", "ru": "Клавиатура", "zh": "键盘", "hi": "कीबोर्ड", "mk": "Тастатура", "pt": "Teclado", "pt-BR": "Teclado", "ar": "لوحة المفاتيح", "ja": "キーボード", "ko": "키보드", "hu": "Billentyűzet", "no": "Tastatur", "nl": "Toetsenbord", "pl": "Klawiatura", "sv": "Tangentbord", "el": "Πληκτρολόγιο", "uk": "Клавіатура" };
-    var lg = function () { return typeof lang === "string" ? lang : "en"; };
-    var layout = function () { var l = lg(); return (l === "de" || l === "gsw" || l === "fr-CH") ? "qwertz" : (l === "fr") ? "azerty" : "qwerty"; };
-    var ROWS = { qwerty: ["qwertyuiop", "asdfghjkl", "zxcvbnm"], qwertz: ["qwertzuiop", "asdfghjkl", "yxcvbnm"], azerty: ["azertyuiop", "qsdfghjklm", "wxcvbn"] };
-    var SYM = ["1234567890", "@#&_-+=()/", "!?.,:;'\"*%"];
-    var kb = document.createElement("div");
-    kb.id = "kb";
-    kb.dir = "ltr";
-    kb.setAttribute("role", "group");
-    var tg = document.createElement("button");
-    tg.id = "kbbtn";
-    tg.type = "button";
-    tg.textContent = "⌨";
-    tg.setAttribute("aria-pressed", "false");
-    document.body.append(kb, tg);
-    var on = false, shift = false, sym = false, cur = null, saved = new WeakMap();
-    var touchy = matchMedia("(pointer:coarse)").matches || matchMedia("(hover:none)").matches || ("ontouchstart" in window);
-    on = touchy;
-    try {
-        if (!touchy)
-            on = localStorage.getItem("kb") === "1";
-    }
-    catch (_) { }
-    var isTxt = function (e) { return e && e.tagName === "INPUT" && /^(text|email|password|search|tel|url|number|)$/.test(e.type || "text"); };
-    function ins(t) {
-        var e = cur;
-        if (!e)
-            return;
-        try {
-            if (e.selectionStart == null)
-                throw 0;
-            var a = e.selectionStart, b = e.selectionEnd;
-            e.setRangeText(t, a, b, "end");
-        }
-        catch (_) {
-            e.value = e.value + t;
-        }
-        if (e.maxLength > 0 && e.value.length > e.maxLength)
-            e.value = e.value.slice(0, e.maxLength);
-        e.dispatchEvent(new Event("input", { bubbles: true }));
-    }
-    function back() {
-        var e = cur;
-        if (!e)
-            return;
-        try {
-            if (e.selectionStart == null)
-                throw 0;
-            var a = e.selectionStart, b = e.selectionEnd;
-            if (a === b && a > 0)
-                a--;
-            e.setRangeText("", a, b, "end");
-        }
-        catch (_) {
-            e.value = e.value.slice(0, -1);
-        }
-        e.dispatchEvent(new Event("input", { bubbles: true }));
-    }
-    function enter() { var e = cur; if (!e)
-        return; var f = e.form; if (f) {
-        f.requestSubmit ? f.requestSubmit() : f.dispatchEvent(new Event("submit", { cancelable: true, bubbles: true }));
-    }
-    else
-        e.blur(); }
-    function key(label, cls, fn) {
-        var b = document.createElement("button");
-        b.type = "button";
-        b.textContent = label;
-        if (cls)
-            b.className = cls;
-        b.addEventListener("mousedown", function (ev) { return ev.preventDefault(); });
-        b.addEventListener("pointerdown", function (ev) { return ev.preventDefault(); });
-        b.addEventListener("mousedown", function (ev) { return ev.preventDefault(); });
-        b.addEventListener("click", function () { fn(); if (cur)
-            cur.focus({ preventScroll: true }); });
-        return b;
-    }
-    function row() { var r = document.createElement("div"); r.className = "kr"; return r; }
-    function render() {
-        kb.textContent = "";
-        var rows = sym ? SYM : ROWS[layout()];
-        rows.forEach(function (chars, i) {
-            var e_12, _a;
-            var r = row();
-            if (i === 2) {
-                r.append(key(sym ? "#+=" : "⇧", (shift && !sym) ? "w on" : "w", function () { if (!sym) {
-                    shift = !shift;
-                    render();
-                } }));
-            }
-            var _loop_11 = function (c) {
-                var ch = (shift && !sym) ? c.toLocaleUpperCase() : c;
-                r.append(key(ch, "", function () { ins(ch); if (shift && !sym) {
-                    shift = false;
-                    render();
-                } }));
-            };
-            try {
-                for (var chars_1 = __values(chars), chars_1_1 = chars_1.next(); !chars_1_1.done; chars_1_1 = chars_1.next()) {
-                    var c = chars_1_1.value;
-                    _loop_11(c);
-                }
-            }
-            catch (e_12_1) { e_12 = { error: e_12_1 }; }
-            finally {
-                try {
-                    if (chars_1_1 && !chars_1_1.done && (_a = chars_1.return)) _a.call(chars_1);
-                }
-                finally { if (e_12) throw e_12.error; }
-            }
-            if (i === 2)
-                r.append(key("⌫", "w", back));
-            kb.append(r);
-        });
-        var r = row();
-        r.append(key(sym ? "ABC" : "123", "w", function () { sym = !sym; shift = false; render(); }));
-        r.append(key("@", "", function () { return ins("@"); }), key(".", "", function () { return ins("."); }));
-        r.append(key(" ", "sp", function () { return ins(" "); }));
-        r.append(key("↵", "w", enter), key("⌄", "w", function () { cur && cur.blur(); hide(); }));
-        kb.append(r);
-        var h = function () { document.documentElement.style.setProperty("--kbh", kb.offsetHeight + "px"); };
-        requestAnimationFrame(h);
-    }
-    function show() {
-        if (!on || !cur)
-            return;
-        render();
-        kb.classList.add("open");
-        document.body.classList.add("kbopen");
-        setTimeout(function () { try {
-            cur.scrollIntoView({ block: "center", inline: "nearest" });
-            var se = document.scrollingElement;
-            if (se)
-                se.scrollLeft = 0;
-        }
-        catch (_) { } }, 60);
-    }
-    function hide() { kb.classList.remove("open"); document.body.classList.remove("kbopen"); }
-    function applyMode() {
-        tg.setAttribute("aria-pressed", on ? "true" : "false");
-        tg.setAttribute("aria-label", (TXK[lg()] || TXK[lg().split("-")[0]] || TXK.en));
-        tg.title = tg.getAttribute("aria-label");
-        document.querySelectorAll("input").forEach(function (e) {
-            if (!isTxt(e))
-                return;
-            if (on) {
-                if (!saved.has(e))
-                    saved.set(e, e.getAttribute("inputmode"));
-                e.setAttribute("inputmode", "none");
-            }
-            else if (saved.has(e)) {
-                var v = saved.get(e);
-                v == null ? e.removeAttribute("inputmode") : e.setAttribute("inputmode", v);
-                saved.delete(e);
-            }
-        });
-        if (!on)
-            hide();
-    }
-    tg.onclick = function () { on = !on; try {
-        localStorage.setItem("kb", on ? "1" : "0");
-    }
-    catch (_) { } applyMode(); var f = document.activeElement; if (on && isTxt(f)) {
-        cur = f;
-        show();
-    } };
-    document.addEventListener("focusin", function (e) { if (isTxt(e.target)) {
-        cur = e.target;
-        if (on) {
-            if (!saved.has(cur)) {
-                saved.set(cur, cur.getAttribute("inputmode"));
-                cur.setAttribute("inputmode", "none");
-            }
-            show();
-        }
-    } });
-    document.addEventListener("focusout", function () { return setTimeout(function () { if (!isTxt(document.activeElement))
-        hide(); }, 120); });
-    document.addEventListener("keydown", function (e) { if (e.key === "Escape" && kb.classList.contains("open")) {
-        hide();
-    } });
-    applyMode();
-    setInterval(function () { if (kb.classList.contains("open")) {
-        var l = layout();
-        if (kb.dataset.l !== l) {
-            kb.dataset.l = l;
-            render();
-        }
-    } applyMode.lang !== lg() && (applyMode.lang = lg(), tg.setAttribute("aria-label", (TXK[lg()] || TXK[lg().split("-")[0]] || TXK.en))); }, 800);
-})();
 /* Terms gate, then account screen */
 lock();
 if (lsGet("tos2") === "1") {
@@ -3882,6 +3784,79 @@ if (window.__resume) {
     }
     applyLang();
 }
+/* ===== Login / Terms background: pictures being colored and puzzles being solved (decoration only) ===== */
+(function () {
+    var BG = $("bgshow"), gen = 0, QI = [0, 1, 2, 3, 4, 8, 10, 11], qrot = 0, prot = 0, rs;
+    function esc(x) { return String(x).replace(/[&<>"]/g, function (c) { return ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]); }); }
+    function alive(g) { return g === gen && document.body.classList.contains("intro"); }
+    function later(g, fn, ms) { setTimeout(function () { if (alive(g))
+        fn(); }, ms); }
+    function question(t, g, n) {
+        var qi = QI[qrot++ % QI.length], p = T(qi), ans = PUZZLES[qi].a, opts = p.o || PUZZLES[qi].o;
+        t.className = "bt";
+        t.innerHTML = '<span class="bg">' + esc(p.g) + '</span><p class="bq">' + esc(p.q) + '</p>' + opts.map(function (o, k) { return '<div class="bo"><i>' + (k + 1) + '</i>' + esc(o) + '</div>'; }).join("");
+        var rows = t.querySelectorAll(".bo");
+        later(g, function () { rows[ans].classList.add("pick"); }, 1500 + Math.random() * 800);
+        later(g, function () { rows[ans].classList.remove("pick"); rows[ans].classList.add("right"); for (var k = 0; k < rows.length; k++)
+            if (k !== ans)
+                rows[k].classList.add("dim"); }, 2900 + Math.random() * 500);
+        later(g, function () { t.classList.add("out"); }, 5600);
+        later(g, function () { question(t, g, n); }, 6200);
+    }
+    function picture(t, g, n) {
+        var pi = (prot++ * 5) % PICS.length, pic = PICS[pi], R = pic.r[0][0].indexOf('width="200" height="200"') > -1 ? pic.r : [['<rect x="0" y="0" width="200" height="200"/>', 1, 14, 14]].concat(pic.r), order = R.map(function (r, k) { return k; }).sort(function (a, b) { return R[a][1] - R[b][1] || a - b; });
+        t.className = "bt";
+        t.innerHTML = '<p class="bn">' + esc(U().unlocked + " " + (U().names[pi] || pic.name)) + '</p><svg viewBox="0 0 200 200">' + R.map(function (r) { return r[0].replace("/>", ' class="reg"/>') + '<text class="lbl" x="' + r[2] + '" y="' + r[3] + '">' + r[1] + "</text>"; }).join("") + '</svg><div class="bp">' + COLORS.map(function (c) { return '<b style="background:' + c + '"></b>'; }).join("") + "</div>";
+        var regs = t.querySelectorAll(".reg"), lbls = t.querySelectorAll("text"), dots = t.querySelectorAll(".bp b"), step = Math.max(110, Math.min(380, 4800 / order.length)), k = 0;
+        function go() {
+            if (!alive(g))
+                return;
+            if (k >= order.length) {
+                later(g, function () { t.classList.add("out"); }, 2200);
+                later(g, function () { picture(t, g, n); }, 2800);
+                return;
+            }
+            var j = order[k++], c = R[j][1];
+            for (var d = 0; d < dots.length; d++)
+                dots[d].className = d + 1 === c ? "on" : "";
+            regs[j].style.fill = COLORS[c - 1];
+            lbls[j].style.display = "none";
+            setTimeout(go, step);
+        }
+        later(g, go, 900 + Math.random() * 900);
+    }
+    function build() {
+        gen++;
+        var g = gen, w = window.innerWidth, h = window.innerHeight, cols = Math.max(1, Math.floor((w - 14) / 210)), rows = Math.max(1, Math.ceil((h - 14) / 270)), n = cols * rows;
+        BG.style.gridTemplateColumns = "repeat(" + cols + ",minmax(0,1fr))";
+        BG.style.gridAutoRows = "256px";
+        BG.innerHTML = "";
+        for (var i = 0; i < n; i++) {
+            (function (i) {
+                var t = document.createElement("div");
+                t.style.setProperty("--r", ((i * 37) % 5 - 2) * .6 + "deg");
+                BG.appendChild(t);
+                var isQ = ((i % cols) + Math.floor(i / cols)) % 2 === 0;
+                setTimeout(function () { if (alive(g))
+                    (isQ ? question : picture)(t, g, i); }, i * 220);
+            })(i);
+        }
+    }
+    function sync() {
+        var on = !$("gate").classList.contains("hide") || !$("auth").classList.contains("hide"), was = document.body.classList.contains("intro");
+        document.body.classList.toggle("intro", on);
+        if (on && !was)
+            build();
+        if (!on)
+            gen++;
+    }
+    var mo = new MutationObserver(sync);
+    mo.observe($("gate"), { attributes: true, attributeFilter: ["class"] });
+    mo.observe($("auth"), { attributes: true, attributeFilter: ["class"] });
+    window.addEventListener("resize", function () { clearTimeout(rs); rs = setTimeout(function () { if (document.body.classList.contains("intro"))
+        build(); }, 250); });
+    sync();
+})();
 $("aname").addEventListener("input", function () {
     var v = $("aname").value.trim(), msg = PT("n_taken");
     if (authMode === "create" && v.length >= 3 && nameTaken(v))
