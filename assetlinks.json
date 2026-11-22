@@ -1,0 +1,8 @@
+[{
+      "relation": ["delegate_permission/common.handle_all_urls"],
+      "target": {
+        "namespace": "android_app",
+        "package_name": "io.github.unlock_color.twa",
+        "sha256_cert_fingerprints": ["56:AA:69:EA:FD:4B:95:A7:6B:90:16:A6:5A:E5:CA:CA:70:AD:5F:86:BA:53:83:ED:DB:C2:FA:CC:2B:27:68:47"]
+      }
+    }]
