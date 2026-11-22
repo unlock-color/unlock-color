@@ -3977,6 +3977,56 @@ $("aname").addEventListener("input", function () {
     else if ($("aerr").textContent === msg)
         err("");
 });
+
+/* ===== Translations for puzzles 14-46 (the first 13 live in PZ above). Add a language by adding a key to X below. ===== */
+(function () {
+    var X = {
+        de: [
+            ["Mit welchem Teil des Computers tippst du Wörter?", ["Tastatur", "Maus", "Lautsprecher", "Bildschirm"]],
+            ["Muster: rot, grün, rot, grün, rot, … Was kommt als Nächstes?", ["Rot", "Gelb", "Blau", "Grün"]],
+            ["Ein Roboter geht 2 Stufen hinauf, dann noch 3 Stufen hinauf. Wie viele Stufen sind es insgesamt?"],
+            ["Welches davon ist ein Eingabegerät (damit gibst du Informationen ein)?", ["Drucker", "Tastatur", "Monitor", "Lautsprecher"]],
+            ["Was ist ein Algorithmus?", ["Ein Computervirus", "Eine Art Tastatur", "Ein Webbrowser", "Eine Liste von Schritten, um ein Problem zu lösen"]],
+            ["Was gibt dieser Code aus?"],
+            ["Was gibt dieser Code aus? (% liefert den Rest.)"],
+            ["Wie lautet die Dezimalzahl 13 im Binärsystem?"],
+            ["Was ist an dieser Schleife falsch?", ["Sie hört nie auf", "Sie gibt nichts aus", "Syntaxfehler", "x ist ein Text"]],
+            ["Was gibt f(4) zurück?"],
+            ["Welche Datenstruktur arbeitet nach dem Prinzip „last in, first out“?", ["Warteschlange", "Stapel", "Graph", "Menge"]],
+            ["Was bringt HTTPS im Vergleich zu HTTP zusätzlich?", ["Schnellere Bilder", "Mehr Werbung", "Verschlüsselung", "Grössere Seiten"]],
+            ["Wie schnell ist das Nachschlagen eines Schlüssels in einer Hashtabelle im Durchschnitt?"],
+            ["Welche Taste drückst du, um einen Abstand zwischen Wörtern zu machen?", ["Enter", "Umschalt", "Leertaste", "Escape"]],
+            ["Muster: 1, 2, 1, 2, 1, … Was kommt als Nächstes?"],
+            ["Ein Roboter hat 10 Sticker und verschenkt 4. Wie viele Sticker bleiben übrig?"],
+            ["Welches davon ist ein Ausgabegerät (es zeigt dir Informationen an)?", ["Tastatur", "Maus", "Drucker", "Mikrofon"]],
+            ["Was ist ein Bug in einem Programm?", ["Ein echtes Insekt im Computer", "Ein Fehler, der das Programm falsch arbeiten lässt", "Ein sehr schneller Computer", "Eine Art Spiel"]],
+            ["Was gibt dieser Code aus?"],
+            ["Was gibt dieser Code aus?"],
+            ["Welche Dezimalzahl ist die Binärzahl 110?"],
+            ["Finde den Fehler:", ["Doppelpunkt fehlt", "Falscher Variablenname", "print ist falsch geschrieben", "range braucht 4"]],
+            ["Was gibt f(3) zurück?"],
+            ["Welches Sortierverfahren vertauscht wiederholt benachbarte Elemente, die in der falschen Reihenfolge stehen?", ["Bubblesort", "Binäre Suche", "Hashing", "Rekursion"]],
+            ["Was macht eine Firewall?", ["Sie kühlt den Computer", "Sie blockiert unerwünschten Netzwerkverkehr", "Sie macht Dateien kleiner", "Sie beschleunigt Downloads"]],
+            ["Wie lange braucht Mergesort im schlechtesten Fall bei n Elementen?"],
+            ["Was kannst du in der Hosentasche tragen und zum Anrufen benutzen?", ["Kühlschrank", "Tisch", "Bett", "Handy"]],
+            ["Ein Roboter tanzt: klatschen, stampfen, klatschen, stampfen, … Was kommt als Nächstes?", ["Klatschen", "Stampfen", "Springen", "Drehen"]],
+            ["Jeder Roboter hat 2 Beine. Wie viele Beine haben 3 Roboter zusammen?"],
+            ["Wie nennt man die Anweisungen, die dem Computer sagen, was er tun soll?", ["Eine Batterie", "Ein Programm", "Ein Kabel", "Ein Bildschirm"]],
+            ["Ein Spiel sagt: WENN dein Punktestand 10 oder mehr ist, gewinnst du. Dein Punktestand ist 7. Was passiert?", ["Du gewinnst", "Du gewinnst noch nicht", "Dein Punktestand wird 10", "Das Spiel löscht sich selbst"]],
+            ["Was gibt dieser Code aus?"],
+            ["Was gibt dieser Code aus? (Punkt vor Strich: Multiplikation kommt vor der Addition.)"]
+        ]
+    };
+    Object.keys(X).forEach(function (c) {
+        var a = PZ[c];
+        if (!a) return;
+        X[c].forEach(function (p, k) {
+            var n = 13 + k, o = { g: a[n % 13].g, q: p[0] };
+            if (p[1]) o.o = p[1];
+            a[n] = o;
+        });
+    });
+})();
 </script>
 </body>
 </html>
