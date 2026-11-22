@@ -1803,15 +1803,24 @@ PICS.push({ name: "Bee", r: [
 var PORDER = [], PNEW = { "Bee": 1, "Strawberry": 1, "Snail": 1, "Birthday cake": 1, "Camping tent": 1, "Smiling star": 1 };
 /* new pictures are mixed in after every 4th old picture so they show up early */
 function porder() { if (PORDER.length === PICS.length)
-    return PORDER; var o = [], nw = [], r = [], k; for (k = 0; k < PICS.length; k++)
-    (PNEW[PICS[k].name] ? nw : o).push(k); for (k = 0; k < o.length; k++) {
+    return PORDER; var o = [], nw = [], dp = [], sn = {}, r = [], k; for (k = 0; k < PICS.length; k++) {
+    var pn = PICS[k].name;
+    if (PNEW[pn])
+        nw.push(k);
+    else if (sn[pn])
+        dp.push(k);
+    else {
+        sn[pn] = 1;
+        o.push(k);
+    }
+} for (k = 0; k < o.length; k++) {
     r.push(o[k]);
     if (k % 4 === 3 && nw.length)
         r.push(nw.shift());
-} return PORDER = r.concat(nw); }
+} return PORDER = r.concat(nw, dp); }
 function pidx(n) { var P = porder(), L = P.length; return P[((((D.lap | 0) * PUZZLES.length + n) % L) + L) % L]; }
 function nextLbl() { $("next").textContent = i >= PUZZLES.length ? U().again : U().next; }
-var i = 0, sel = 1, total = 0, filled = 0, locked = false, coins = 0, wrongs = 0;
+var i = 0, sel = 1, total = 0, filled = 0, locked = false, coins = 0, wrongs = 0, drawT = 0;
 var $ = function (id) { return document.getElementById(id); };
 function bar() { $("bar").innerHTML = PUZZLES.map(function (_, n) { return "<div class=\"pip ".concat(n < i ? "done" : n === i ? "now" : "", "\"></div>"); }).join(""); }
 function showCoins(pop) {
@@ -1895,7 +1904,8 @@ function answer(n, btn) {
         updHint();
         $("hint").textContent = U().ok;
         $("hint").style.color = "var(--good)";
-        setTimeout(showDraw, 700);
+        clearTimeout(drawT);
+        drawT = setTimeout(showDraw, 700);
     }
     else {
         btn.classList.add("wrong");
@@ -1931,9 +1941,9 @@ function showDraw() {
         tap(el, labels[k]);
     } }; });
     $("pal").innerHTML = "";
-    COLORS.forEach(function (c, k) { var b = document.createElement("button"); b.className = "sw"; b.style.background = c; b.style.color = TXT[k]; b.textContent = k + 1; b.setAttribute("aria-label", U().color + " " + (k + 1)); b.onclick = function () { sel = k + 1; sync(); }; $("pal").appendChild(b); });
+    COLORS.forEach(function (c, k) { var b = document.createElement("button"); b.className = "sw"; b.style.background = c; b.style.color = TXT[k]; b.textContent = k + 1; b.setAttribute("aria-label", U().color + " " + (k + 1)); b.dataset.sel = k + 1; b.onclick = function () { sel = k + 1; sync(); }; $("pal").appendChild(b); });
     SPECIAL.forEach(function (o, k) { if (!D.shop.col.includes(o.id))
-        return; var b = document.createElement("button"); b.className = "sw"; b.style.background = o.c; b.style.color = o.t; b.textContent = "★\uFE0E"; b.setAttribute("aria-label", PT("c_" + o.id)); b.onclick = function () { sel = 7 + k; sync(); }; $("pal").appendChild(b); });
+        return; var b = document.createElement("button"); b.className = "sw"; b.style.background = o.c; b.style.color = o.t; b.textContent = "★\uFE0E"; b.setAttribute("aria-label", PT("c_" + o.id)); b.dataset.sel = 7 + k; b.onclick = function () { sel = 7 + k; sync(); }; $("pal").appendChild(b); });
     sync();
     status();
     i++;
@@ -1943,7 +1953,7 @@ function showDraw() {
     nextLbl();
     $("draw").scrollIntoView({ behavior: "smooth", block: "start" });
 }
-function sync() { __spreadArray([], __read($("pal").children), false).forEach(function (b, k) { return b.setAttribute("aria-pressed", k + 1 === sel); }); }
+function sync() { __spreadArray([], __read($("pal").children), false).forEach(function (b, k) { return b.setAttribute("aria-pressed", +b.dataset.sel === sel); }); }
 function status() { $("dhint").style.color = ""; $("dhint").textContent = U().pick.replace("{0}", filled).replace("{1}", total); }
 function tap(el, lbl) {
     if (el.dataset.done)
@@ -1997,13 +2007,13 @@ function applyLang() {
     if ($("puzzle").classList.contains("hide")) {
         $("title").textContent = U().unlocked + " " + (U().names[pidx(i - 1)] || PICS[pidx(i - 1)].name);
         nextLbl();
-        __spreadArray([], __read($("pal").children), false).forEach(function (b, k) { return b.setAttribute("aria-label", U().color + " " + (k + 1)); });
+        __spreadArray([], __read($("pal").children), false).forEach(function (b, k) { if (+b.dataset.sel > 6) return b.setAttribute("aria-label", PT("c_" + SPECIAL[b.dataset.sel - 7].id)); return b.setAttribute("aria-label", U().color + " " + (k + 1)); });
         if (filled < total)
             status();
         else
             $("dhint").textContent = U().done;
     }
-    else
+    else if (!locked)
         showPuzzle();
 }
 /* ===== Accounts, saving and stats ===== */
@@ -2072,6 +2082,14 @@ function keepStorage() { if (_ps++)
 catch (_) { } }
 var hex = function (b) { return __spreadArray([], __read(b), false).map(function (x) { return x.toString(16).padStart(2, "0"); }).join(""); };
 var unhex = function (h) { return new Uint8Array(h.match(/../g).map(function (x) { return parseInt(x, 16); })); };
+function lfGet(e) { try {
+    return JSON.parse(lsGet("lf:" + e) || "null") || { n: 0, t: 0 };
+}
+catch (_) {
+    return { n: 0, t: 0 };
+} }
+function lfFail(e) { var f = lfGet(e); f.n++; if (f.n >= 5)
+    f.t = Date.now() + Math.min(3600000, 30000 * Math.pow(2, f.n - 5)); lsSet("lf:" + e, JSON.stringify(f)); }
 function hashPw(pw, saltHex) {
     return __awaiter(this, void 0, void 0, function () {
         var salt, key, bits;
@@ -2166,6 +2184,8 @@ function nameTaken(n) { var k = normName(n); if (!k)
 } return Object.keys(U).some(function (id) { return U[id] && U[id].name && normName(U[id].name) === k; }); }
 var err = function (m) { $("aerr").textContent = m || ""; return false; };
 function enter(id, gname) {
+    clearTimeout(drawT);
+    locked = false;
     keepStorage();
     uid = id;
     D = loadData(id);
@@ -2280,13 +2300,18 @@ $("af").onsubmit = function (e) { return __awaiter(void 0, void 0, void 0, funct
                 return [3 /*break*/, 7];
             case 5:
                 u = U[id], bad = CH("e_bad");
+                if (lfGet(email).t > Date.now())
+                    return [2 /*return*/, err(PT("x_wait"))];
                 if (!u || !u.hash)
                     return [2 /*return*/, err(bad)];
                 return [4 /*yield*/, hashPw(pw, u.salt)];
             case 6:
                 h = _a.sent();
-                if (h.hash !== u.hash)
+                if (h.hash !== u.hash) {
+                    lfFail(email);
                     return [2 /*return*/, err(bad)];
+                }
+                lsDel("lf:" + email);
                 enter(id);
                 _a.label = 7;
             case 7: return [3 /*break*/, 10];
@@ -2355,6 +2380,8 @@ function domainCanReceive(d) {
                     j = _a.sent();
                     if (j.Status === 3)
                         return [2 /*return*/, false];
+                    if (j.Status !== 0)
+                        return [2 /*return*/, null];
                     mx = (j.Answer || []).filter(function (a) { return a.type === 15; });
                     if (mx.length)
                         return [2 /*return*/, mx.some(function (a) { return String(a.data).trim().split(/\s+/)[1] !== "."; })];
@@ -2363,6 +2390,8 @@ function domainCanReceive(d) {
                     a = _a.sent();
                     if (a.Status === 3)
                         return [2 /*return*/, false];
+                    if (a.Status !== 0)
+                        return [2 /*return*/, null];
                     return [2 /*return*/, !!((a.Answer || []).some(function (x) { return x.type === 1; }))];
                 case 3:
                     _2 = _a.sent();
@@ -2596,8 +2625,8 @@ function social(provider, sub, name, email) {
                 return err(ne);
             name = un;
         }
-        else if (!name || nameCheck(name))
-            name = "Player";
+        else
+            return err(PT("x_noacct"));
         U[id] = { id: id, provider: provider, name: name, email: email || "", created: Date.now() };
     }
     else if (name && !U[id].name)
@@ -2871,6 +2900,8 @@ else
 window.addEventListener("popstate", function () { if (statsOpen)
     closeStats(true); });
 function leave() {
+    clearTimeout(drawT);
+    locked = false;
     statsOpen = false;
     popStats();
     uid = null;
@@ -3198,9 +3229,14 @@ document.querySelectorAll(".langsel").forEach(function (el) {
     el.onchange = function () { lang = el.value; lsSet("lang", lang); applyLang(); };
 });
 /* ===== What's new popup ===== */
-var UPDATE_VER = "2026-11-21.7";
-var UPDATE_SHOW_UNTIL = Date.parse("2026-11-21T23:59:59+01:00"); /* ends today (Nov 21, 2026) until told to change; set a new date when publishing a new update */
-var UPDATES = [{ v: "2026-11-21.7", tr: { "en": ["What’s new", "Update", "Got it", "Better layout and keyboard for Windows, Mac and tablets", "Fixed text that was still in English (Library, email sign-up and more) in every language", "New on-screen keyboard for typing", "Chat messages now follow the language you choose", "New language: Français (Suisse)", "Usernames must be unique: you’ll be told if a name already exists", "Small fixes and improvements"], "de": ["Neuigkeiten", "Update", "Verstanden", "Besseres Layout und bessere Tastatur für Windows, Mac und Tablets", "Texte behoben, die noch auf Englisch waren (Bibliothek, E-Mail-Anmeldung u. a.), in jeder Sprache", "Neue Bildschirmtastatur zum Tippen", "Chat-Nachrichten folgen jetzt der gewählten Sprache", "Neue Sprache: Français (Suisse)", "Benutzernamen müssen einmalig sein: Du erfährst, wenn ein Name schon existiert", "Kleine Korrekturen und Verbesserungen"], "gsw": ["Was isch neu", "Update", "Verstande", "Besseres Layout und bessleri Tastatur für Windows, Mac und Tablets", "Texte korrigiert, wo no uf Änglisch gsi sind (Bibliothek, E-Mail-Aamäldig u. a.), i jeder Sprach", "Neui Bildschirmtastatur zum Tippe", "Chat-Nachrichte folged jetz de gwählte Sprach", "Neui Sprach: Français (Suisse)", "Benutzername müend einmalig sii: Du gsesch, wenn en Name scho existiert", "Chlini Korrekture und Verbesserige"], "fr": ["Nouveautés", "Mise à jour", "Compris", "Meilleure mise en page et meilleur clavier pour Windows, Mac et tablettes", "Textes encore en anglais corrigés (bibliothèque, inscription par e-mail, etc.) dans toutes les langues", "Nouveau clavier à l’écran pour écrire", "Les messages du chat suivent maintenant la langue choisie", "Nouvelle langue : Français (Suisse)", "Les noms d’utilisateur doivent être uniques : tu seras prévenu si un nom existe déjà", "Petites corrections et améliorations"], "it": ["Novità", "Aggiornamento", "Capito", "Layout e tastiera migliorati per Windows, Mac e tablet", "Corretti i testi ancora in inglese (libreria, registrazione via e-mail e altro) in ogni lingua", "Nuova tastiera sullo schermo per scrivere", "I messaggi della chat ora seguono la lingua scelta", "Nuova lingua: Français (Suisse)", "I nomi utente devono essere unici: ti avviseremo se un nome esiste già", "Piccole correzioni e miglioramenti"], "es": ["Novedades", "Actualización", "Entendido", "Mejor diseño y teclado para Windows, Mac y tabletas", "Corregidos los textos que seguían en inglés (biblioteca, registro por correo y más) en todos los idiomas", "Nuevo teclado en pantalla para escribir", "Los mensajes del chat ahora siguen el idioma elegido", "Nuevo idioma: Français (Suisse)", "Los nombres de usuario deben ser únicos: se te avisará si un nombre ya existe", "Pequeñas correcciones y mejoras"], "sr-Latn": ["Šta je novo", "Ažuriranje", "Razumem", "Bolji raspored i tastatura za Windows, Mac i tablete", "Ispravljeni tekstovi koji su ostali na engleskom (biblioteka, prijava e-poštom i drugo) na svim jezicima", "Nova tastatura na ekranu za kucanje", "Poruke u ćaskanju sada prate izabrani jezik", "Novi jezik: Français (Suisse)", "Korisnička imena moraju biti jedinstvena: dobićeš obaveštenje ako ime već postoji", "Male ispravke i poboljšanja"], "sr": ["Шта је ново", "Ажурирање", "Разумем", "Бољи распоред и тастатура за Windows, Mac и таблете", "Исправљени текстови који су остали на енглеском (библиотека, пријава е-поштом и друго) на свим језицима", "Нова тастатура на екрану за куцање", "Поруке у ћаскању сада прате изабрани језик", "Нови језик: Français (Suisse)", "Корисничка имена морају бити јединствена: добићеш обавештење ако име већ постоји", "Мале исправке и побољшања"], "jam": ["Wah new", "Update", "Mi get it", "Better layout an keyboard fi Windows, Mac an tablet dem", "Fix di text dem weh did still inna English (Library, email sign-up an more) inna every language", "New keyboard pon di screen fi type", "Chat message dem now follow di language yuh choose", "New language: Français (Suisse)", "Username haffi be one a a kind: wi will tell yuh if a name already deh deh", "Likkle fix dem an improvement dem"], "ru": ["Что нового", "Обновление", "Понятно", "Улучшены вид и клавиатура для Windows, Mac и планшетов", "Исправлены тексты, которые остались на английском (библиотека, регистрация по почте и другое), на всех языках", "Новая экранная клавиатура для ввода", "Сообщения в чате теперь следуют выбранному языку", "Новый язык: Français (Suisse)", "Имена пользователей должны быть уникальными: ты узнаешь, если имя уже существует", "Небольшие исправления и улучшения"], "zh": ["新功能", "更新", "知道了", "优化了 Windows、Mac 和平板电脑上的布局与键盘", "修复了各语言中仍显示英文的文字（图库、邮箱注册等）", "新的屏幕键盘，方便输入", "聊天消息现在会跟随你选择的语言", "新语言：Français (Suisse)", "用户名必须唯一：如果名称已存在，系统会提示你", "小修复和改进"], "hi": ["नया क्या है", "अपडेट", "समझ गया", "Windows, Mac और टैबलेट के लिए बेहतर लेआउट और कीबोर्ड", "हर भाषा में अब भी अंग्रेज़ी में दिख रहे टेक्स्ट ठीक किए (लाइब्रेरी, ईमेल साइन-अप आदि)", "टाइप करने के लिए नया ऑन-स्क्रीन कीबोर्ड", "चैट संदेश अब आपकी चुनी हुई भाषा में बदलते हैं", "नई भाषा: Français (Suisse)", "उपयोगकर्ता नाम अनोखे होने चाहिए: नाम पहले से मौजूद होने पर आपको बताया जाएगा", "छोटे सुधार और बेहतरी"], "mk": ["Што е ново", "Ажурирање", "Разбрав", "Подобар изглед и тастатура за Windows, Mac и таблети", "Поправени текстови што останаа на англиски (библиотека, регистрација со е-пошта и друго) на сите јазици", "Нова тастатура на екранот за пишување", "Пораките во разговорот сега го следат избраниот јазик", "Нов јазик: Français (Suisse)", "Корисничките имиња мора да бидат уникатни: ќе добиеш порака ако името веќе постои", "Мали поправки и подобрувања"], "pt": ["Novidades", "Atualização", "Entendi", "Melhor disposição e teclado para Windows, Mac e tablets", "Corrigidos os textos que ainda estavam em inglês (biblioteca, registo por email e mais) em todos os idiomas", "Novo teclado no ecrã para escrever", "As mensagens do chat agora seguem o idioma escolhido", "Novo idioma: Français (Suisse)", "Os nomes de utilizador têm de ser únicos: és avisado se um nome já existir", "Pequenas correções e melhorias"], "pt-BR": ["Novidades", "Atualização", "Entendi", "Layout e teclado melhores para Windows, Mac e tablets", "Corrigidos os textos que ainda estavam em inglês (biblioteca, cadastro por e-mail e mais) em todos os idiomas", "Novo teclado na tela para digitar", "As mensagens do chat agora seguem o idioma escolhido", "Novo idioma: Français (Suisse)", "Os nomes de usuário precisam ser únicos: você será avisado se um nome já existir", "Pequenas correções e melhorias"], "ar": ["الجديد", "تحديث", "فهمت", "تخطيط ولوحة مفاتيح أفضل لأجهزة Windows وMac والأجهزة اللوحية", "إصلاح النصوص التي بقيت بالإنجليزية (المكتبة، التسجيل بالبريد وغيرها) في كل اللغات", "لوحة مفاتيح جديدة على الشاشة للكتابة", "رسائل الدردشة تتبع الآن اللغة التي تختارها", "لغة جديدة: Français (Suisse)", "يجب أن تكون أسماء المستخدمين فريدة: سيتم إخبارك إذا كان الاسم موجودًا بالفعل", "إصلاحات وتحسينات صغيرة"], "ja": ["新着情報", "アップデート", "わかった", "Windows、Mac、タブレット向けにレイアウトとキーボードを改善しました", "英語のままだった文章（ライブラリ、メール登録など）をすべての言語で修正しました", "入力用の新しい画面キーボード", "チャットのメッセージが選んだ言語に合わせて切り替わります", "新しい言語：Français (Suisse)", "ユーザー名は重複できません。すでに使われている場合はお知らせします", "小さな修正と改善"], "ko": ["새로운 소식", "업데이트", "확인", "Windows, Mac, 태블릿을 위한 더 나은 화면 구성과 키보드", "영어로 남아 있던 문구(라이브러리, 이메일 가입 등)를 모든 언어에서 고쳤어요", "입력을 위한 새 화면 키보드", "채팅 메시지가 이제 선택한 언어를 따라요", "새 언어: Français (Suisse)", "사용자 이름은 고유해야 합니다. 이미 있는 이름이면 알려 드려요", "작은 수정 및 개선"], "hu": ["Újdonságok", "Frissítés", "Értem", "Jobb elrendezés és billentyűzet Windowshoz, Machez és táblagépekhez", "Kijavítottuk az angolul maradt szövegeket (könyvtár, e-mailes regisztráció stb.) minden nyelven", "Új képernyő-billentyűzet gépeléshez", "A csevegőüzenetek mostantól a választott nyelvet követik", "Új nyelv: Français (Suisse)", "A felhasználónevek egyediek kell legyenek: szólunk, ha egy név már létezik", "Apró javítások és fejlesztések"], "no": ["Hva er nytt", "Oppdatering", "Skjønner", "Bedre layout og tastatur for Windows, Mac og nettbrett", "Rettet tekster som fortsatt var på engelsk (bibliotek, e-postregistrering og mer) på alle språk", "Nytt tastatur på skjermen for skriving", "Chat-meldinger følger nå språket du velger", "Nytt språk: Français (Suisse)", "Brukernavn må være unike: du får beskjed hvis et navn allerede finnes", "Små rettelser og forbedringer"], "nl": ["Wat is er nieuw", "Update", "Begrepen", "Betere indeling en toetsenbord voor Windows, Mac en tablets", "Teksten die nog in het Engels stonden (bibliotheek, aanmelden met e-mail en meer) opgelost in elke taal", "Nieuw schermtoetsenbord om te typen", "Chatberichten volgen nu de taal die je kiest", "Nieuwe taal: Français (Suisse)", "Gebruikersnamen moeten uniek zijn: je krijgt een melding als een naam al bestaat", "Kleine fixes en verbeteringen"], "pl": ["Co nowego", "Aktualizacja", "Jasne", "Lepszy układ i klawiatura dla Windows, Maca i tabletów", "Poprawiono teksty, które wciąż były po angielsku (biblioteka, rejestracja e-mailem i inne) we wszystkich językach", "Nowa klawiatura ekranowa do pisania", "Wiadomości czatu zmieniają teraz język razem z wyborem", "Nowy język: Français (Suisse)", "Nazwy użytkowników muszą być unikalne: dostaniesz komunikat, jeśli nazwa już istnieje", "Drobne poprawki i ulepszenia"], "sv": ["Nytt", "Uppdatering", "Uppfattat", "Bättre layout och tangentbord för Windows, Mac och surfplattor", "Rättade texter som fortfarande var på engelska (bibliotek, e-postregistrering med mera) på alla språk", "Nytt tangentbord på skärmen för att skriva", "Chattmeddelanden följer nu det språk du väljer", "Nytt språk: Français (Suisse)", "Användarnamn måste vara unika: du får veta om ett namn redan finns", "Små rättningar och förbättringar"], "el": ["Τι νέο υπάρχει", "Ενημέρωση", "Το κατάλαβα", "Καλύτερη διάταξη και πληκτρολόγιο για Windows, Mac και tablet", "Διορθώθηκαν κείμενα που έμεναν στα αγγλικά (βιβλιοθήκη, εγγραφή με email κ.ά.) σε όλες τις γλώσσες", "Νέο πληκτρολόγιο οθόνης για πληκτρολόγηση", "Τα μηνύματα συνομιλίας ακολουθούν πλέον τη γλώσσα που επιλέγεις", "Νέα γλώσσα: Français (Suisse)", "Τα ονόματα χρήστη πρέπει να είναι μοναδικά: θα ειδοποιηθείς αν ένα όνομα υπάρχει ήδη", "Μικρές διορθώσεις και βελτιώσεις"], "uk": ["Що нового", "Оновлення", "Зрозуміло", "Кращий вигляд і клавіатура для Windows, Mac і планшетів", "Виправлено тексти, що лишалися англійською (бібліотека, реєстрація за поштою та інше), усіма мовами", "Нова екранна клавіатура для введення", "Повідомлення в чаті тепер відповідають обраній мові", "Нова мова: Français (Suisse)", "Імена користувачів мають бути унікальними: ти дізнаєшся, якщо ім’я вже існує", "Невеликі виправлення та покращення"] } }];
+var UPDATE_VER = "2026-11-22.1";
+var UPDATE_SHOW_UNTIL = Date.parse("2026-11-25T23:59:59+01:00"); /* shows for 3 days (until end of Nov 25, 2026), then stops until told to change; set a new date when publishing a new update */
+var UPDATES = [{ v: "2026-11-22.1", tr: {
+    "en": ["What’s new", "Update", "Got it", "Fixed the wrong color being highlighted in your palette", "Changing the language while answering can no longer skip a puzzle", "Picture names now show in your language", "Every picture shows up once before any repeats", "Safer login: too many wrong tries now pause login for a while", "Small fixes and improvements"],
+    "de": ["Neuigkeiten", "Update", "Verstanden", "Falsch markierte Farbe in der Palette behoben", "Beim Sprachwechsel während einer Antwort wird kein Rätsel mehr übersprungen", "Bildnamen erscheinen jetzt in deiner Sprache", "Jedes Bild kommt einmal vor, bevor sich etwas wiederholt", "Sichereres Anmelden: Bei zu vielen Fehlversuchen wird die Anmeldung kurz pausiert", "Kleine Korrekturen und Verbesserungen"],
+    "fr": ["Nouveautés", "Mise à jour", "Compris", "Correction de la mauvaise couleur mise en surbrillance dans la palette", "Changer de langue pendant une réponse ne saute plus d’énigme", "Les noms des images s’affichent maintenant dans ta langue", "Chaque image apparaît une fois avant toute répétition", "Connexion plus sûre : trop d’essais ratés mettent la connexion en pause", "Petites corrections et améliorations"],
+    "it": ["Novità", "Aggiornamento", "Capito", "Corretto il colore evidenziato per errore nella tavolozza", "Cambiare lingua mentre rispondi non salta più un enigma", "I nomi delle immagini ora appaiono nella tua lingua", "Ogni immagine compare una volta prima di ripetersi", "Accesso più sicuro: troppi tentativi sbagliati mettono in pausa il login", "Piccole correzioni e miglioramenti"],
+    "es": ["Novedades", "Actualización", "Entendido", "Corregido el color resaltado por error en la paleta", "Cambiar de idioma mientras respondes ya no salta un acertijo", "Los nombres de los dibujos ahora salen en tu idioma", "Cada dibujo aparece una vez antes de repetirse", "Inicio de sesión más seguro: demasiados intentos fallidos lo pausan un rato", "Pequeños arreglos y mejoras"] } }, { v: "2026-11-21.7", tr: { "en": ["What’s new", "Update", "Got it", "Better layout and keyboard for Windows, Mac and tablets", "Fixed text that was still in English (Library, email sign-up and more) in every language", "New on-screen keyboard for typing", "Chat messages now follow the language you choose", "New language: Français (Suisse)", "Usernames must be unique: you’ll be told if a name already exists", "Small fixes and improvements"], "de": ["Neuigkeiten", "Update", "Verstanden", "Besseres Layout und bessere Tastatur für Windows, Mac und Tablets", "Texte behoben, die noch auf Englisch waren (Bibliothek, E-Mail-Anmeldung u. a.), in jeder Sprache", "Neue Bildschirmtastatur zum Tippen", "Chat-Nachrichten folgen jetzt der gewählten Sprache", "Neue Sprache: Français (Suisse)", "Benutzernamen müssen einmalig sein: Du erfährst, wenn ein Name schon existiert", "Kleine Korrekturen und Verbesserungen"], "gsw": ["Was isch neu", "Update", "Verstande", "Besseres Layout und bessleri Tastatur für Windows, Mac und Tablets", "Texte korrigiert, wo no uf Änglisch gsi sind (Bibliothek, E-Mail-Aamäldig u. a.), i jeder Sprach", "Neui Bildschirmtastatur zum Tippe", "Chat-Nachrichte folged jetz de gwählte Sprach", "Neui Sprach: Français (Suisse)", "Benutzername müend einmalig sii: Du gsesch, wenn en Name scho existiert", "Chlini Korrekture und Verbesserige"], "fr": ["Nouveautés", "Mise à jour", "Compris", "Meilleure mise en page et meilleur clavier pour Windows, Mac et tablettes", "Textes encore en anglais corrigés (bibliothèque, inscription par e-mail, etc.) dans toutes les langues", "Nouveau clavier à l’écran pour écrire", "Les messages du chat suivent maintenant la langue choisie", "Nouvelle langue : Français (Suisse)", "Les noms d’utilisateur doivent être uniques : tu seras prévenu si un nom existe déjà", "Petites corrections et améliorations"], "it": ["Novità", "Aggiornamento", "Capito", "Layout e tastiera migliorati per Windows, Mac e tablet", "Corretti i testi ancora in inglese (libreria, registrazione via e-mail e altro) in ogni lingua", "Nuova tastiera sullo schermo per scrivere", "I messaggi della chat ora seguono la lingua scelta", "Nuova lingua: Français (Suisse)", "I nomi utente devono essere unici: ti avviseremo se un nome esiste già", "Piccole correzioni e miglioramenti"], "es": ["Novedades", "Actualización", "Entendido", "Mejor diseño y teclado para Windows, Mac y tabletas", "Corregidos los textos que seguían en inglés (biblioteca, registro por correo y más) en todos los idiomas", "Nuevo teclado en pantalla para escribir", "Los mensajes del chat ahora siguen el idioma elegido", "Nuevo idioma: Français (Suisse)", "Los nombres de usuario deben ser únicos: se te avisará si un nombre ya existe", "Pequeñas correcciones y mejoras"], "sr-Latn": ["Šta je novo", "Ažuriranje", "Razumem", "Bolji raspored i tastatura za Windows, Mac i tablete", "Ispravljeni tekstovi koji su ostali na engleskom (biblioteka, prijava e-poštom i drugo) na svim jezicima", "Nova tastatura na ekranu za kucanje", "Poruke u ćaskanju sada prate izabrani jezik", "Novi jezik: Français (Suisse)", "Korisnička imena moraju biti jedinstvena: dobićeš obaveštenje ako ime već postoji", "Male ispravke i poboljšanja"], "sr": ["Шта је ново", "Ажурирање", "Разумем", "Бољи распоред и тастатура за Windows, Mac и таблете", "Исправљени текстови који су остали на енглеском (библиотека, пријава е-поштом и друго) на свим језицима", "Нова тастатура на екрану за куцање", "Поруке у ћаскању сада прате изабрани језик", "Нови језик: Français (Suisse)", "Корисничка имена морају бити јединствена: добићеш обавештење ако име већ постоји", "Мале исправке и побољшања"], "jam": ["Wah new", "Update", "Mi get it", "Better layout an keyboard fi Windows, Mac an tablet dem", "Fix di text dem weh did still inna English (Library, email sign-up an more) inna every language", "New keyboard pon di screen fi type", "Chat message dem now follow di language yuh choose", "New language: Français (Suisse)", "Username haffi be one a a kind: wi will tell yuh if a name already deh deh", "Likkle fix dem an improvement dem"], "ru": ["Что нового", "Обновление", "Понятно", "Улучшены вид и клавиатура для Windows, Mac и планшетов", "Исправлены тексты, которые остались на английском (библиотека, регистрация по почте и другое), на всех языках", "Новая экранная клавиатура для ввода", "Сообщения в чате теперь следуют выбранному языку", "Новый язык: Français (Suisse)", "Имена пользователей должны быть уникальными: ты узнаешь, если имя уже существует", "Небольшие исправления и улучшения"], "zh": ["新功能", "更新", "知道了", "优化了 Windows、Mac 和平板电脑上的布局与键盘", "修复了各语言中仍显示英文的文字（图库、邮箱注册等）", "新的屏幕键盘，方便输入", "聊天消息现在会跟随你选择的语言", "新语言：Français (Suisse)", "用户名必须唯一：如果名称已存在，系统会提示你", "小修复和改进"], "hi": ["नया क्या है", "अपडेट", "समझ गया", "Windows, Mac और टैबलेट के लिए बेहतर लेआउट और कीबोर्ड", "हर भाषा में अब भी अंग्रेज़ी में दिख रहे टेक्स्ट ठीक किए (लाइब्रेरी, ईमेल साइन-अप आदि)", "टाइप करने के लिए नया ऑन-स्क्रीन कीबोर्ड", "चैट संदेश अब आपकी चुनी हुई भाषा में बदलते हैं", "नई भाषा: Français (Suisse)", "उपयोगकर्ता नाम अनोखे होने चाहिए: नाम पहले से मौजूद होने पर आपको बताया जाएगा", "छोटे सुधार और बेहतरी"], "mk": ["Што е ново", "Ажурирање", "Разбрав", "Подобар изглед и тастатура за Windows, Mac и таблети", "Поправени текстови што останаа на англиски (библиотека, регистрација со е-пошта и друго) на сите јазици", "Нова тастатура на екранот за пишување", "Пораките во разговорот сега го следат избраниот јазик", "Нов јазик: Français (Suisse)", "Корисничките имиња мора да бидат уникатни: ќе добиеш порака ако името веќе постои", "Мали поправки и подобрувања"], "pt": ["Novidades", "Atualização", "Entendi", "Melhor disposição e teclado para Windows, Mac e tablets", "Corrigidos os textos que ainda estavam em inglês (biblioteca, registo por email e mais) em todos os idiomas", "Novo teclado no ecrã para escrever", "As mensagens do chat agora seguem o idioma escolhido", "Novo idioma: Français (Suisse)", "Os nomes de utilizador têm de ser únicos: és avisado se um nome já existir", "Pequenas correções e melhorias"], "pt-BR": ["Novidades", "Atualização", "Entendi", "Layout e teclado melhores para Windows, Mac e tablets", "Corrigidos os textos que ainda estavam em inglês (biblioteca, cadastro por e-mail e mais) em todos os idiomas", "Novo teclado na tela para digitar", "As mensagens do chat agora seguem o idioma escolhido", "Novo idioma: Français (Suisse)", "Os nomes de usuário precisam ser únicos: você será avisado se um nome já existir", "Pequenas correções e melhorias"], "ar": ["الجديد", "تحديث", "فهمت", "تخطيط ولوحة مفاتيح أفضل لأجهزة Windows وMac والأجهزة اللوحية", "إصلاح النصوص التي بقيت بالإنجليزية (المكتبة، التسجيل بالبريد وغيرها) في كل اللغات", "لوحة مفاتيح جديدة على الشاشة للكتابة", "رسائل الدردشة تتبع الآن اللغة التي تختارها", "لغة جديدة: Français (Suisse)", "يجب أن تكون أسماء المستخدمين فريدة: سيتم إخبارك إذا كان الاسم موجودًا بالفعل", "إصلاحات وتحسينات صغيرة"], "ja": ["新着情報", "アップデート", "わかった", "Windows、Mac、タブレット向けにレイアウトとキーボードを改善しました", "英語のままだった文章（ライブラリ、メール登録など）をすべての言語で修正しました", "入力用の新しい画面キーボード", "チャットのメッセージが選んだ言語に合わせて切り替わります", "新しい言語：Français (Suisse)", "ユーザー名は重複できません。すでに使われている場合はお知らせします", "小さな修正と改善"], "ko": ["새로운 소식", "업데이트", "확인", "Windows, Mac, 태블릿을 위한 더 나은 화면 구성과 키보드", "영어로 남아 있던 문구(라이브러리, 이메일 가입 등)를 모든 언어에서 고쳤어요", "입력을 위한 새 화면 키보드", "채팅 메시지가 이제 선택한 언어를 따라요", "새 언어: Français (Suisse)", "사용자 이름은 고유해야 합니다. 이미 있는 이름이면 알려 드려요", "작은 수정 및 개선"], "hu": ["Újdonságok", "Frissítés", "Értem", "Jobb elrendezés és billentyűzet Windowshoz, Machez és táblagépekhez", "Kijavítottuk az angolul maradt szövegeket (könyvtár, e-mailes regisztráció stb.) minden nyelven", "Új képernyő-billentyűzet gépeléshez", "A csevegőüzenetek mostantól a választott nyelvet követik", "Új nyelv: Français (Suisse)", "A felhasználónevek egyediek kell legyenek: szólunk, ha egy név már létezik", "Apró javítások és fejlesztések"], "no": ["Hva er nytt", "Oppdatering", "Skjønner", "Bedre layout og tastatur for Windows, Mac og nettbrett", "Rettet tekster som fortsatt var på engelsk (bibliotek, e-postregistrering og mer) på alle språk", "Nytt tastatur på skjermen for skriving", "Chat-meldinger følger nå språket du velger", "Nytt språk: Français (Suisse)", "Brukernavn må være unike: du får beskjed hvis et navn allerede finnes", "Små rettelser og forbedringer"], "nl": ["Wat is er nieuw", "Update", "Begrepen", "Betere indeling en toetsenbord voor Windows, Mac en tablets", "Teksten die nog in het Engels stonden (bibliotheek, aanmelden met e-mail en meer) opgelost in elke taal", "Nieuw schermtoetsenbord om te typen", "Chatberichten volgen nu de taal die je kiest", "Nieuwe taal: Français (Suisse)", "Gebruikersnamen moeten uniek zijn: je krijgt een melding als een naam al bestaat", "Kleine fixes en verbeteringen"], "pl": ["Co nowego", "Aktualizacja", "Jasne", "Lepszy układ i klawiatura dla Windows, Maca i tabletów", "Poprawiono teksty, które wciąż były po angielsku (biblioteka, rejestracja e-mailem i inne) we wszystkich językach", "Nowa klawiatura ekranowa do pisania", "Wiadomości czatu zmieniają teraz język razem z wyborem", "Nowy język: Français (Suisse)", "Nazwy użytkowników muszą być unikalne: dostaniesz komunikat, jeśli nazwa już istnieje", "Drobne poprawki i ulepszenia"], "sv": ["Nytt", "Uppdatering", "Uppfattat", "Bättre layout och tangentbord för Windows, Mac och surfplattor", "Rättade texter som fortfarande var på engelska (bibliotek, e-postregistrering med mera) på alla språk", "Nytt tangentbord på skärmen för att skriva", "Chattmeddelanden följer nu det språk du väljer", "Nytt språk: Français (Suisse)", "Användarnamn måste vara unika: du får veta om ett namn redan finns", "Små rättningar och förbättringar"], "el": ["Τι νέο υπάρχει", "Ενημέρωση", "Το κατάλαβα", "Καλύτερη διάταξη και πληκτρολόγιο για Windows, Mac και tablet", "Διορθώθηκαν κείμενα που έμεναν στα αγγλικά (βιβλιοθήκη, εγγραφή με email κ.ά.) σε όλες τις γλώσσες", "Νέο πληκτρολόγιο οθόνης για πληκτρολόγηση", "Τα μηνύματα συνομιλίας ακολουθούν πλέον τη γλώσσα που επιλέγεις", "Νέα γλώσσα: Français (Suisse)", "Τα ονόματα χρήστη πρέπει να είναι μοναδικά: θα ειδοποιηθείς αν ένα όνομα υπάρχει ήδη", "Μικρές διορθώσεις και βελτιώσεις"], "uk": ["Що нового", "Оновлення", "Зрозуміло", "Кращий вигляд і клавіатура для Windows, Mac і планшетів", "Виправлено тексти, що лишалися англійською (бібліотека, реєстрація за поштою та інше), усіма мовами", "Нова екранна клавіатура для введення", "Повідомлення в чаті тепер відповідають обраній мові", "Нова мова: Français (Suisse)", "Імена користувачів мають бути унікальними: ти дізнаєшся, якщо ім’я вже існує", "Невеликі виправлення та покращення"] } }];
 function showUpdate() {
     if (document.getElementById("upd"))
         return;
@@ -3606,6 +3642,65 @@ addEventListener("keydown", function (e) { if (e.key === "Escape" && !$("lib").c
         TOS[c] = TOS.ar;
     }
 }
+
+/* ===== New messages + names for pictures 21-58 in every language ===== */
+(function () {
+    var M = {
+        x_wait: { en: "Too many wrong tries. Please wait a little and try again.", de: "Zu viele Fehlversuche. Bitte warte kurz und versuche es erneut.", fr: "Trop d’essais ratés. Attends un peu et réessaie.", it: "Troppi tentativi sbagliati. Aspetta un po’ e riprova.", es: "Demasiados intentos fallidos. Espera un poco e inténtalo de nuevo." },
+        x_noacct: { en: "No account found. Tap “Create account” to sign up first.", de: "Kein Konto gefunden. Tippe zuerst auf „Konto erstellen“.", fr: "Aucun compte trouvé. Touche « Créer un compte » d’abord.", it: "Nessun account trovato. Tocca «Crea account» prima.", es: "No se encontró ninguna cuenta. Toca «Crear cuenta» primero." }
+    };
+    var MA = { gsw: "de", "fr-CH": "fr", "es-MX": "es" };
+    Object.keys(UI).forEach(function (c) { Object.keys(M).forEach(function (k) { var t = M[k][c] || M[k][MA[c]]; if (t)
+        UI[c][k] = t; }); });
+    var IDX = [21, 22, 23, 24, 25, 26, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51, 52, 53, 54, 55, 56, 57, 58];
+    var N = {
+        de: "Eis|Pizza|Schneemann|Kaktus|Schildkröte|Cupcake|Apfel|Pinguin|Elefant|Giraffe|Auto|Flugzeug|Baum|Regenbogen|Frosch|Marienkäfer|Pilz|Krone|Teddybär|Regenschirm|Windmühle|U-Boot|Mond und Sterne|Ente|Ananas|UFO|Biene|Erdbeere|Schnecke|Geburtstagskuchen|Campingzelt|Lächelnder Stern",
+        fr: "Glace|Pizza|Bonhomme de neige|Cactus|Tortue|Cupcake|Pomme|Pingouin|Éléphant|Girafe|Voiture|Avion|Arbre|Arc-en-ciel|Grenouille|Coccinelle|Champignon|Couronne|Ours en peluche|Parapluie|Moulin à vent|Sous-marin|Lune et étoiles|Canard|Ananas|OVNI|Abeille|Fraise|Escargot|Gâteau d’anniversaire|Tente de camping|Étoile souriante",
+        it: "Gelato|Pizza|Pupazzo di neve|Cactus|Tartaruga|Cupcake|Mela|Pinguino|Elefante|Giraffa|Auto|Aereo|Albero|Arcobaleno|Rana|Coccinella|Fungo|Corona|Orsacchiotto|Ombrello|Mulino a vento|Sottomarino|Luna e stelle|Anatra|Ananas|UFO|Ape|Fragola|Lumaca|Torta di compleanno|Tenda da campeggio|Stella sorridente",
+        es: "Helado|Pizza|Muñeco de nieve|Cactus|Tortuga|Magdalena|Manzana|Pingüino|Elefante|Jirafa|Coche|Avión|Árbol|Arcoíris|Rana|Mariquita|Seta|Corona|Osito de peluche|Paraguas|Molino de viento|Submarino|Luna y estrellas|Pato|Piña|OVNI|Abeja|Fresa|Caracol|Tarta de cumpleaños|Tienda de campaña|Estrella sonriente",
+        pt: "Gelado|Pizza|Boneco de neve|Cacto|Tartaruga|Cupcake|Maçã|Pinguim|Elefante|Girafa|Carro|Avião|Árvore|Arco-íris|Rã|Joaninha|Cogumelo|Coroa|Ursinho de peluche|Guarda-chuva|Moinho de vento|Submarino|Lua e estrelas|Pato|Ananás|OVNI|Abelha|Morango|Caracol|Bolo de aniversário|Tenda de campismo|Estrela sorridente",
+        ru: "Мороженое|Пицца|Снеговик|Кактус|Черепаха|Капкейк|Яблоко|Пингвин|Слон|Жираф|Машина|Самолёт|Дерево|Радуга|Лягушка|Божья коровка|Гриб|Корона|Плюшевый мишка|Зонт|Ветряная мельница|Подводная лодка|Луна и звёзды|Утка|Ананас|НЛО|Пчела|Клубника|Улитка|Праздничный торт|Палатка|Улыбающаяся звезда",
+        uk: "Морозиво|Піца|Сніговик|Кактус|Черепаха|Капкейк|Яблуко|Пінгвін|Слон|Жираф|Автомобіль|Літак|Дерево|Веселка|Жаба|Божа корівка|Гриб|Корона|Плюшевий ведмедик|Парасолька|Вітряк|Підводний човен|Місяць і зірки|Качка|Ананас|НЛО|Бджола|Полуниця|Равлик|Торт на день народження|Намет|Усміхнена зірка",
+        zh: "冰淇淋|披萨|雪人|仙人掌|乌龟|纸杯蛋糕|苹果|企鹅|大象|长颈鹿|汽车|飞机|树|彩虹|青蛙|瓢虫|蘑菇|皇冠|泰迪熊|雨伞|风车|潜水艇|月亮和星星|鸭子|菠萝|不明飞行物|蜜蜂|草莓|蜗牛|生日蛋糕|露营帐篷|微笑的星星",
+        ja: "アイスクリーム|ピザ|雪だるま|サボテン|カメ|カップケーキ|りんご|ペンギン|ぞう|キリン|くるま|ひこうき|木|にじ|カエル|てんとう虫|きのこ|王冠|テディベア|かさ|風車|潜水艦|月と星|アヒル|パイナップル|UFO|ミツバチ|いちご|カタツムリ|バースデーケーキ|キャンプのテント|にっこり星",
+        ko: "아이스크림|피자|눈사람|선인장|거북이|컵케이크|사과|펭귄|코끼리|기린|자동차|비행기|나무|무지개|개구리|무당벌레|버섯|왕관|곰 인형|우산|풍차|잠수함|달과 별|오리|파인애플|UFO|꿀벌|딸기|달팽이|생일 케이크|캠핑 텐트|웃는 별",
+        hi: "आइसक्रीम|पिज़्ज़ा|स्नोमैन|कैक्टस|कछुआ|कपकेक|सेब|पेंगुइन|हाथी|जिराफ़|कार|हवाई जहाज़|पेड़|इंद्रधनुष|मेंढक|लेडीबग|मशरूम|मुकुट|टेडी बियर|छाता|पवनचक्की|पनडुब्बी|चाँद और तारे|बत्तख|अनानास|यूएफओ|मधुमक्खी|स्ट्रॉबेरी|घोंघा|जन्मदिन का केक|कैंपिंग टेंट|मुस्कुराता तारा",
+        ar: "آيس كريم|بيتزا|رجل الثلج|صبّار|سلحفاة|كب كيك|تفاحة|بطريق|فيل|زرافة|سيارة|طائرة|شجرة|قوس قزح|ضفدع|دعسوقة|فطر|تاج|دبدوب|مظلة|طاحونة هواء|غواصة|القمر والنجوم|بطة|أناناس|طبق طائر|نحلة|فراولة|حلزون|كعكة عيد ميلاد|خيمة تخييم|نجمة مبتسمة",
+        hu: "Fagylalt|Pizza|Hóember|Kaktusz|Teknős|Cupcake|Alma|Pingvin|Elefánt|Zsiráf|Autó|Repülő|Fa|Szivárvány|Béka|Katicabogár|Gomba|Korona|Plüssmaci|Esernyő|Szélmalom|Tengeralattjáró|Hold és csillagok|Kacsa|Ananász|UFO|Méhecske|Eper|Csiga|Születésnapi torta|Kempingsátor|Mosolygó csillag",
+        no: "Iskrem|Pizza|Snømann|Kaktus|Skilpadde|Cupcake|Eple|Pingvin|Elefant|Sjiraff|Bil|Fly|Tre|Regnbue|Frosk|Marihøne|Sopp|Krone|Bamse|Paraply|Vindmølle|Ubåt|Måne og stjerner|And|Ananas|UFO|Bie|Jordbær|Snegl|Bursdagskake|Campingtelt|Smilende stjerne",
+        nl: "IJsje|Pizza|Sneeuwpop|Cactus|Schildpad|Cupcake|Appel|Pinguïn|Olifant|Giraf|Auto|Vliegtuig|Boom|Regenboog|Kikker|Lieveheersbeestje|Paddenstoel|Kroon|Teddybeer|Paraplu|Windmolen|Onderzeeër|Maan en sterren|Eend|Ananas|UFO|Bij|Aardbei|Slak|Verjaardagstaart|Kampeertent|Lachende ster",
+        pl: "Lody|Pizza|Bałwan|Kaktus|Żółw|Babeczka|Jabłko|Pingwin|Słoń|Żyrafa|Samochód|Samolot|Drzewo|Tęcza|Żaba|Biedronka|Grzyb|Korona|Miś pluszowy|Parasol|Wiatrak|Łódź podwodna|Księżyc i gwiazdy|Kaczka|Ananas|UFO|Pszczoła|Truskawka|Ślimak|Tort urodzinowy|Namiot kempingowy|Uśmiechnięta gwiazda",
+        sv: "Glass|Pizza|Snögubbe|Kaktus|Sköldpadda|Cupcake|Äpple|Pingvin|Elefant|Giraff|Bil|Flygplan|Träd|Regnbåge|Groda|Nyckelpiga|Svamp|Krona|Nallebjörn|Paraply|Väderkvarn|Ubåt|Måne och stjärnor|And|Ananas|UFO|Bi|Jordgubbe|Snigel|Födelsedagstårta|Campingtält|Leende stjärna",
+        el: "Παγωτό|Πίτσα|Χιονάνθρωπος|Κάκτος|Χελώνα|Κεκάκι|Μήλο|Πιγκουίνος|Ελέφαντας|Καμηλοπάρδαλη|Αυτοκίνητο|Αεροπλάνο|Δέντρο|Ουράνιο τόξο|Βάτραχος|Πασχαλίτσα|Μανιτάρι|Στέμμα|Αρκουδάκι|Ομπρέλα|Ανεμόμυλος|Υποβρύχιο|Φεγγάρι και αστέρια|Πάπια|Ανανάς|UFO|Μέλισσα|Φράουλα|Σαλιγκάρι|Τούρτα γενεθλίων|Σκηνή κάμπινγκ|Χαμογελαστό αστέρι",
+        vi: "Kem|Pizza|Người tuyết|Xương rồng|Con rùa|Bánh cupcake|Quả táo|Chim cánh cụt|Con voi|Hươu cao cổ|Ô tô|Máy bay|Cái cây|Cầu vồng|Con ếch|Bọ rùa|Cây nấm|Vương miện|Gấu bông|Cái ô|Cối xay gió|Tàu ngầm|Mặt trăng và các vì sao|Con vịt|Quả dứa|UFO|Con ong|Quả dâu tây|Ốc sên|Bánh sinh nhật|Lều cắm trại|Ngôi sao mỉm cười",
+        th: "ไอศกรีม|พิซซ่า|มนุษย์หิมะ|กระบองเพชร|เต่า|คัพเค้ก|แอปเปิล|เพนกวิน|ช้าง|ยีราฟ|รถยนต์|เครื่องบิน|ต้นไม้|สายรุ้ง|กบ|เต่าทอง|เห็ด|มงกุฎ|หมีเท็ดดี้|ร่ม|กังหันลม|เรือดำน้ำ|พระจันทร์และดาว|เป็ด|สับปะรด|ยูเอฟโอ|ผึ้ง|สตรอว์เบอร์รี|หอยทาก|เค้กวันเกิด|เต็นท์ตั้งแคมป์|ดาวยิ้ม",
+        id: "Es krim|Pizza|Manusia salju|Kaktus|Kura-kura|Cupcake|Apel|Pinguin|Gajah|Jerapah|Mobil|Pesawat|Pohon|Pelangi|Katak|Kepik|Jamur|Mahkota|Boneka beruang|Payung|Kincir angin|Kapal selam|Bulan dan bintang|Bebek|Nanas|UFO|Lebah|Stroberi|Siput|Kue ulang tahun|Tenda berkemah|Bintang tersenyum",
+        bn: "আইসক্রিম|পিৎজা|তুষারমানব|ক্যাকটাস|কচ্ছপ|কাপকেক|আপেল|পেঙ্গুইন|হাতি|জিরাফ|গাড়ি|বিমান|গাছ|রামধনু|ব্যাঙ|লেডিবাগ|মাশরুম|মুকুট|টেডি বিয়ার|ছাতা|বায়ুকল|সাবমেরিন|চাঁদ ও তারা|হাঁস|আনারস|ইউএফও|মৌমাছি|স্ট্রবেরি|শামুক|জন্মদিনের কেক|ক্যাম্পিং তাঁবু|হাসিমুখ তারা",
+        sr: "Сладолед|Пица|Снешко Белић|Кактус|Корњача|Капкејк|Јабука|Пингвин|Слон|Жирафа|Ауто|Авион|Дрво|Дуга|Жаба|Бубамара|Печурка|Круна|Плишани меда|Кишобран|Ветрењача|Подморница|Месец и звезде|Патка|Ананас|НЛО|Пчела|Јагода|Пуж|Рођенданска торта|Шатор за камповање|Насмејана звезда",
+        mk: "Сладолед|Пица|Снежен човек|Кактус|Желка|Капкејк|Јаболко|Пингвин|Слон|Жирафа|Автомобил|Авион|Дрво|Виножито|Жаба|Бубамара|Габа|Круна|Плишано мече|Чадор|Ветерница|Подморница|Месечина и ѕвезди|Патка|Ананас|НЛО|Пчела|Јагода|Полж|Роденденска торта|Шатор за кампување|Насмеана ѕвезда"
+    };
+    var ALIAS = { gsw: "de", "fr-CH": "fr", "es-MX": "es", "pt-BR": "pt", "ar-MA": "ar", "ar-QA": "ar", "sr-Latn": "sr" };
+    var FIX = { "es-MX": { "Coche": "Carro", "Seta": "Hongo", "Tarta de cumpleaños": "Pastel de cumpleaños", "Magdalena": "Cupcake" }, "pt-BR": { "Gelado": "Sorvete", "Ananás": "Abacaxi", "Tenda de campismo": "Barraca de camping", "Ursinho de peluche": "Ursinho de pelúcia" } };
+    var CY = { "а": "a", "б": "b", "в": "v", "г": "g", "д": "d", "ђ": "đ", "е": "e", "ж": "ž", "з": "z", "и": "i", "ј": "j", "к": "k", "л": "l", "љ": "lj", "м": "m", "н": "n", "њ": "nj", "о": "o", "п": "p", "р": "r", "с": "s", "т": "t", "ћ": "ć", "у": "u", "ф": "f", "х": "h", "ц": "c", "ч": "č", "џ": "dž", "ш": "š" };
+    var lat = function (t) { return t.replace(/[\u0400-\u04FF]/g, function (ch) { var lo = ch.toLowerCase(), v = CY[lo]; if (v == null)
+        return ch; return ch === lo ? v : v.charAt(0).toUpperCase() + v.slice(1); }); };
+    var DUP = { 27: 16, 28: 17, 29: 20, 30: 18, 31: 19, 32: 15 };
+    Object.keys(UI).forEach(function (c) {
+        if (c === "en" || c === "jam" || !UI[c] || !UI[c].names)
+            return;
+        var src = N[c] ? c : ALIAS[c], list = src && N[src] ? N[src].split("|") : null;
+        if (!list || list.length !== IDX.length)
+            return;
+        if (FIX[c])
+            list = list.map(function (t) { return FIX[c][t] || t; });
+        if (c === "sr-Latn")
+            list = list.map(lat);
+        var nm = UI[c].names;
+        IDX.forEach(function (ix, k) { nm[ix] = list[k]; });
+        Object.keys(DUP).forEach(function (d) { if (nm[DUP[d]])
+            nm[d] = nm[DUP[d]]; });
+    });
+})();
 applyLang();
 /* Returning player: restore the session only now, after everything above is set up */
 if (window.__resume) {
