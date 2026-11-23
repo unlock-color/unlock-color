@@ -20,6 +20,8 @@
 pre{direction:ltr;text-align:left}[dir=rtl] .gtxt ul{padding-left:0;padding-right:20px}[dir=rtl] .gbox>.langsel{align-self:flex-start}[dir=rtl] .opt{text-align:right}
 .tgrp{display:flex;align-items:center;gap:8px;flex:none}.top .langsel{min-width:0;flex:1 1 0;max-width:none}
 .shopbtn{cursor:pointer;padding:5px 14px 5px 10px;color:var(--ink)}.shopbtn:active{transform:scale(.96)}
+.coinbtn{cursor:pointer;user-select:none}.coinbtn:active{transform:scale(.96)}.coinbtn:hover{border-color:var(--accent)}.cplus{display:inline-grid;place-items:center;width:20px;height:20px;border-radius:50%;background:var(--accent);color:var(--bg,#0f1428);font-weight:900;font-size:.95rem;line-height:1;margin-left:2px}
+.cgrid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:4px 0 12px}.cpack{display:flex;flex-direction:column;align-items:center;gap:4px;padding:14px 8px;background:var(--surface);color:var(--ink);border:1px solid var(--line);border-radius:16px;font:inherit;cursor:pointer}.cpack:hover,.cpack:focus-visible{border-color:var(--accent)}.cpack:active{transform:scale(.97)}.cpack b{font-size:1.35rem}.cpack span{font-size:.95rem;opacity:.85}
 .musicbtn{padding:5px 12px;font-size:1.05rem;line-height:1}
 .btn.alt{background:var(--surface);color:var(--ink);border:2px solid var(--line)}
 .opt.gone{opacity:.3;text-decoration:line-through}
@@ -272,7 +274,7 @@ html,body{max-width:100%;overflow-x:hidden}
 <div id="bgshow" aria-hidden="true"></div>
 <main>
   <div class="top">
-  <div class="tgrp"><div class="coins" id="coinbox" role="status" aria-label="Coins"><span class="coin" aria-hidden="true">★&#xFE0E;</span><span id="coins">0</span></div><button class="coins shopbtn" id="shopbtn" type="button"><span aria-hidden="true">🛍️</span><span id="shoplbl">Shop</span></button></div>
+  <div class="tgrp"><div class="coins coinbtn" id="coinbox" role="button" tabindex="0" aria-haspopup="dialog" aria-label="Coins"><span class="coin" aria-hidden="true">★&#xFE0E;</span><span id="coins">0</span><span class="cplus" aria-hidden="true">+</span></div><button class="coins shopbtn" id="shopbtn" type="button"><span aria-hidden="true">🛍️</span><span id="shoplbl">Shop</span></button></div>
   <select class="langsel"></select>
   </div>
   <div class="meline">
@@ -374,6 +376,16 @@ html,body{max-width:100%;overflow-x:hidden}
 </div>
 
 
+<div id="cstore" class="ov hide" role="dialog" aria-modal="true" aria-labelledby="cst">
+  <div class="gbox">
+    <h2 id="cst">Coin store</h2>
+    <p class="gs" id="css"></p>
+    <div class="coins" style="align-self:flex-start;margin:0 0 8px"><span class="coin" aria-hidden="true">★&#xFE0E;</span><span id="csn">0</span></div>
+    <p class="err" id="csmsg" role="alert"></p>
+    <div id="csbody" class="cgrid"></div>
+    <button class="btn" id="csclose" type="button">Close</button>
+  </div>
+</div>
 <div id="shop" class="ov hide" role="dialog" aria-modal="true" aria-labelledby="sht">
   <div class="gbox">
     <h2 id="sht">Shop</h2>
@@ -1916,7 +1928,6 @@ function answer(n, btn) {
         Music.no();
         track(false);
         wrongs++;
-        addCoins(-1);
         $("hint").textContent = U().no;
         $("hint").style.color = "var(--bad)";
     }
@@ -1987,7 +1998,6 @@ function tap(el, lbl) {
     else {
         $("dhint").textContent = U().wrong.replace(/\{0\}/g, n);
         $("dhint").style.color = "var(--bad)";
-        addCoins(-1);
         Music.no();
         el.classList.remove("bad");
         void el.getBBox;
@@ -3564,6 +3574,55 @@ $("shopbtn").onclick = openShop;
 $("shclose").onclick = closeShop;
 addEventListener("keydown", function (e) { if (e.key === "Escape" && !$("shop").classList.contains("hide"))
     closeShop(); });
+/* ===== Coin store: packs are shown, but real payments are NOT connected. No coins are ever given from this screen. ===== */
+var COIN_PACKS = [{ usd: 5, coins: 50 }, { usd: 10, coins: 120 }, { usd: 15, coins: 200 }, { usd: 20, coins: 300 }, { usd: 25, coins: 400 }, { usd: 30, coins: 500 }];
+{
+    var CSX = {
+        en: { cs_title: "Coin store", cs_sub: "Pick a coin pack.", cs_soon: "Buying coins isn’t turned on yet, so nothing can be charged.", cs_coins: "{0} coins", cs_open: "Open the coin store" },
+        de: { cs_title: "Münz-Shop", cs_sub: "Wähle ein Münzpaket.", cs_soon: "Münzen kaufen ist noch nicht aktiviert, es wird nichts abgebucht.", cs_coins: "{0} Münzen", cs_open: "Münz-Shop öffnen" },
+        fr: { cs_title: "Boutique de pièces", cs_sub: "Choisis un pack de pièces.", cs_soon: "L’achat de pièces n’est pas encore activé, rien ne sera débité.", cs_coins: "{0} pièces", cs_open: "Ouvrir la boutique de pièces" },
+        it: { cs_title: "Negozio di monete", cs_sub: "Scegli un pacchetto di monete.", cs_soon: "L’acquisto di monete non è ancora attivo, nulla verrà addebitato.", cs_coins: "{0} monete", cs_open: "Apri il negozio di monete" },
+        es: { cs_title: "Tienda de monedas", cs_sub: "Elige un paquete de monedas.", cs_soon: "Comprar monedas aún no está activado, no se cobrará nada.", cs_coins: "{0} monedas", cs_open: "Abrir la tienda de monedas" }
+    };
+    var CSA = { gsw: "de", "fr-CH": "fr", "es-MX": "es" };
+    Object.keys(UI).forEach(function (c) { var t = CSX[c] || CSX[CSA[c]]; if (t)
+        Object.assign(UI[c], t); });
+    if (UI.en)
+        Object.assign(UI.en, CSX.en);
+}
+function csMsg(m) { $("csmsg").textContent = m || ""; }
+function renderStore() {
+    $("cst").textContent = PT("cs_title");
+    $("css").textContent = PT("cs_sub");
+    $("csn").textContent = coins;
+    $("csclose").textContent = CH("s_close");
+    var B = $("csbody");
+    B.innerHTML = "";
+    COIN_PACKS.forEach(function (p) {
+        var b = document.createElement("button"), pr = document.createElement("b"), cn = document.createElement("span");
+        b.type = "button";
+        b.className = "cpack";
+        pr.textContent = "$" + p.usd.toFixed(2);
+        cn.textContent = "★ " + PT("cs_coins").replace("{0}", p.coins);
+        b.appendChild(pr);
+        b.appendChild(cn);
+        b.onclick = function () { csMsg(PT("cs_soon")); };
+        B.appendChild(b);
+    });
+    $("coinbox").setAttribute("title", PT("cs_open"));
+}
+function openStore() { csMsg(PT("cs_soon")); renderStore(); lock(); $("cstore").classList.remove("hide"); $("csclose").focus(); }
+function closeStore() { $("cstore").classList.add("hide"); unlock(); csMsg(""); }
+$("coinbox").onclick = function () { if (uid)
+    openStore(); };
+$("coinbox").onkeydown = function (e) { if (e.key === "Enter" || e.key === " ") {
+    e.preventDefault();
+    if (uid)
+        openStore();
+} };
+$("csclose").onclick = closeStore;
+addEventListener("keydown", function (e) { if (e.key === "Escape" && !$("cstore").classList.contains("hide"))
+    closeStore(); });
 /* ===== Library: finished drawings, private to this account on this device ===== */
 {
     var LB = { "en": { "lib": "Library", "lib_s": "Your finished drawings. Only you can see them: they are saved on this device.", "lib_empty": "No drawings yet. Finish a picture and it will show up here.", "lib_back": "Back", "lib_del": "Delete drawing", "lib_del2": "Tap again to delete" }, "de": { "lib": "Bibliothek", "lib_s": "Deine fertigen Bilder. Nur du kannst sie sehen: Sie werden auf diesem Gerät gespeichert.", "lib_empty": "Noch keine Bilder. Male ein Bild fertig, dann erscheint es hier.", "lib_back": "Zurück", "lib_del": "Bild löschen", "lib_del2": "Nochmal tippen zum Löschen" }, "fr": { "lib": "Bibliothèque", "lib_s": "Tes coloriages terminés. Toi seul peux les voir : ils sont enregistrés sur cet appareil.", "lib_empty": "Aucun dessin pour l’instant. Termine une image et elle apparaîtra ici.", "lib_back": "Retour", "lib_del": "Supprimer le dessin", "lib_del2": "Touche à nouveau pour supprimer" }, "it": { "lib": "Libreria", "lib_s": "I tuoi disegni finiti. Solo tu puoi vederli: sono salvati su questo dispositivo.", "lib_empty": "Ancora nessun disegno. Finisci un’immagine e comparirà qui.", "lib_back": "Indietro", "lib_del": "Elimina disegno", "lib_del2": "Tocca di nuovo per eliminare" }, "es": { "lib": "Biblioteca", "lib_s": "Tus dibujos terminados. Solo tú puedes verlos: se guardan en este dispositivo.", "lib_empty": "Aún no hay dibujos. Termina una imagen y aparecerá aquí.", "lib_back": "Atrás", "lib_del": "Eliminar dibujo", "lib_del2": "Toca de nuevo para eliminar" }, "pt": { "lib": "Biblioteca", "lib_s": "Os teus desenhos terminados. Só tu os podes ver: ficam guardados neste dispositivo.", "lib_empty": "Ainda não há desenhos. Termina uma imagem e ela aparece aqui.", "lib_back": "Voltar", "lib_del": "Eliminar desenho", "lib_del2": "Toca outra vez para eliminar" }, "pt-BR": { "lib": "Biblioteca", "lib_s": "Seus desenhos prontos. Só você pode vê-los: eles ficam salvos neste dispositivo.", "lib_empty": "Ainda não há desenhos. Termine uma imagem e ela aparece aqui.", "lib_back": "Voltar", "lib_del": "Excluir desenho", "lib_del2": "Toque de novo para excluir" }, "es-MX": { "lib": "Biblioteca", "lib_s": "Tus dibujos terminados. Solo tú puedes verlos: se guardan en este dispositivo.", "lib_empty": "Aún no hay dibujos. Termina una imagen y aparecerá aquí.", "lib_back": "Atrás", "lib_del": "Eliminar dibujo", "lib_del2": "Toca de nuevo para eliminar" } };
