@@ -2094,7 +2094,7 @@ catch (_) {
 function saveUsers(u) { return lsSet("users", JSON.stringify(u)); }
 
 /* ===== User IDs + player counts ===== */
-var SHOW_PLAYERS_MENU = true; /* set to false to hide the Players menu (👥) */
+var SHOW_PLAYERS_MENU = false; /* set to false to hide the Players menu (👥) */
 var pad4 = function (n) { return String(n).padStart(4, "0"); };
 /* The ID shown to players: the permanent cloud ID when cloud mode is on, otherwise the local one. */
 function idOf(u) { return u ? (window.Cloud && Cloud.on ? u.cnum : u.num) : 0; }
