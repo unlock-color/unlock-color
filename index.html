@@ -155,7 +155,6 @@ main{transition:opacity .45s ease,filter .45s ease}
 .seg button[aria-selected="true"]{background:var(--surface);box-shadow:0 1px 3px rgba(0,0,0,.2)}
 .prov{display:flex;align-items:center;justify-content:center;gap:10px;width:100%;min-height:48px;padding:13px;border-radius:12px;border:1.5px solid var(--line);background:var(--surface);font-weight:700;margin:0 0 10px}
 .prov svg{width:20px;height:20px;margin:0;background:none;border-radius:0;flex:none}
-.prov.apple{background:#000;color:#fff;border-color:#555}
 .or{display:flex;align-items:center;gap:10px;color:var(--muted);margin:6px 0 10px;font-size:.85rem}
 .or::before,.or::after{content:"";flex:1;height:1px;background:var(--line)}
 .fld{display:block;margin:0 0 10px;font-weight:700;font-size:.9rem}
@@ -170,6 +169,11 @@ main{transition:opacity .45s ease,filter .45s ease}
 .sg{display:grid;grid-template-columns:1fr 1fr;gap:8px;grid-gap:8px;margin:0 0 6px}
 .tile{background:var(--bg);border-radius:12px;padding:10px 12px}
 .tile b{display:block;font-size:1.4rem}.tile span{color:var(--muted);font-size:.8rem}
+.uidbadge{display:flex;align-items:center;justify-content:space-between;gap:10px;background:var(--bg);border:1px solid var(--line);border-radius:12px;padding:10px 14px;margin:0 0 12px}.uidbadge span{color:var(--muted);font-size:.85rem;font-weight:600}.uidbadge b{color:var(--accent);font-size:1.3rem;font-variant-numeric:tabular-nums;letter-spacing:.5px}
+.uid{color:var(--muted);font-weight:600;font-size:.8rem;flex:none;font-variant-numeric:tabular-nums}
+.prow{display:flex;align-items:center;gap:8px;padding:9px 6px;border-bottom:1px solid var(--line)}.prow.me{background:var(--bg);border-radius:10px}
+.pid{font-weight:800;color:var(--accent);flex:none;font-variant-numeric:tabular-nums}.pnm{flex:1;min-width:0;font-weight:700;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.pmeta{color:var(--muted);font-size:.8rem;flex:none;text-transform:capitalize}
+#prows{margin:6px 0 10px}
 /* Older WebViews (Chromium < 88, e.g. EMUI 9-11 Huawei Browser): no flex gap -> use margins */
 @supports not (aspect-ratio:1/1){
  .bar,.pal,.lock,.top,.coins,.chip,.prov,.or,.seg,.gck,#picrow{gap:0}
@@ -183,7 +187,7 @@ main{transition:opacity .45s ease,filter .45s ease}
 }
 </style>
 <style>
-.meline{display:flex;align-items:center;gap:8px;margin:0 0 14px}.meline .chip{margin:0;flex:1 1 0;min-width:0}.meline .shopbtn{flex:none}
+.meline{display:flex;flex-wrap:wrap;align-items:center;gap:8px;margin:0 0 14px}.meline .chip{margin:0 0 6px;flex:1 1 100%;min-width:0}.meline .shopbtn{flex:none}
 .libgrid{display:grid;grid-template-columns:1fr 1fr;gap:10px;grid-gap:10px;margin:8px 0}
 .libitem{display:flex;flex-direction:column;align-items:stretch;gap:6px;padding:8px;border:1px solid var(--line);border-radius:14px;background:var(--bg);text-align:center}
 .libitem svg,.lib1 svg{margin:0;background:var(--surface)}
@@ -278,9 +282,10 @@ html,body{max-width:100%;overflow-x:hidden}
   <select class="langsel"></select>
   </div>
   <div class="meline">
-  <button class="chip" id="me" type="button" aria-label="Your stats"><span class="av" id="av" aria-hidden="true"></span><span class="nm" id="mename"></span><span data-i="s_chip" data-pre="· " style="color:var(--muted);font-weight:500">· Stats</span></button>
+  <button class="chip" id="me" type="button" aria-label="Your stats"><span class="av" id="av" aria-hidden="true"></span><span class="nm" id="mename"></span><span class="uid" id="meid"></span><span data-i="s_chip" data-pre="· " style="color:var(--muted);font-weight:500">· Stats</span></button>
   <button class="coins shopbtn" id="libbtn" type="button"><span aria-hidden="true">📚</span><span id="liblbl">Library</span></button>
   <button class="coins shopbtn musicbtn" id="musicbtn" type="button" aria-pressed="true" aria-label="Music on">🔊</button>
+  <button class="coins shopbtn musicbtn" id="plbtn" type="button" aria-haspopup="dialog" aria-label="Players">👥</button>
   </div>
   <h1 id="h1">Unlock &amp; Color</h1>
   <p class="sub" id="sub"></p>
@@ -316,11 +321,11 @@ html,body{max-width:100%;overflow-x:hidden}
       <h3>1. What the Game is</h3>
       <p>Unlock &amp; Color is a free educational game. Players answer puzzles from first grade to college level, and each correct answer unlocks a color-by-number picture. The Game may include virtual coins. Coins are only a fun score inside the Game: they have no monetary value, cannot be bought, sold, transferred or exchanged for money or anything else, and may be reset or removed at any time. The Game is meant for fun and general learning, not as a school curriculum or a test.</p>
       <h3>2. Who can use it</h3>
-      <p>The Game is for all ages. Players under 18 should use it with the permission of a parent or guardian. You do not need an account to play: you can play as a guest. You can optionally create an account (with email, Google or Apple) to save your progress and stats.</p>
+      <p>The Game is for all ages. Players under 18 should use it with the permission of a parent or guardian. You do not need an account to play: you can play as a guest. You can optionally create an account (with email or Google) to save your progress and stats.</p>
       <h3>3. Your information</h3>
       <ul>
-        <li>You can play as a guest without giving any personal information. If you create an account, the Game stores your name, your email address (or the user ID that Google or Apple provides), an optional profile picture (accounts only, not guests), and your progress, coins and statistics. In this version of the Game this is saved only on your own device, in your browser’s local storage; it is not sent to our servers. Any personal data is handled in line with the Swiss Federal Act on Data Protection (FADP).</li>
-        <li>If you sign in with Google or Apple, you are taken to that provider, which handles your login under its own privacy policy and tells the Game your name, email address and a user ID. We never see your Google or Apple password. For email accounts, your password is stored on your device only in scrambled (hashed) form.</li>
+        <li>You can play as a guest without giving any personal information. If you create an account, the Game stores your name, your email address (or the user ID that Google provides), an optional profile picture (accounts only, not guests), and your progress, coins and statistics. Your progress, coins and statistics are saved on your own device, in your browser’s local storage. Your account record (name, email address, user ID, number of logins and any moderation status such as a warning or a ban) is also stored on our server, hosted by Google Firebase, so that the Game can count players and enforce its rules. Any personal data is handled in line with the Swiss Federal Act on Data Protection (FADP).</li>
+        <li>If you sign in with Google, you are taken to that provider, which handles your login under its own privacy policy and tells the Game your name, email address and a user ID. We never see your Google password. For email accounts, your password is stored on your device only in scrambled (hashed) form.</li>
         <li>You can log out, or delete your account and all its saved data, at any time from the Stats screen. Clearing your browser data also removes it.</li>
         <li>Your browser may save your coin score and your acceptance of these Terms on your own device (local storage). This is only used to make the Game work and remember your choices. You can clear it at any time in your browser settings.</li>
         <li>The Game is hosted by a third-party web host, which may collect technical information such as your IP address under its own privacy policy. This may involve processing outside Switzerland.</li>
@@ -355,7 +360,6 @@ html,body{max-width:100%;overflow-x:hidden}
     <div class="seg" role="tablist"><button id="tabc" type="button" role="tab" aria-selected="true">Create account</button><button id="tabl" type="button" role="tab" aria-selected="false">Log in</button></div>
     <div id="nrow"><label class="fld" style="margin-bottom:4px"><span data-i="a_un">Username</span><input id="aname" type="text" autocomplete="nickname" autocapitalize="words" autocorrect="off" spellcheck="false" enterkeyhint="done" maxlength="20" data-ip="a_ph" placeholder="3–20 characters"></label><p class="small" data-i="a_hint" style="text-align:left;margin:0 0 12px">Needed for guests and new accounts. Please keep it kind: no racist, hateful or discriminatory names.</p></div>
     <button class="prov" id="bg" type="button"><svg viewBox="0 0 48 48" aria-hidden="true"><path fill="#EA4335" d="M24 9.5c3.5 0 6.6 1.2 9.1 3.6l6.8-6.8C35.8 2.4 30.3 0 24 0 14.6 0 6.5 5.4 2.6 13.2l7.9 6.1C12.4 13.6 17.7 9.5 24 9.5z"/><path fill="#4285F4" d="M46.5 24.5c0-1.6-.1-3.1-.4-4.5H24v9h12.7c-.6 3-2.3 5.5-4.8 7.2l7.5 5.8c4.4-4.1 7.1-10.1 7.1-17.5z"/><path fill="#FBBC05" d="M10.5 28.7a14.5 14.5 0 0 1 0-9.4l-7.9-6.1a24 24 0 0 0 0 21.6l7.9-6.1z"/><path fill="#34A853" d="M24 48c6.5 0 11.9-2.1 15.9-5.8l-7.5-5.8c-2.1 1.4-4.9 2.3-8.4 2.3-6.3 0-11.6-4.1-13.5-9.8l-7.9 6.1C6.5 42.6 14.6 48 24 48z"/></svg><span id="bgt">Sign up with Google</span></button>
-    <button class="prov apple" id="ba" type="button"><svg viewBox="0 0 24 24" aria-hidden="true" fill="#fff"><path d="M16.365 1.43c0 1.14-.493 2.27-1.177 3.08-.744.9-1.99 1.57-2.987 1.57-.12 0-.23-.02-.3-.03-.01-.06-.04-.22-.04-.39 0-1.15.572-2.27 1.206-2.98.804-.94 2.142-1.64 3.248-1.68.03.13.05.28.05.43zm4.565 15.71c-.03.07-.463 1.58-1.518 3.12-.945 1.34-1.94 2.71-3.43 2.71-1.517 0-1.9-.88-3.63-.88-1.698 0-2.302.91-3.67.91-1.377 0-2.332-1.26-3.428-2.8-1.287-1.82-2.323-4.63-2.323-7.28 0-4.28 2.797-6.55 5.552-6.55 1.448 0 2.675.95 3.6.95.865 0 2.222-1.01 3.902-1.01.613 0 2.886.06 4.374 2.19-.13.09-2.383 1.37-2.383 4.19 0 3.26 2.854 4.42 2.955 4.45z"/></svg><span id="bat">Sign up with Apple</span></button>
     <div class="or" data-i="a_or">or with email</div>
     <form id="af" novalidate>
       <label class="fld"><span data-i="a_em">Email</span><input id="aemail" type="email" autocomplete="email" inputmode="email" autocapitalize="off" autocorrect="off" spellcheck="false" enterkeyhint="next" maxlength="120"></label>
@@ -372,7 +376,7 @@ html,body{max-width:100%;overflow-x:hidden}
       <button class="link" id="vback" type="button">Back</button>
     </div>
     <button class="link" id="aguest" type="button">Continue as guest</button>
-    <p class="small" data-i="a_dev">Accounts are saved on this device only.</p>
+    <p class="small" data-i="a_dev">Your progress is saved on this device. Your account is stored online.</p>
   </div>
 </div>
 
@@ -411,12 +415,31 @@ html,body{max-width:100%;overflow-x:hidden}
   <div class="gbox">
     <h2 id="st">Your stats</h2>
     <p class="gs" id="who"></p>
+    <div class="uidbadge hide" id="uidbadge"><span>Your user ID</span><b id="uidnum"></b></div>
     <div id="picrow" class="hide"><span class="av big" id="bigav" aria-hidden="true"></span><div><button class="link" id="pchange" type="button">Change picture</button><button class="link" id="premove" type="button">Remove picture</button></div><input id="pfile" type="file" accept="image/*" hidden></div>
     <p class="err" id="perr" role="alert"></p>
     <div class="sg" id="sg"></div>
     <button class="btn" id="sclose" type="button">Close</button>
     <button class="link" id="slogout" type="button">Log out</button>
     <button class="link" id="sdel" type="button" style="color:var(--bad)">Delete account &amp; data</button>
+  </div>
+</div>
+
+<div id="plist" class="ov hide" role="dialog" aria-modal="true" aria-labelledby="plt">
+  <div class="gbox">
+    <h2 id="plt">Players</h2>
+    <p class="gs" id="pdesc">Accounts, logins and guests on this device.</p>
+    <div class="sg" id="pg"></div>
+    <div id="prows"></div>
+    <button class="btn" id="pclose" type="button">Close</button>
+  </div>
+</div>
+
+<div id="cmsg" class="ov hide" role="alertdialog" aria-modal="true" aria-labelledby="cmt" style="z-index:9999">
+  <div class="gbox" style="text-align:center">
+    <h2 id="cmt"></h2>
+    <p class="gs" id="cmb" style="white-space:pre-wrap"></p>
+    <button class="btn hide" id="cmok" type="button">I understand</button>
   </div>
 </div>
 
@@ -432,6 +455,10 @@ html,body{max-width:100%;overflow-x:hidden}
   </div>
 </div>
 
+<script>
+/* ===== CLOUD (Firebase): paste your config here. Leave apiKey empty to stay in local-only mode. ===== */
+window.FIREBASE_CONFIG = { apiKey: "AIzaSyBgl58_5eAd9ni8jilaZFcPAz6iu9BO21c", authDomain: "unlock-color.firebaseapp.com", projectId: "unlock-color", storageBucket: "unlock-color.firebasestorage.app", messagingSenderId: "362464520368", appId: "1:362464520368:web:85a1a5fef2e2ef5bcaf375" };
+</script>
 <script>
 /* Legacy-browser support (iOS 9-12, old Android WebViews). Plain ES5 on purpose. */
 (function (w) {
@@ -1501,7 +1528,7 @@ var UI = {
     en: { title: "Unlock & Color", sub: "Solve a puzzle from first grade up to college. Each win unlocks a color-by-number picture.", ok: "Correct! Unlocking your picture…", no: "Not quite. Try another answer.", unlocked: "Unlocked:", names: ["Bird", "Fish", "House", "Rocket", "Flower"], pick: "Pick a color, then tap its number. {0} of {1} filled.", done: "Finished! Great work.", wrong: "That space is number {0}. Pick color {0}.", next: "Next puzzle", again: "Play again", color: "Color", college: "College" },
 };
 var CK = "tos_t,tos_s,tos_f,tos_b,a_ct,a_wb,a_s1,a_s2,a_tc,a_tl,a_un,a_ph,a_hint,a_su,a_li,a_or,a_em,a_pw,a_guest,a_dev,s_t,s_chip,s_close,s_out,s_acc,s_del,s_del2,s_guest,t_solved,t_tried,t_acc,t_first,t_best,t_pics,t_coins,t_prog,e_guest,e_email,e_pw,e_bad".split(",");
-var CV = { "en": "Terms of Service|Please read and accept to start playing. (The full Terms are in English.)|By tapping “Accept & play” you agree to these Terms (or your parent or guardian has, for you).|Accept & play|Create your account|Welcome back|Save your progress, coins and stats.|Log in to pick up where you left off.|Create account|Log in|Username|3–20 characters|Needed for guests and new accounts. Please keep it kind: no racist, hateful or discriminatory names.|Sign up with {0}|Log in with {0}|or with email|Email|Password|Continue as guest|Accounts are saved on this device only.|Your stats|Stats|Close|Log out|Create account or log in|Delete account & data|Tap again to delete everything|saved on this device. Create an account to keep it under your name.|Puzzles solved|Answers tried|Accuracy|First-try wins|Best streak|Pictures colored|Coins|Progress|Pick a username to play as a guest.|Please enter a valid email address.|Password must be at least 8 characters.|Wrong email or password." };
+var CV = { "en": "Terms of Service|Please read and accept to start playing. (The full Terms are in English.)|By tapping “Accept & play” you agree to these Terms (or your parent or guardian has, for you).|Accept & play|Create your account|Welcome back|Save your progress, coins and stats.|Log in to pick up where you left off.|Create account|Log in|Username|3–20 characters|Needed for guests and new accounts. Please keep it kind: no racist, hateful or discriminatory names.|Sign up with {0}|Log in with {0}|or with email|Email|Password|Continue as guest|Your progress is saved on this device. Your account is stored online.|Your stats|Stats|Close|Log out|Create account or log in|Delete account & data|Tap again to delete everything|saved on this device. Create an account to keep it under your name.|Puzzles solved|Answers tried|Accuracy|First-try wins|Best streak|Pictures colored|Coins|Progress|Pick a username to play as a guest.|Please enter a valid email address.|Password must be at least 8 characters.|Wrong email or password." };
 var _loop_1 = function (c) {
     CV[c] = CV[c].replace(/ \([^|()]*\)\|/, "|");
     var v = CV[c].split("|");
@@ -2031,9 +2058,9 @@ function applyLang() {
         showPuzzle();
 }
 /* ===== Accounts, saving and stats ===== */
-/* To turn on real Google / Apple sign-in, fill these in (see notes). */
-var AUTH_CONFIG = { googleClientId: "1069541751577-l3jflo8f78qu0u296r5b2h804u26k8g5.apps.googleusercontent.com", appleClientId: "", appleRedirectUri: "" };
-/* Show the Google/Apple buttons even before they are configured (design preview). Set to false to hide unconfigured buttons. */
+/* Google sign-in client ID. */
+var AUTH_CONFIG = { googleClientId: "1069541751577-l3jflo8f78qu0u296r5b2h804u26k8g5.apps.googleusercontent.com" };
+/* Show the Google button even before it is configured (design preview). Set to false to hide it. */
 /* Email verification codes are sent with EmailJS (https://www.emailjs.com, free tier). Fill these in. */
 var EMAIL_CONFIG = { serviceId: "service_lnvjo97", templateId: "template_utleyof", publicKey: "VkNUzVrTbS2akgP1O" };
 var SHOW_PREVIEW = false;
@@ -2065,6 +2092,107 @@ catch (_) {
     return {};
 } }
 function saveUsers(u) { return lsSet("users", JSON.stringify(u)); }
+
+/* ===== User IDs + player counts ===== */
+var SHOW_PLAYERS_MENU = true; /* set to false to hide the Players menu (👥) */
+var pad4 = function (n) { return String(n).padStart(4, "0"); };
+/* The ID shown to players: the permanent cloud ID when cloud mode is on, otherwise the local one. */
+function idOf(u) { return u ? (window.Cloud && Cloud.on ? u.cnum : u.num) : 0; }
+function nextNum(U) {
+    var m = parseInt(lsGet("uc_next") || "0", 10) || 0;
+    Object.keys(U).forEach(function (k) { if (U[k] && U[k].num > m)
+        m = U[k].num; });
+    m++;
+    lsSet("uc_next", String(m));
+    return m;
+}
+/* Give every existing account an ID too (oldest account = #0001) */
+function ensureNums() {
+    var U = users(), todo = Object.keys(U).filter(function (k) { return U[k] && !U[k].num; });
+    if (!todo.length)
+        return;
+    todo.sort(function (a, b) { return (U[a].created || 0) - (U[b].created || 0); });
+    todo.forEach(function (k) { U[k].num = nextNum(U); });
+    saveUsers(U);
+}
+ensureNums();
+function evGet() { try {
+    return JSON.parse(lsGet("uc_ev") || "{}") || {};
+}
+catch (_) {
+    return {};
+} }
+function logEv(kind, provider, id) {
+    var S = evGet();
+    S[kind] = S[kind] || {};
+    S[kind][provider] = (S[kind][provider] || 0) + 1;
+    lsSet("uc_ev", JSON.stringify(S));
+    if (id && id !== "guest") {
+        var U = users();
+        if (U[id]) {
+            if (kind === "login")
+                U[id].logins = (U[id].logins || 0) + 1;
+            U[id].last = Date.now();
+            saveUsers(U);
+        }
+    }
+}
+function evSum(o) { var t = 0; for (var k in (o || {}))
+    t += o[k]; return t; }
+function showPlayers() {
+    var U = users(), S = evGet();
+    var ids = Object.keys(U).filter(function (k) { return U[k]; }).sort(function (a, b) { return (idOf(U[a]) || 0) - (idOf(U[b]) || 0); });
+    var by = { email: 0, google: 0 };
+    ids.forEach(function (k) { var p = U[k].provider; by[p] = (by[p] || 0) + 1; });
+    var cl = window.Cloud && Cloud.on, cs = cl ? (Cloud.stats || {}) : null;
+    var tiles = cl ? [[cs.accounts === undefined ? "…" : cs.accounts | 0, "Accounts · all players"], [cs.logins === undefined ? "…" : cs.logins | 0, "Logins · all players"], [ids.length, "Accounts · this device"], [evSum(S.guest), "Guest plays · this device"], [by.email, "Email · this device"], [by.google, "Google · this device"]]
+        : [[ids.length, "Accounts"], [evSum(S.signup), "Sign-ups"], [evSum(S.login), "Logins"], [evSum(S.guest), "Guest plays"], [by.email, "Email accounts"], [by.google, "Google accounts"]];
+    $("pdesc").textContent = cl ? "● Live totals for all players. Updates instantly." : "Accounts, logins and guests on this device.";
+    var g = $("pg");
+    g.textContent = "";
+    tiles.forEach(function (t) {
+        var d = document.createElement("div"), b = document.createElement("b"), sp = document.createElement("span");
+        d.className = "tile";
+        b.textContent = t[0];
+        sp.textContent = t[1];
+        d.appendChild(b);
+        d.appendChild(sp);
+        g.appendChild(d);
+    });
+    var r = $("prows");
+    r.textContent = "";
+    if (!ids.length) {
+        var e = document.createElement("p");
+        e.className = "gs";
+        e.textContent = "No accounts on this device yet.";
+        r.appendChild(e);
+    }
+    ids.forEach(function (k) {
+        var u = U[k], row = document.createElement("div"), a = document.createElement("span"), n = document.createElement("span"), m = document.createElement("span"), l = u.logins || 0;
+        row.className = "prow" + (k === uid ? " me" : "");
+        a.className = "pid";
+        a.textContent = idOf(u) ? "#" + pad4(idOf(u)) : "#—";
+        n.className = "pnm";
+        n.textContent = u.name || "Player";
+        m.className = "pmeta";
+        m.textContent = (u.provider || "") + " · " + l + " login" + (l === 1 ? "" : "s");
+        row.appendChild(a);
+        row.appendChild(n);
+        row.appendChild(m);
+        r.appendChild(row);
+    });
+    lock();
+    $("plist").classList.remove("hide");
+    $("pclose").focus();
+}
+function closePlayers() { $("plist").classList.add("hide"); unlock(); }
+$("plbtn").onclick = showPlayers;
+$("pclose").onclick = closePlayers;
+if (!SHOW_PLAYERS_MENU)
+    $("plbtn").classList.add("hide");
+document.addEventListener("keydown", function (e) { if (e.key === "Escape" && !$("plist").classList.contains("hide"))
+    closePlayers(); });
+
 function loadData(id) { try {
     var d = JSON.parse(lsGet("data:" + id) || "null");
     if (d) {
@@ -2227,6 +2355,8 @@ function enter(id, gname) {
     unlock();
     applyLang();
     showUpdate();
+    if (window.Cloud)
+        Cloud.attach(id);
 }
 function setMode(m) {
     authMode = m;
@@ -2236,7 +2366,6 @@ function setMode(m) {
     $("at").textContent = CH(c ? "a_ct" : "a_wb");
     $("asub").textContent = CH(c ? "a_s1" : "a_s2");
     $("bgt").textContent = CH(c ? "a_su" : "a_li").replace("{0}", "Google");
-    $("bat").textContent = CH(c ? "a_su" : "a_li").replace("{0}", "Apple");
     $("nrow").classList.toggle("hide", !c);
     $("asubmit").textContent = CH(c ? "a_tc" : "a_tl");
     $("apw").setAttribute("autocomplete", c ? "new-password" : "current-password");
@@ -2267,6 +2396,7 @@ $("aguest").onclick = function () {
         $("aname").focus();
         return;
     }
+    logEv("guest", "guest");
     enter("guest", n);
 };
 $("af").onsubmit = function (e) { return __awaiter(void 0, void 0, void 0, function () {
@@ -2277,6 +2407,8 @@ $("af").onsubmit = function (e) { return __awaiter(void 0, void 0, void 0, funct
                 e.preventDefault();
                 err("");
                 email = $("aemail").value.trim().toLowerCase(), pw = $("apw").value, name = $("aname").value.trim();
+                if (window.Cloud)
+                    Cloud.pw = pw;
                 if (!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(email))
                     return [2 /*return*/, err(CH("e_email"))];
                 if (!(window.crypto && crypto.subtle))
@@ -2326,6 +2458,7 @@ $("af").onsubmit = function (e) { return __awaiter(void 0, void 0, void 0, funct
                     return [2 /*return*/, err(bad)];
                 }
                 lsDel("lf:" + email);
+                logEv("login", "email", id);
                 enter(id);
                 _a.label = 7;
             case 7: return [3 /*break*/, 10];
@@ -2619,10 +2752,13 @@ $("vok").onclick = function () { return __awaiter(void 0, void 0, void 0, functi
                     setMode("login");
                     return [2 /*return*/, err(PT("x_exists"))];
                 }
-                U_1[id] = { id: id, provider: "email", name: vf.name, email: vf.email, salt: vf.salt, hash: vf.hash, verified: true, created: Date.now() };
+                U_1[id] = { id: id, provider: "email", name: vf.name, email: vf.email, salt: vf.salt, hash: vf.hash, verified: true, created: Date.now(), num: nextNum(U_1), logins: 0 };
                 if (!saveUsers(U_1))
                     return [2 /*return*/, verr(PT("x_save"))];
                 endVerify();
+                logEv("signup", "email", id);
+                if (window.Cloud)
+                    Cloud.pw = $("apw").value;
                 enter(id);
                 offerPic();
                 return [3 /*break*/, 5];
@@ -2666,19 +2802,20 @@ function social(provider, sub, name, email) {
             name = autoName(name, email);
             isNew = true;
         }
-        U[id] = { id: id, provider: provider, name: name, email: email || "", created: Date.now() };
+        U[id] = { id: id, provider: provider, name: name, email: email || "", created: Date.now(), num: nextNum(U), logins: 0 };
     }
     else if (name && !U[id].name)
         U[id].name = name;
     if (!saveUsers(U))
         return err(PT("x_save"));
+    logEv(isNew ? "signup" : "login", provider, id);
     enter(id);
     if (isNew)
         offerPic();
 }
 function loadScript(src) { return new Promise(function (res, rej) { var s = document.createElement("script"), t = setTimeout(function () { return rej(new Error("timeout")); }, 8000); s.src = src; s.async = true; s.onload = function () { clearTimeout(t); res(); }; s.onerror = function () { clearTimeout(t); rej(new Error("load")); }; document.head.appendChild(s); }); }
 function hideProv(id) { var b = $(id); if (b)
-    b.classList.add("hide"); var any = !$("bg").classList.contains("hide") || !$("ba").classList.contains("hide"); var o = document.querySelector("#auth .or"); if (o)
+    b.classList.add("hide"); var any = !$("bg").classList.contains("hide"); var o = document.querySelector("#auth .or"); if (o)
     o.classList.toggle("hide", !any); }
 var socialReady = false, gBlocked = false;
 function preloadSocial() {
@@ -2687,17 +2824,13 @@ function preloadSocial() {
     socialReady = true;
     if (!AUTH_CONFIG.googleClientId && !SHOW_PREVIEW)
         hideProv("bg");
-    if (!AUTH_CONFIG.appleClientId && !SHOW_PREVIEW)
-        hideProv("ba");
     if (AUTH_CONFIG.googleClientId)
         loadScript("https://accounts.google.com/gsi/client").catch(function () { gBlocked = true; });
-    if (AUTH_CONFIG.appleClientId)
-        loadScript("https://appleid.cdn-apple.com/appleauth/static/jsapi/appleid/1/en_US/appleid.auth.js").then(function () {
-            AppleID.auth.init({ clientId: AUTH_CONFIG.appleClientId, scope: "name email", redirectURI: AUTH_CONFIG.appleRedirectUri || location.origin + location.pathname, state: "uc", usePopup: true });
-        }).catch(function () { return hideProv("ba"); });
 }
 $("bg").onclick = function () {
     err("");
+    if (window.Cloud && Cloud.on)
+        return Cloud.google();
     if (!AUTH_CONFIG.googleClientId)
         return err(PT("x_gsetup"));
     if (authMode === "create") {
@@ -2736,41 +2869,6 @@ $("bg").onclick = function () {
         err(PT("x_gfail"));
     }
 };
-$("ba").onclick = function () { return __awaiter(void 0, void 0, void 0, function () {
-    var ne, r, p, n, e_11;
-    return __generator(this, function (_a) {
-        switch (_a.label) {
-            case 0:
-                err("");
-                if (!AUTH_CONFIG.appleClientId)
-                    return [2 /*return*/, err(PT("x_asetup"))];
-                if (authMode === "create") {
-                    ne = nameCheck($("aname").value.trim());
-                    if (ne)
-                        return [2 /*return*/, err(ne)];
-                }
-                if (!window.AppleID)
-                    return [2 /*return*/, err(PT("x_aload"))];
-                _a.label = 1;
-            case 1:
-                _a.trys.push([1, 3, , 4]);
-                return [4 /*yield*/, AppleID.auth.signIn()];
-            case 2:
-                r = _a.sent(), p = parseJwt(r.authorization.id_token), n = r.user && r.user.name ? [r.user.name.firstName, r.user.name.lastName].filter(Boolean).join(" ") : "";
-                if (!p.sub)
-                    throw 0;
-                social("apple", p.sub, n, (r.user && r.user.email) || p.email);
-                return [3 /*break*/, 4];
-            case 3:
-                e_11 = _a.sent();
-                if (e_11 && e_11.error === "popup_closed_by_user")
-                    return [2 /*return*/];
-                err(PT("x_afail"));
-                return [3 /*break*/, 4];
-            case 4: return [2 /*return*/];
-        }
-    });
-}); };
 var statsOpen = false, statsPushed = false;
 function popStats() { if (statsPushed) {
     statsPushed = false;
@@ -2792,6 +2890,8 @@ function showStats() {
     var tiles = [[s.correct, CH("t_solved")], [s.answered, CH("t_tried")], [acc + "%", CH("t_acc")], [s.first, CH("t_first")], [s.best, CH("t_best")], [s.pics, CH("t_pics")], [coins, CH("t_coins")], [Math.min(i, N) + " / " + N, CH("t_prog")]];
     $("sg").innerHTML = tiles.map(function (t) { return "<div class=\"tile\"><b>".concat(t[0], "</b><span>").concat(t[1], "</span></div>"); }).join("");
     $("who").textContent = uid === "guest" ? (D.name || "Guest") + " · " + CH("s_guest") : (u.name || "Player") + (u.email ? " · " + u.email : "");
+    $("uidnum").textContent = idOf(u) ? "#" + pad4(idOf(u)) : "";
+    $("uidbadge").classList.toggle("hide", uid === "guest" || !idOf(u));
     $("slogout").textContent = uid === "guest" ? CH("s_acc") : CH("s_out");
     $("sdel").textContent = CH("s_del");
     $("sdel").dataset.arm = "";
@@ -2939,6 +3039,8 @@ else
 window.addEventListener("popstate", function () { if (statsOpen)
     closeStats(true); });
 function leave() {
+    if (window.Cloud)
+        Cloud.detach();
     clearTimeout(drawT);
     locked = false;
     statsOpen = false;
@@ -3517,7 +3619,8 @@ for (var c in SH_TOS) {
         TOS[c] = TOS[c].replace(o1, n1).replace(o2, n2);
     }
 }
-function showName() { var b = (D && D.shop && D.shop.eq) || ""; $("mename").textContent = (b ? b + " " : "") + curName; }
+function showName() { var b = (D && D.shop && D.shop.eq) || ""; $("mename").textContent = (b ? b + " " : "") + curName; var e = $("meid"), u = uid && uid !== "guest" ? users()[uid] : null; if (e)
+    e.textContent = u && idOf(u) ? "#" + pad4(idOf(u)) : ""; }
 function updHint() {
     var n = D.shop ? D.shop.hints : 0, b = $("hintbtn");
     if (!b)
@@ -4228,6 +4331,194 @@ $("aname").addEventListener("input", function () {
 })();
 
 if ("serviceWorker" in navigator) { window.addEventListener("load", function () { navigator.serviceWorker.register("sw.js").catch(function () { }); }); }
+</script>
+<script>
+/* ===== Cloud layer (Firebase): permanent user IDs, live player counts, staff warnings and bans =====
+   Dormant unless window.FIREBASE_CONFIG has an apiKey. Needs the Firestore rules in firestore.rules. */
+(function () {
+    var CFG = window.FIREBASE_CONFIG || {};
+    var on = !!(CFG.apiKey && CFG.projectId);
+    var C = window.Cloud = { on: on, stats: null, pw: null };
+    var noop = function () { };
+    if (!on) { C.attach = C.detach = C.google = noop; return; }
+    var V = "10.12.2", fb = null, auth = null, db = null, loading = null, authReady = null;
+    var subs = [], beat = 0, seq = 0, uref = null;
+    function TS() { return fb.firestore.FieldValue.serverTimestamp(); }
+    function INC(n) { return fb.firestore.FieldValue.increment(n); }
+    function load() {
+        if (loading)
+            return loading;
+        var base = "https://www.gstatic.com/firebasejs/" + V + "/";
+        loading = ["firebase-app-compat.js", "firebase-auth-compat.js", "firebase-firestore-compat.js"].reduce(function (p, f) { return p.then(function () { return loadScript(base + f); }); }, Promise.resolve()).then(function () {
+            fb = window.firebase;
+            fb.initializeApp(CFG);
+            auth = fb.auth();
+            db = fb.firestore();
+            authReady = new Promise(function (res) { var un = auth.onAuthStateChanged(function (u) { un(); res(u); }); });
+            /* Public live counters: everyone can read these, even before logging in. */
+            db.doc("meta/stats").onSnapshot(function (s) {
+                C.stats = s.exists ? s.data() : { accounts: 0, logins: 0 };
+                if (!$("plist").classList.contains("hide"))
+                    showPlayers();
+            }, noop);
+        }).catch(function (e) { loading = null; throw e; });
+        return loading;
+    }
+    C.load = load;
+    load().catch(noop); /* preload so the Google popup is not blocked later */
+    function say(title, body, ok) {
+        $("cmt").textContent = title;
+        $("cmb").textContent = body;
+        var b = $("cmok");
+        b.classList.toggle("hide", !ok);
+        b.onclick = function () { $("cmsg").classList.add("hide"); unlock(); if (ok)
+            ok(); };
+        lock();
+        $("cmsg").classList.remove("hide");
+        if (ok)
+            b.focus();
+    }
+    function activeBan(d) { var b = d && d.banned; return !!(d && d.status === "banned" && (!b || !b.until || b.until > Date.now())); }
+    function showBan(d) {
+        var b = d.banned || {}, t = b.until ? "Until " + new Date(b.until).toLocaleString() + "." : "This ban is permanent.";
+        C.detach();
+        if (uid)
+            leave();
+        say("Account banned", (b.reason ? b.reason + "\n\n" : "") + t + "\nIf you think this is a mistake, contact the game owner.", null);
+    }
+    function handle(d) {
+        if (activeBan(d))
+            return showBan(d);
+        var w = d.warn;
+        if (w && w.id !== d.warnAck && $("cmsg").classList.contains("hide"))
+            say("Message from the staff", w.text || "Please follow the rules.", function () { if (uref)
+                uref.update({ warnAck: w.id }).catch(noop); });
+    }
+    C.refreshId = function () {
+        var u = uid && uid !== "guest" ? users()[uid] : null;
+        showName();
+        if (u && $("uidnum")) {
+            $("uidnum").textContent = u.cnum ? "#" + pad4(u.cnum) : "";
+            $("uidbadge").classList.toggle("hide", !u.cnum);
+        }
+    };
+    function fbEmail(email, pw) {
+        return auth.signInWithEmailAndPassword(email, pw).then(function (r) { return r.user; }, function (e) {
+            if (e.code === "auth/user-not-found" || e.code === "auth/invalid-credential" || e.code === "auth/invalid-login-credentials")
+                return auth.createUserWithEmailAndPassword(email, pw).then(function (r) { return r.user; });
+            throw e;
+        });
+    }
+    function relink(msg) {
+        C.detach();
+        if (uid)
+            leave();
+        setMode("login");
+        err(msg || "Please log in again to connect your account to the cloud.");
+    }
+    C.attach = function (localId) {
+        if (localId === "guest")
+            return;
+        var my = ++seq;
+        (function () {
+            return load().then(function () { return authReady; }).then(function (fu0) {
+                var lu = users()[localId], fu = auth.currentUser || fu0;
+                if (!lu || my !== seq)
+                    return;
+                var p = Promise.resolve(fu);
+                if (lu.provider === "email" && (!fu || fu.email !== lu.email))
+                    p = C.pw ? fbEmail(lu.email, C.pw) : Promise.resolve(null);
+                return p.then(function (u) {
+                    C.pw = null;
+                    var gok = lu.provider !== "google" || (u && u.providerData.some(function (d) { return d.providerId === "google.com" && "google:" + d.uid === localId; }));
+                    if (!u || !gok || my !== seq)
+                        return my === seq ? relink() : null;
+                    return register(localId, lu, u, my);
+                });
+            });
+        })().catch(function (e) {
+            C.pw = null;
+            if (my !== seq)
+                return;
+            console.warn("cloud", e);
+            if (e && (e.code === "auth/wrong-password" || e.code === "auth/email-already-in-use"))
+                relink("This email already has an online account with a different password. Use the same password as before.");
+            else
+                say("Offline", "Could not reach the game server. Your progress is still saved on this device.", function () { });
+        });
+    };
+    function register(localId, lu, fu, my) {
+        uref = db.collection("users").doc(fu.uid);
+        var sref = db.doc("meta/stats");
+        return uref.get().then(function (snap) {
+            if (my !== seq)
+                return;
+            if (!snap.exists)
+                return db.runTransaction(function (t) {
+                    return t.get(sref).then(function (s) {
+                        var st = s.exists ? s.data() : { accounts: 0, logins: 0 }, n = (st.accounts | 0) + 1;
+                        t.set(uref, { num: n, name: lu.name || "Player", provider: lu.provider, email: lu.email || "", created: TS(), lastSeen: TS(), logins: 1, status: "ok" });
+                        if (s.exists)
+                            t.update(sref, { accounts: n, logins: (st.logins | 0) + 1 });
+                        else
+                            t.set(sref, { accounts: n, logins: 1 });
+                        return n;
+                    });
+                }).then(function (n) { return { num: n }; });
+            var d = snap.data();
+            if (activeBan(d))
+                return d;
+            var b = db.batch();
+            b.update(uref, { lastSeen: TS(), logins: INC(1) });
+            b.update(sref, { logins: INC(1) });
+            return b.commit().then(function () { return d; });
+        }).then(function (d) {
+            if (my !== seq || !d)
+                return;
+            var U = users();
+            if (U[localId]) {
+                U[localId].cnum = d.num;
+                U[localId].cuid = fu.uid;
+                saveUsers(U);
+            }
+            C.refreshId();
+            subs.push(uref.onSnapshot(function (s) { if (s.exists)
+                handle(s.data()); }, noop));
+            clearInterval(beat);
+            beat = setInterval(function () { if (!document.hidden && uref)
+                uref.update({ lastSeen: TS() }).catch(noop); }, 90000);
+        });
+    }
+    C.detach = function () {
+        seq++;
+        subs.forEach(function (f) { try {
+            f();
+        }
+        catch (_) { } });
+        subs = [];
+        clearInterval(beat);
+        uref = null;
+        if (auth)
+            auth.signOut().catch(noop);
+    };
+    C.google = function () {
+        if (authMode === "create") {
+            var ne = nameCheck($("aname").value.trim());
+            if (ne)
+                return err(ne);
+        }
+        if (!auth)
+            return err("Still connecting to the server. Try again in a moment.");
+        auth.signInWithPopup(new fb.auth.GoogleAuthProvider()).then(function (r) {
+            var g = r.user.providerData.filter(function (d) { return d.providerId === "google.com"; })[0] || {};
+            social("google", g.uid || r.user.uid, r.user.displayName, r.user.email);
+        }).catch(function (e) {
+            if (e && (e.code === "auth/popup-closed-by-user" || e.code === "auth/cancelled-popup-request"))
+                return;
+            err(e && e.code === "auth/popup-blocked" ? "Your browser blocked the Google window. Allow pop-ups and try again." : PT("x_gfail"));
+        });
+    };
+})();
 </script>
 </body>
 </html>
