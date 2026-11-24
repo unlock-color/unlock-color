@@ -2091,7 +2091,7 @@ function users() { try {
 catch (_) {
     return {};
 } }
-function saveUsers(u) { return lsSet("users", JSON.stringify(u)); }
+function saveUsers(u) { var ok = lsSet("users", JSON.stringify(u)); if (ok && window.Cloud && Cloud.sync) Cloud.sync(); return ok; }
 
 /* ===== User IDs + player counts ===== */
 var SHOW_PLAYERS_MENU = false; /* set to false to hide the Players menu (👥) */
@@ -4470,7 +4470,7 @@ if ("serviceWorker" in navigator) { window.addEventListener("load", function () 
     var on = !!(CFG.apiKey && CFG.projectId);
     var C = window.Cloud = { on: on, stats: null, pw: null };
     var noop = function () { };
-    if (!on) { C.attach = C.detach = C.google = noop; return; }
+    if (!on) { C.attach = C.detach = C.google = C.sync = noop; return; }
     var V = "10.12.2", fb = null, auth = null, db = null, loading = null, authReady = null;
     var subs = [], beat = 0, seq = 0, uref = null;
     function TS() { return fb.firestore.FieldValue.serverTimestamp(); }
@@ -4623,6 +4623,8 @@ if ("serviceWorker" in navigator) { window.addEventListener("load", function () 
                 saveUsers(U);
             }
             C.refreshId();
+            lastSync = "";
+            C.sync();
             subs.push(uref.onSnapshot(function (s) { if (s.exists)
                 handle(s.data()); }, noop));
             clearInterval(beat);
@@ -4630,7 +4632,19 @@ if ("serviceWorker" in navigator) { window.addEventListener("load", function () 
                 uref.update({ lastSeen: TS() }).catch(noop); }, 90000);
         });
     }
+    /* Push the current username + profile picture to the server so the owner page shows them */
+    var lastSync = "";
+    C.sync = function () {
+        if (!uref || !uid || uid === "guest") return;
+        var u = users()[uid];
+        if (!u) return;
+        var k = (u.name || "") + "|" + (u.pic || "");
+        if (k === lastSync) return;
+        lastSync = k;
+        uref.update({ name: u.name || "Player", pic: u.pic || fb.firestore.FieldValue.delete() }).catch(function () { lastSync = ""; });
+    };
     C.detach = function () {
+        lastSync = "";
         seq++;
         subs.forEach(function (f) { try {
             f();
