@@ -3432,6 +3432,71 @@ function showUpdate() {
     d.addEventListener("keydown", function (e) { if (e.key === "Escape")
         close(); });
 }
+/* ===== Owner mode: only for the verified Google account of the owner. Gives a toolbar with Back / Skip, free coins,
+   every shop item and hints. (This is only a convenience in the game; the real owner rights are in the server rules.) ===== */
+var OWNER_EMAIL = "hletaj9@gmail.com";
+function isOwnerNow() {
+    var u = uid && uid !== "guest" ? users()[uid] : null;
+    return !!(window.__ownerFb && u && u.provider === "google" && String(u.email || "").toLowerCase() === OWNER_EMAIL);
+}
+function ownerBar() {
+    var o = document.getElementById("ownerbar");
+    if (o)
+        return o;
+    o = document.createElement("div");
+    o.id = "ownerbar";
+    o.className = "hide";
+    o.style.cssText = "display:flex;flex-wrap:wrap;gap:6px;align-items:center;margin:0 0 10px;padding:8px 10px;border:1px dashed var(--accent);border-radius:12px;background:var(--surface);color:var(--ink);font-size:.85rem";
+    o.innerHTML = '<b style="margin-right:4px">\uD83D\uDC51 Owner</b><span id="ownpos" style="color:var(--muted);margin-right:auto"></span>';
+    var mk = function (id, t, f) { var b = document.createElement("button"); b.type = "button"; b.className = "btn alt"; b.id = id; b.textContent = t; b.style.cssText = "padding:6px 10px;font-size:.85rem;min-height:0"; b.onclick = f; o.appendChild(b); return b; };
+    var goto = function (n) { var L = PUZZLES.length; i = Math.max(0, Math.min(L - 1, n)); D.i = i; persist(); showPuzzle(); window.scrollTo(0, 0); };
+    mk("ownback", "\u25C0 Back", function () { if (!isOwnerNow())
+        return; var onDraw = !$("draw").classList.contains("hide"); goto(i - 1); });
+    mk("ownskip", "Skip \u25B6", function () { if (!isOwnerNow())
+        return; var onDraw = !$("draw").classList.contains("hide"); if (onDraw)
+        return goto(i); if (i + 1 >= PUZZLES.length) { i = 0; D.lap = (D.lap | 0) + 1; D.i = 0; persist(); showPuzzle(); window.scrollTo(0, 0); }
+    else
+        goto(i + 1); });
+    mk("ownall", "Unlock everything", function () {
+        if (!isOwnerNow())
+            return;
+        D.shop = D.shop || { col: [], bad: [], eq: "", hints: 0 };
+        D.shop.col = SPECIAL.map(function (x) { return x.id; });
+        D.shop.bad = BADGES.map(function (x) { return x[0]; });
+        D.shop.hints = Math.max(D.shop.hints | 0, 99);
+        if (coins < 9999)
+            addCoins(9999 - coins);
+        else
+            persist();
+        if (!$("shop").classList.contains("hide"))
+            renderShop();
+        if (typeof updHint === "function")
+            updHint();
+        ownerRefresh();
+    });
+    mk("ownstaff", "Staff panel", function () { window.open("admin.html", "_blank", "noopener"); });
+    var m = document.querySelector("main");
+    m.insertBefore(o, m.firstChild);
+    return o;
+}
+function ownerRefresh() {
+    var on = isOwnerNow(), o = document.getElementById("ownerbar");
+    if (!on) {
+        if (o)
+            o.classList.add("hide");
+        return;
+    }
+    o = ownerBar();
+    o.classList.remove("hide");
+    $("ownpos").textContent = "Puzzle " + Math.min(i + 1, PUZZLES.length) + " of " + PUZZLES.length;
+    $("ownback").disabled = i <= 0;
+}
+window.ownerRefresh = ownerRefresh;
+{
+    var _barOrig = bar;
+    bar = function () { _barOrig(); try { ownerRefresh(); } catch (e) { } };
+    setInterval(function () { try { ownerRefresh(); } catch (e) { } }, 1500);
+}
 /* Terms gate, then account screen */
 lock();
 if (lsGet("tos2") === "1") {
@@ -4359,6 +4424,7 @@ if ("serviceWorker" in navigator) { window.addEventListener("load", function () 
             fb = window.firebase;
             fb.initializeApp(CFG);
             auth = fb.auth();
+            auth.onAuthStateChanged(function (u) { window.__ownerFb = !!(u && u.emailVerified && u.email && u.email.toLowerCase() === OWNER_EMAIL && u.providerData.some(function (d) { return d.providerId === "google.com"; })); if (window.ownerRefresh) window.ownerRefresh(); });
             db = fb.firestore();
             authReady = new Promise(function (res) { var un = auth.onAuthStateChanged(function (u) { un(); res(u); }); });
             /* Public live counters: everyone can read these, even before logging in. */
@@ -4403,7 +4469,7 @@ if ("serviceWorker" in navigator) { window.addEventListener("load", function () 
         say(X[0], (b.reason ? b.reason + "\n\n" : "") + t + "\n" + X[3], null);
     }
     function handle(d) {
-        if (activeBan(d))
+        if (activeBan(d) && !window.__ownerFb)
             return showBan(d);
         var w = d.warn;
         if (w && w.id !== d.warnAck && $("cmsg").classList.contains("hide"))
