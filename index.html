@@ -365,6 +365,7 @@ html,body{max-width:100%;overflow-x:hidden}
     </form>
     <div id="vpanel" class="hide">
       <label class="fld"><span id="vlbl">Verification code</span><input id="vcode" type="text" inputmode="numeric" autocomplete="one-time-code" maxlength="6" pattern="[0-9]*" placeholder="000000"></label>
+      <p class="gs" id="vnote" style="font-size:.92rem;margin:6px 0 4px"></p>
       <p class="err" id="verr" role="alert"></p>
       <button class="btn" id="vok" type="button" style="margin-top:4px">Verify</button>
       <button class="link" id="vresend" type="button">Send a new code</button>
@@ -2517,6 +2518,13 @@ function vText() {
     $("vlbl").textContent = PT("v_code");
     $("vok").textContent = PT("v_ok");
     $("vback").textContent = PT("v_back");
+    var vn = $("vnote"), vp = PT("v_note").split("{0}"), va = document.createElement("a");
+    vn.textContent = "";
+    vn.appendChild(document.createTextNode(vp[0]));
+    va.href = "mailto:technocreativecompany@gmail.com";
+    va.textContent = "technocreativecompany@gmail.com";
+    vn.appendChild(va);
+    vn.appendChild(document.createTextNode(vp[1] || ""));
     vCool();
 }
 function showVerify() {
@@ -3804,6 +3812,42 @@ addEventListener("keydown", function (e) { if (e.key === "Escape" && !$("lib").c
             nm[d] = nm[DUP[d]]; });
     });
 })();
+/* ===== Verification screen: "check spam/junk" + help contact, all languages ===== */
+{
+    var VN = {
+ "en": "Can’t find the code? Check your spam/junk folder too. Need help? Contact {0}.",
+ "de": "Code nicht gefunden? Schau auch im Spam-/Junk-Ordner nach. Brauchst du Hilfe? Schreib an {0}.",
+ "gsw": "De Code nöd gfunde? Lueg au im Spam-/Junk-Ordner. Bruchsch Hilf? Schriib a {0}.",
+ "fr": "Tu ne trouves pas le code ? Regarde aussi dans tes spams / courriers indésirables. Besoin d’aide ? Écris à {0}.",
+ "it": "Non trovi il codice? Controlla anche nella cartella spam/posta indesiderata. Serve aiuto? Scrivi a {0}.",
+ "es": "¿No encuentras el código? Mira también en la carpeta de spam/correo no deseado. ¿Necesitas ayuda? Escribe a {0}.",
+ "pt": "Não encontras o código? Verifica também a pasta de spam/lixo eletrónico. Precisas de ajuda? Contacta {0}.",
+ "pt-BR": "Não encontrou o código? Verifique também a pasta de spam/lixo eletrônico. Precisa de ajuda? Fale com {0}.",
+ "ru": "Не нашёл код? Загляни также в папку «Спам»/«Нежелательная почта». Нужна помощь? Напиши на {0}.",
+ "uk": "Не знайшов код? Перевір також папку «Спам»/«Небажана пошта». Потрібна допомога? Напиши на {0}.",
+ "zh": "没有找到验证码？也请查看垃圾邮件文件夹。需要帮助？请联系 {0}。",
+ "ja": "コードが見つからない？迷惑メールフォルダも見てみてね。ヘルプが必要なら {0} まで連絡してね。",
+ "ko": "코드가 안 보이나요? 스팸/정크 메일함도 확인해 보세요. 도움이 필요하면 {0}(으)로 연락하세요.",
+ "hi": "कोड नहीं मिल रहा? स्पैम/जंक फ़ोल्डर भी देखें। मदद चाहिए? {0} पर संपर्क करें।",
+ "ar": "لا تجد الرمز؟ تحقق أيضًا من مجلد الرسائل غير المرغوب فيها (السبام). تحتاج مساعدة؟ تواصل مع {0}.",
+ "hu": "Nem találod a kódot? Nézd meg a spam/levélszemét mappát is. Segítségre van szükséged? Írj ide: {0}.",
+ "no": "Finner du ikke koden? Sjekk også søppelpost-/spam-mappen. Trenger du hjelp? Kontakt {0}.",
+ "nl": "Code niet gevonden? Kijk ook in je spam-/ongewenste-mailmap. Hulp nodig? Neem contact op via {0}.",
+ "pl": "Nie widzisz kodu? Sprawdź też folder spam/wiadomości-śmieci. Potrzebujesz pomocy? Napisz na {0}.",
+ "sv": "Hittar du inte koden? Kolla även skräppostmappen. Behöver du hjälp? Kontakta {0}.",
+ "el": "Δεν βρίσκεις τον κωδικό; Έλεγξε και τον φάκελο ανεπιθύμητων (spam/junk). Χρειάζεσαι βοήθεια; Επικοινώνησε στο {0}.",
+ "vi": "Không thấy mã? Hãy kiểm tra cả thư mục thư rác/spam. Cần giúp đỡ? Liên hệ {0}.",
+ "th": "ไม่พบรหัส? ลองดูในโฟลเดอร์สแปม/ขยะด้วย ต้องการความช่วยเหลือ? ติดต่อ {0}",
+ "id": "Kode tidak ketemu? Cek juga folder spam/sampah. Butuh bantuan? Hubungi {0}.",
+ "bn": "কোড খুঁজে পাচ্ছেন না? স্প্যাম/জাঙ্ক ফোল্ডারটাও দেখুন। সাহায্য লাগলে যোগাযোগ করুন {0}।",
+ "sr": "Не налазиш код? Погледај и фасциклу за нежељену пошту (спам). Треба ти помоћ? Пиши на {0}.",
+ "mk": "Не го наоѓаш кодот? Провери ја и папката за спам/несакана пошта. Ти треба помош? Пиши на {0}.",
+ "sr-Latn": "Ne nalaziš kod? Pogledaj i fasciklu za neželjenu poštu (spam). Treba ti pomoć? Piši na {0}."
+};
+    var VNA = {"fr-CH": "fr", "es-MX": "es", "ar-MA": "ar", "ar-QA": "ar"};
+    Object.keys(UI).forEach(function (c) { var t = VN[c] || VN[VNA[c]]; if (t)
+        UI[c].v_note = t; });
+}
 applyLang();
 /* Returning player: restore the session only now, after everything above is set up */
 if (window.__resume) {
