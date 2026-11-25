@@ -3006,7 +3006,10 @@ $("nchange").onclick = function () {
         alert(PT("x_save"));
         return;
     }
+    curName = n;
+    showName();
     setAv($("av"), n, u.pic);
+    if (window.Cloud && Cloud.pubSync) { try { Cloud.pubSync(true); } catch (e) { } }
     showStats();
 };
 $("pchange").onclick = function () { if (uid && uid !== "guest")
@@ -3116,7 +3119,7 @@ $("pfile3").onchange = function (e) { return __awaiter(void 0, void 0, void 0, f
         }
     });
 }); };
-function closeStats(fromPop) { $("stats").classList.add("hide"); unlock(); statsOpen = false; if (fromPop)
+function closeStats(fromPop) { $("stats").classList.add("hide"); unlock(); statsOpen = false; try { showName(); var _U = users(); if (uid && uid !== "guest" && _U[uid]) setAv($("av"), _U[uid].name, _U[uid].pic); } catch (_e) { } if (fromPop)
     statsPushed = false;
 else
     popStats(); }
@@ -3830,7 +3833,7 @@ for (var c in SH_TOS) {
         TOS[c] = TOS[c].replace(o1, n1).replace(o2, n2);
     }
 }
-function showName() { var b = (D && D.shop && D.shop.eq) || ""; $("mename").textContent = (b ? b + " " : "") + curName; var e = $("meid"), u = uid && uid !== "guest" ? users()[uid] : null; if (e)
+function showName() { var b = (D && D.shop && D.shop.eq) || ""; try { var _u = uid && uid !== "guest" ? users()[uid] : null; if (_u && _u.name) curName = _u.name; } catch (_e) { } $("mename").textContent = (b ? b + " " : "") + curName; var e = $("meid"), u = uid && uid !== "guest" ? users()[uid] : null; if (e)
     e.textContent = u && idOf(u) ? "#" + pad4(idOf(u)) : ""; }
 function updHint() {
     var n = D.shop ? D.shop.hints : 0, b = $("hintbtn");
