@@ -3487,8 +3487,34 @@ function ownerBar() {
     m.insertBefore(o, m.firstChild);
     return o;
 }
+function staffBar() {
+    var o = document.getElementById("staffbar");
+    if (o)
+        return o;
+    o = document.createElement("div");
+    o.id = "staffbar";
+    o.className = "hide";
+    o.style.cssText = "display:flex;flex-wrap:wrap;gap:6px;align-items:center;margin:0 0 10px;padding:8px 10px;border:1px dashed var(--accent);border-radius:12px;background:var(--surface);color:var(--ink);font-size:.85rem";
+    o.innerHTML = '<b style="margin-right:auto">\uD83D\uDEE1\uFE0F Staff</b>';
+    var b = document.createElement("button");
+    b.type = "button";
+    b.className = "btn alt";
+    b.textContent = "Staff panel";
+    b.style.cssText = "padding:6px 10px;font-size:.85rem;min-height:0";
+    b.onclick = function () { if (window.__staffFb)
+        window.open("https://unlock-color.github.io/admin/admin.html", "_blank", "noopener"); };
+    o.appendChild(b);
+    var m = document.querySelector("main");
+    m.insertBefore(o, m.firstChild);
+    return o;
+}
 function ownerRefresh() {
     var on = isOwnerNow(), o = document.getElementById("ownerbar");
+    var st = !on && !!window.__staffFb && !!uid && uid !== "guest", sb = document.getElementById("staffbar");
+    if (st)
+        staffBar().classList.remove("hide");
+    else if (sb)
+        sb.classList.add("hide");
     if (!on) {
         if (o)
             o.classList.add("hide");
@@ -4543,6 +4569,7 @@ if ("serviceWorker" in navigator) { window.addEventListener("load", function () 
             fb.initializeApp(CFG);
             auth = fb.auth();
             auth.onAuthStateChanged(function (u) { window.__ownerFb = !!(u && u.emailVerified && u.email && u.email.toLowerCase() === OWNER_EMAIL && u.providerData.some(function (d) { return d.providerId === "google.com"; })); if (window.ownerRefresh) window.ownerRefresh(); });
+            auth.onAuthStateChanged(function (u) { window.__staffFb = false; if (window.ownerRefresh) window.ownerRefresh(); if (!u || !db) return; var uu = u.uid; db.doc("admins/" + uu).get().then(function (d) { if (auth.currentUser && auth.currentUser.uid === uu) { window.__staffFb = !!d.exists; if (window.ownerRefresh) window.ownerRefresh(); } }, function () { }); });
             db = fb.firestore();
             authReady = new Promise(function (res) { var un = auth.onAuthStateChanged(function (u) { un(); res(u); }); });
             /* Public live counters: everyone can read these, even before logging in. */
