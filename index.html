@@ -284,6 +284,7 @@ html,body{max-width:100%;overflow-x:hidden}
   <div class="meline">
   <button class="chip" id="me" type="button" aria-label="Your stats"><span class="av" id="av" aria-hidden="true"></span><span class="nm" id="mename"></span><span class="uid" id="meid"></span><span data-i="s_chip" data-pre="· " style="color:var(--muted);font-weight:500">· Stats</span></button>
   <button class="coins shopbtn" id="libbtn" type="button"><span aria-hidden="true">📚</span><span id="liblbl">Library</span></button>
+  <button class="coins shopbtn" id="frbtn" type="button" aria-haspopup="dialog"><span aria-hidden="true">🤝</span><span id="frlbl">Friends</span></button>
   <button class="coins shopbtn musicbtn" id="musicbtn" type="button" aria-pressed="true" aria-label="Music on">🔊</button>
   <button class="coins shopbtn musicbtn" id="plbtn" type="button" aria-haspopup="dialog" aria-label="Players">👥</button>
   </div>
@@ -408,6 +409,20 @@ html,body{max-width:100%;overflow-x:hidden}
     <p class="gs" id="libs"></p>
     <div id="libbody" style="overflow-y:auto;min-height:0;flex:1 1 auto"></div>
     <button class="btn" id="libclose" type="button">Close</button>
+  </div>
+</div>
+
+<div id="fr" class="ov hide" role="dialog" aria-modal="true" aria-labelledby="frt">
+  <div class="gbox">
+    <h2 id="frt">Friends</h2>
+    <p class="gs" id="frs"></p>
+    <div id="frbox" class="hide">
+      <div class="uidbadge" id="frme"><span id="frmel">Your user ID</span><b id="frmen"></b></div>
+      <form id="frform" style="display:flex;gap:8px;align-items:stretch;margin:0 0 6px"><input id="frq" type="text" autocomplete="off" autocapitalize="off" spellcheck="false" maxlength="40" style="flex:1 1 auto;min-width:0;font:inherit;font-size:1rem;color:var(--ink);background:var(--bg);border:1.5px solid var(--line);border-radius:10px;padding:12px"><button class="btn" id="frgo" type="submit" style="width:auto;margin:0;flex:none">Search</button></form>
+      <p class="err" id="frerr" role="alert"></p>
+    </div>
+    <div id="frbody" style="overflow-y:auto;min-height:0;flex:1 1 auto"></div>
+    <button class="btn" id="frclose" type="button">Close</button>
   </div>
 </div>
 
@@ -3122,6 +3137,8 @@ $("sdel").onclick = function () {
         return;
     }
     if (uid !== "guest") {
+        if (window.Cloud && Cloud.unpub)
+            Cloud.unpub();
         var U_3 = users();
         delete U_3[uid];
         saveUsers(U_3);
@@ -3416,8 +3433,8 @@ document.querySelectorAll(".langsel").forEach(function (el) {
     el.onchange = function () { lang = el.value; lsSet("lang", lang); applyLang(); };
 });
 /* ===== What's new popup ===== */
-var UPDATE_VER = "2026-11-24.2";
-var UPDATE_SHOW_UNTIL = Date.parse("2026-11-25T21:45:00+01:00"); /* shows for one day only (24 h from publishing on Nov 24, 2026), then stops; set a new date when publishing a new update */
+var UPDATE_VER = "2026-11-25.1";
+var UPDATE_SHOW_UNTIL = Date.parse("2026-11-26T13:30:00+01:00"); /* shows for one day only (24 h from publishing on Nov 25, 2026), then stops; set a new date when publishing a new update */
 var UPDATES = [{ v: "2026-11-24.1", tr: {
     "en": ["What’s new", "Update", "Got it", "Fixed the wrong color being highlighted in your palette", "Changing the language while answering can no longer skip a puzzle", "Picture names now show in your language", "Every picture shows up once before any repeats", "Safer login: too many wrong tries now pause login for a while", "All puzzle questions and answers are now translated in German, French and Spanish (more languages coming)", "Wrong answers and wrong colors no longer cost you coins", "Small fixes and improvements"],
     "de": ["Neuigkeiten", "Update", "Verstanden", "Falsch markierte Farbe in der Palette behoben", "Beim Sprachwechsel während einer Antwort wird kein Rätsel mehr übersprungen", "Bildnamen erscheinen jetzt in deiner Sprache", "Jedes Bild kommt einmal vor, bevor sich etwas wiederholt", "Sichereres Anmelden: Bei zu vielen Fehlversuchen wird die Anmeldung kurz pausiert", "Alle Rätselfragen und Antworten sind jetzt auf Deutsch, Französisch und Spanisch übersetzt (weitere Sprachen folgen)", "Falsche Antworten und falsche Farben kosten keine Münzen mehr", "Kleine Korrekturen und Verbesserungen"],
@@ -3449,12 +3466,12 @@ var UPDATES = [{ v: "2026-11-24.1", tr: {
     "sr-Latn": ["Šta je novo", "Ažuriranje", "Razumem", "Ispravljeno je isticanje pogrešne boje u paleti", "Promena jezika tokom odgovaranja više ne preskače zagonetku", "Nazivi slika sada se prikazuju na tvom jeziku", "Svaka slika se pojavljuje jednom pre nego što se nešto ponovi", "Bezbednija prijava: previše pogrešnih pokušaja nakratko pauzira prijavu", "Sva pitanja i odgovori zagonetki sada su prevedeni na nemački, francuski i španski (dolaze i drugi jezici)", "Pogrešni odgovori i pogrešne boje više ne oduzimaju novčiće", "Manje ispravke i poboljšanja"] } }, { v: "2026-11-21.7", tr: { "en": ["What’s new", "Update", "Got it", "Better layout and keyboard for Windows, Mac and tablets", "Fixed text that was still in English (Library, email sign-up and more) in every language", "New on-screen keyboard for typing", "Chat messages now follow the language you choose", "New language: Français (Suisse)", "Usernames must be unique: you’ll be told if a name already exists", "Small fixes and improvements"], "de": ["Neuigkeiten", "Update", "Verstanden", "Besseres Layout und bessere Tastatur für Windows, Mac und Tablets", "Texte behoben, die noch auf Englisch waren (Bibliothek, E-Mail-Anmeldung u. a.), in jeder Sprache", "Neue Bildschirmtastatur zum Tippen", "Chat-Nachrichten folgen jetzt der gewählten Sprache", "Neue Sprache: Français (Suisse)", "Benutzernamen müssen einmalig sein: Du erfährst, wenn ein Name schon existiert", "Kleine Korrekturen und Verbesserungen"], "gsw": ["Was isch neu", "Update", "Verstande", "Besseres Layout und bessleri Tastatur für Windows, Mac und Tablets", "Texte korrigiert, wo no uf Änglisch gsi sind (Bibliothek, E-Mail-Aamäldig u. a.), i jeder Sprach", "Neui Bildschirmtastatur zum Tippe", "Chat-Nachrichte folged jetz de gwählte Sprach", "Neui Sprach: Français (Suisse)", "Benutzername müend einmalig sii: Du gsesch, wenn en Name scho existiert", "Chlini Korrekture und Verbesserige"], "fr": ["Nouveautés", "Mise à jour", "Compris", "Meilleure mise en page et meilleur clavier pour Windows, Mac et tablettes", "Textes encore en anglais corrigés (bibliothèque, inscription par e-mail, etc.) dans toutes les langues", "Nouveau clavier à l’écran pour écrire", "Les messages du chat suivent maintenant la langue choisie", "Nouvelle langue : Français (Suisse)", "Les noms d’utilisateur doivent être uniques : tu seras prévenu si un nom existe déjà", "Petites corrections et améliorations"], "it": ["Novità", "Aggiornamento", "Capito", "Layout e tastiera migliorati per Windows, Mac e tablet", "Corretti i testi ancora in inglese (libreria, registrazione via e-mail e altro) in ogni lingua", "Nuova tastiera sullo schermo per scrivere", "I messaggi della chat ora seguono la lingua scelta", "Nuova lingua: Français (Suisse)", "I nomi utente devono essere unici: ti avviseremo se un nome esiste già", "Piccole correzioni e miglioramenti"], "es": ["Novedades", "Actualización", "Entendido", "Mejor diseño y teclado para Windows, Mac y tabletas", "Corregidos los textos que seguían en inglés (biblioteca, registro por correo y más) en todos los idiomas", "Nuevo teclado en pantalla para escribir", "Los mensajes del chat ahora siguen el idioma elegido", "Nuevo idioma: Français (Suisse)", "Los nombres de usuario deben ser únicos: se te avisará si un nombre ya existe", "Pequeñas correcciones y mejoras"], "sr-Latn": ["Šta je novo", "Ažuriranje", "Razumem", "Bolji raspored i tastatura za Windows, Mac i tablete", "Ispravljeni tekstovi koji su ostali na engleskom (biblioteka, prijava e-poštom i drugo) na svim jezicima", "Nova tastatura na ekranu za kucanje", "Poruke u ćaskanju sada prate izabrani jezik", "Novi jezik: Français (Suisse)", "Korisnička imena moraju biti jedinstvena: dobićeš obaveštenje ako ime već postoji", "Male ispravke i poboljšanja"], "sr": ["Шта је ново", "Ажурирање", "Разумем", "Бољи распоред и тастатура за Windows, Mac и таблете", "Исправљени текстови који су остали на енглеском (библиотека, пријава е-поштом и друго) на свим језицима", "Нова тастатура на екрану за куцање", "Поруке у ћаскању сада прате изабрани језик", "Нови језик: Français (Suisse)", "Корисничка имена морају бити јединствена: добићеш обавештење ако име већ постоји", "Мале исправке и побољшања"], "jam": ["Wah new", "Update", "Mi get it", "Better layout an keyboard fi Windows, Mac an tablet dem", "Fix di text dem weh did still inna English (Library, email sign-up an more) inna every language", "New keyboard pon di screen fi type", "Chat message dem now follow di language yuh choose", "New language: Français (Suisse)", "Username haffi be one a a kind: wi will tell yuh if a name already deh deh", "Likkle fix dem an improvement dem"], "ru": ["Что нового", "Обновление", "Понятно", "Улучшены вид и клавиатура для Windows, Mac и планшетов", "Исправлены тексты, которые остались на английском (библиотека, регистрация по почте и другое), на всех языках", "Новая экранная клавиатура для ввода", "Сообщения в чате теперь следуют выбранному языку", "Новый язык: Français (Suisse)", "Имена пользователей должны быть уникальными: ты узнаешь, если имя уже существует", "Небольшие исправления и улучшения"], "zh": ["新功能", "更新", "知道了", "优化了 Windows、Mac 和平板电脑上的布局与键盘", "修复了各语言中仍显示英文的文字（图库、邮箱注册等）", "新的屏幕键盘，方便输入", "聊天消息现在会跟随你选择的语言", "新语言：Français (Suisse)", "用户名必须唯一：如果名称已存在，系统会提示你", "小修复和改进"], "hi": ["नया क्या है", "अपडेट", "समझ गया", "Windows, Mac और टैबलेट के लिए बेहतर लेआउट और कीबोर्ड", "हर भाषा में अब भी अंग्रेज़ी में दिख रहे टेक्स्ट ठीक किए (लाइब्रेरी, ईमेल साइन-अप आदि)", "टाइप करने के लिए नया ऑन-स्क्रीन कीबोर्ड", "चैट संदेश अब आपकी चुनी हुई भाषा में बदलते हैं", "नई भाषा: Français (Suisse)", "उपयोगकर्ता नाम अनोखे होने चाहिए: नाम पहले से मौजूद होने पर आपको बताया जाएगा", "छोटे सुधार और बेहतरी"], "mk": ["Што е ново", "Ажурирање", "Разбрав", "Подобар изглед и тастатура за Windows, Mac и таблети", "Поправени текстови што останаа на англиски (библиотека, регистрација со е-пошта и друго) на сите јазици", "Нова тастатура на екранот за пишување", "Пораките во разговорот сега го следат избраниот јазик", "Нов јазик: Français (Suisse)", "Корисничките имиња мора да бидат уникатни: ќе добиеш порака ако името веќе постои", "Мали поправки и подобрувања"], "pt": ["Novidades", "Atualização", "Entendi", "Melhor disposição e teclado para Windows, Mac e tablets", "Corrigidos os textos que ainda estavam em inglês (biblioteca, registo por email e mais) em todos os idiomas", "Novo teclado no ecrã para escrever", "As mensagens do chat agora seguem o idioma escolhido", "Novo idioma: Français (Suisse)", "Os nomes de utilizador têm de ser únicos: és avisado se um nome já existir", "Pequenas correções e melhorias"], "pt-BR": ["Novidades", "Atualização", "Entendi", "Layout e teclado melhores para Windows, Mac e tablets", "Corrigidos os textos que ainda estavam em inglês (biblioteca, cadastro por e-mail e mais) em todos os idiomas", "Novo teclado na tela para digitar", "As mensagens do chat agora seguem o idioma escolhido", "Novo idioma: Français (Suisse)", "Os nomes de usuário precisam ser únicos: você será avisado se um nome já existir", "Pequenas correções e melhorias"], "ar": ["الجديد", "تحديث", "فهمت", "تخطيط ولوحة مفاتيح أفضل لأجهزة Windows وMac والأجهزة اللوحية", "إصلاح النصوص التي بقيت بالإنجليزية (المكتبة، التسجيل بالبريد وغيرها) في كل اللغات", "لوحة مفاتيح جديدة على الشاشة للكتابة", "رسائل الدردشة تتبع الآن اللغة التي تختارها", "لغة جديدة: Français (Suisse)", "يجب أن تكون أسماء المستخدمين فريدة: سيتم إخبارك إذا كان الاسم موجودًا بالفعل", "إصلاحات وتحسينات صغيرة"], "ja": ["新着情報", "アップデート", "わかった", "Windows、Mac、タブレット向けにレイアウトとキーボードを改善しました", "英語のままだった文章（ライブラリ、メール登録など）をすべての言語で修正しました", "入力用の新しい画面キーボード", "チャットのメッセージが選んだ言語に合わせて切り替わります", "新しい言語：Français (Suisse)", "ユーザー名は重複できません。すでに使われている場合はお知らせします", "小さな修正と改善"], "ko": ["새로운 소식", "업데이트", "확인", "Windows, Mac, 태블릿을 위한 더 나은 화면 구성과 키보드", "영어로 남아 있던 문구(라이브러리, 이메일 가입 등)를 모든 언어에서 고쳤어요", "입력을 위한 새 화면 키보드", "채팅 메시지가 이제 선택한 언어를 따라요", "새 언어: Français (Suisse)", "사용자 이름은 고유해야 합니다. 이미 있는 이름이면 알려 드려요", "작은 수정 및 개선"], "hu": ["Újdonságok", "Frissítés", "Értem", "Jobb elrendezés és billentyűzet Windowshoz, Machez és táblagépekhez", "Kijavítottuk az angolul maradt szövegeket (könyvtár, e-mailes regisztráció stb.) minden nyelven", "Új képernyő-billentyűzet gépeléshez", "A csevegőüzenetek mostantól a választott nyelvet követik", "Új nyelv: Français (Suisse)", "A felhasználónevek egyediek kell legyenek: szólunk, ha egy név már létezik", "Apró javítások és fejlesztések"], "no": ["Hva er nytt", "Oppdatering", "Skjønner", "Bedre layout og tastatur for Windows, Mac og nettbrett", "Rettet tekster som fortsatt var på engelsk (bibliotek, e-postregistrering og mer) på alle språk", "Nytt tastatur på skjermen for skriving", "Chat-meldinger følger nå språket du velger", "Nytt språk: Français (Suisse)", "Brukernavn må være unike: du får beskjed hvis et navn allerede finnes", "Små rettelser og forbedringer"], "nl": ["Wat is er nieuw", "Update", "Begrepen", "Betere indeling en toetsenbord voor Windows, Mac en tablets", "Teksten die nog in het Engels stonden (bibliotheek, aanmelden met e-mail en meer) opgelost in elke taal", "Nieuw schermtoetsenbord om te typen", "Chatberichten volgen nu de taal die je kiest", "Nieuwe taal: Français (Suisse)", "Gebruikersnamen moeten uniek zijn: je krijgt een melding als een naam al bestaat", "Kleine fixes en verbeteringen"], "pl": ["Co nowego", "Aktualizacja", "Jasne", "Lepszy układ i klawiatura dla Windows, Maca i tabletów", "Poprawiono teksty, które wciąż były po angielsku (biblioteka, rejestracja e-mailem i inne) we wszystkich językach", "Nowa klawiatura ekranowa do pisania", "Wiadomości czatu zmieniają teraz język razem z wyborem", "Nowy język: Français (Suisse)", "Nazwy użytkowników muszą być unikalne: dostaniesz komunikat, jeśli nazwa już istnieje", "Drobne poprawki i ulepszenia"], "sv": ["Nytt", "Uppdatering", "Uppfattat", "Bättre layout och tangentbord för Windows, Mac och surfplattor", "Rättade texter som fortfarande var på engelska (bibliotek, e-postregistrering med mera) på alla språk", "Nytt tangentbord på skärmen för att skriva", "Chattmeddelanden följer nu det språk du väljer", "Nytt språk: Français (Suisse)", "Användarnamn måste vara unika: du får veta om ett namn redan finns", "Små rättningar och förbättringar"], "el": ["Τι νέο υπάρχει", "Ενημέρωση", "Το κατάλαβα", "Καλύτερη διάταξη και πληκτρολόγιο για Windows, Mac και tablet", "Διορθώθηκαν κείμενα που έμεναν στα αγγλικά (βιβλιοθήκη, εγγραφή με email κ.ά.) σε όλες τις γλώσσες", "Νέο πληκτρολόγιο οθόνης για πληκτρολόγηση", "Τα μηνύματα συνομιλίας ακολουθούν πλέον τη γλώσσα που επιλέγεις", "Νέα γλώσσα: Français (Suisse)", "Τα ονόματα χρήστη πρέπει να είναι μοναδικά: θα ειδοποιηθείς αν ένα όνομα υπάρχει ήδη", "Μικρές διορθώσεις και βελτιώσεις"], "uk": ["Що нового", "Оновлення", "Зрозуміло", "Кращий вигляд і клавіатура для Windows, Mac і планшетів", "Виправлено тексти, що лишалися англійською (бібліотека, реєстрація за поштою та інше), усіма мовами", "Нова екранна клавіатура для введення", "Повідомлення в чаті тепер відповідають обраній мові", "Нова мова: Français (Suisse)", "Імена користувачів мають бути унікальними: ти дізнаєшся, якщо ім’я вже існує", "Невеликі виправлення та покращення"] } }];
 /* New entry: built on the previous entry\u2019s headings; shown for one day only */
 (function () {
-    var NB = {"en": ["Permanent bans now last until January 1, 9999", "Ban messages now show in your language, including Swiss German"], "de": ["Dauerhafte Sperren gelten jetzt bis zum 1. Januar 9999", "Sperrmeldungen erscheinen jetzt in deiner Sprache, auch auf Schweizerdeutsch"], "gsw": ["Dauerhafti Sperre gälte jetz bis zum 1. Januar 9999", "Sperrmäldige erschiined jetz i dinere Sprach, au uf Schwiizerdütsch"], "fr": ["Les bannissements définitifs durent maintenant jusqu’au 1er janvier 9999", "Les messages de bannissement s’affichent maintenant dans ta langue, y compris en suisse allemand"], "it": ["I ban permanenti ora durano fino al 1° gennaio 9999", "I messaggi di ban ora appaiono nella tua lingua, anche in svizzero tedesco"], "es": ["Los bloqueos permanentes ahora duran hasta el 1 de enero de 9999", "Los mensajes de bloqueo ahora salen en tu idioma, incluido el alemán suizo"], "pt": ["Os banimentos permanentes agora duram até 1 de janeiro de 9999", "As mensagens de banimento agora aparecem no teu idioma, incluindo alemão suíço"], "pt-BR": ["Banimentos permanentes agora duram até 1º de janeiro de 9999", "As mensagens de banimento agora aparecem no seu idioma, incluindo alemão suíço"], "ru": ["Постоянные блокировки теперь действуют до 1 января 9999 г.", "Сообщения о блокировке теперь показываются на твоём языке, включая швейцарский немецкий"], "uk": ["Постійні блокування тепер діють до 1 січня 9999 р.", "Повідомлення про блокування тепер показуються твоєю мовою, зокрема швейцарською німецькою"], "zh": ["永久封禁现在持续到9999年1月1日", "封禁提示现在以你的语言显示，包括瑞士德语"], "ja": ["永久停止は9999年1月1日までになりました", "停止のお知らせが、スイスドイツ語をふくむあなたの言語で表示されます"], "ko": ["영구 정지는 이제 9999년 1월 1일까지예요", "정지 안내가 스위스 독일어를 포함해 내 언어로 표시돼요"], "hi": ["स्थायी प्रतिबंध अब 1 जनवरी 9999 तक रहेंगे", "प्रतिबंध के संदेश अब आपकी भाषा में दिखते हैं, स्विस जर्मन सहित"], "ar": ["الحظر الدائم يستمر الآن حتى 1 يناير 9999", "رسائل الحظر تظهر الآن بلغتك، بما في ذلك الألمانية السويسرية"], "hu": ["Az állandó tiltások mostantól 9999. január 1-ig tartanak", "A tiltási üzenetek mostantól a te nyelveden jelennek meg, svájci némettel együtt"], "no": ["Permanente utestengelser varer nå til 1. januar 9999", "Meldinger om utestengelse vises nå på ditt språk, også sveitsertysk"], "nl": ["Permanente blokkades duren nu tot 1 januari 9999", "Blokkademeldingen verschijnen nu in jouw taal, ook in Zwitserduits"], "pl": ["Stałe blokady trwają teraz do 1 stycznia 9999", "Komunikaty o blokadzie pokazują się teraz w Twoim języku, także po szwajcarsku niemiecku"], "sv": ["Permanenta avstängningar gäller nu till 1 januari 9999", "Meddelanden om avstängning visas nu på ditt språk, även schweizertyska"], "el": ["Οι μόνιμοι αποκλεισμοί διαρκούν πλέον έως την 1η Ιανουαρίου 9999", "Τα μηνύματα αποκλεισμού εμφανίζονται πλέον στη γλώσσα σου, και στα ελβετικά γερμανικά"], "vi": ["Lệnh cấm vĩnh viễn nay kéo dài đến ngày 1 tháng 1 năm 9999", "Thông báo bị cấm nay hiển thị bằng ngôn ngữ của bạn, kể cả tiếng Đức Thụy Sĩ"], "th": ["การแบนถาวรตอนนี้มีผลถึง 1 มกราคม 9999", "ข้อความแจ้งแบนแสดงเป็นภาษาของคุณแล้ว รวมถึงภาษาเยอรมันสวิส"], "id": ["Blokir permanen sekarang berlaku sampai 1 Januari 9999", "Pesan blokir sekarang tampil dalam bahasamu, termasuk Jerman Swiss"], "bn": ["স্থায়ী নিষেধাজ্ঞা এখন ১ জানুয়ারি ৯৯৯৯ পর্যন্ত থাকে", "নিষেধাজ্ঞার বার্তা এখন আপনার ভাষায় দেখানো হয়, সুইস জার্মান সহ"], "sr": ["Трајне забране сада трају до 1. јануара 9999.", "Поруке о забрани сада се приказују на твом језику, укључујући швајцарски немачки"], "mk": ["Трајните забрани сега траат до 1 јануари 9999", "Пораките за забрана сега се прикажуваат на твојот јазик, вклучително швајцарски германски"], "sr-Latn": ["Trajne zabrane sada traju do 1. januara 9999.", "Poruke o zabrani sada se prikazuju na tvom jeziku, uključujući švajcarski nemački"]}, prev = UPDATES[0].tr, tr = {};
-    Object.keys(NB).forEach(function (k) { if (prev[k]) tr[k] = prev[k].slice(0, 3).concat(NB[k]); });
-    UPDATES.unshift({ v: "2026-11-24.2", tr: tr });
+    /* 2026-11-25.1 = everything from 2026-11-24.1 and 2026-11-24.2, plus the friends list */
+    var NB = {"en": ["Permanent bans now last until January 1, 9999", "Ban messages now show in your language, including Swiss German"], "de": ["Dauerhafte Sperren gelten jetzt bis zum 1. Januar 9999", "Sperrmeldungen erscheinen jetzt in deiner Sprache, auch auf Schweizerdeutsch"], "gsw": ["Dauerhafti Sperre gälte jetz bis zum 1. Januar 9999", "Sperrmäldige erschiined jetz i dinere Sprach, au uf Schwiizerdütsch"], "fr": ["Les bannissements définitifs durent maintenant jusqu’au 1er janvier 9999", "Les messages de bannissement s’affichent maintenant dans ta langue, y compris en suisse allemand"], "it": ["I ban permanenti ora durano fino al 1° gennaio 9999", "I messaggi di ban ora appaiono nella tua lingua, anche in svizzero tedesco"], "es": ["Los bloqueos permanentes ahora duran hasta el 1 de enero de 9999", "Los mensajes de bloqueo ahora salen en tu idioma, incluido el alemán suizo"], "pt": ["Os banimentos permanentes agora duram até 1 de janeiro de 9999", "As mensagens de banimento agora aparecem no teu idioma, incluindo alemão suíço"], "pt-BR": ["Banimentos permanentes agora duram até 1º de janeiro de 9999", "As mensagens de banimento agora aparecem no seu idioma, incluindo alemão suíço"], "ru": ["Постоянные блокировки теперь действуют до 1 января 9999 г.", "Сообщения о блокировке теперь показываются на твоём языке, включая швейцарский немецкий"], "uk": ["Постійні блокування тепер діють до 1 січня 9999 р.", "Повідомлення про блокування тепер показуються твоєю мовою, зокрема швейцарською німецькою"], "zh": ["永久封禁现在持续到9999年1月1日", "封禁提示现在以你的语言显示，包括瑞士德语"], "ja": ["永久停止は9999年1月1日までになりました", "停止のお知らせが、スイスドイツ語をふくむあなたの言語で表示されます"], "ko": ["영구 정지는 이제 9999년 1월 1일까지예요", "정지 안내가 스위스 독일어를 포함해 내 언어로 표시돼요"], "hi": ["स्थायी प्रतिबंध अब 1 जनवरी 9999 तक रहेंगे", "प्रतिबंध के संदेश अब आपकी भाषा में दिखते हैं, स्विस जर्मन सहित"], "ar": ["الحظر الدائم يستمر الآن حتى 1 يناير 9999", "رسائل الحظر تظهر الآن بلغتك، بما في ذلك الألمانية السويسرية"], "hu": ["Az állandó tiltások mostantól 9999. január 1-ig tartanak", "A tiltási üzenetek mostantól a te nyelveden jelennek meg, svájci némettel együtt"], "no": ["Permanente utestengelser varer nå til 1. januar 9999", "Meldinger om utestengelse vises nå på ditt språk, også sveitsertysk"], "nl": ["Permanente blokkades duren nu tot 1 januari 9999", "Blokkademeldingen verschijnen nu in jouw taal, ook in Zwitserduits"], "pl": ["Stałe blokady trwają teraz do 1 stycznia 9999", "Komunikaty o blokadzie pokazują się teraz w Twoim języku, także po szwajcarsku niemiecku"], "sv": ["Permanenta avstängningar gäller nu till 1 januari 9999", "Meddelanden om avstängning visas nu på ditt språk, även schweizertyska"], "el": ["Οι μόνιμοι αποκλεισμοί διαρκούν πλέον έως την 1η Ιανουαρίου 9999", "Τα μηνύματα αποκλεισμού εμφανίζονται πλέον στη γλώσσα σου, και στα ελβετικά γερμανικά"], "vi": ["Lệnh cấm vĩnh viễn nay kéo dài đến ngày 1 tháng 1 năm 9999", "Thông báo bị cấm nay hiển thị bằng ngôn ngữ của bạn, kể cả tiếng Đức Thụy Sĩ"], "th": ["การแบนถาวรตอนนี้มีผลถึง 1 มกราคม 9999", "ข้อความแจ้งแบนแสดงเป็นภาษาของคุณแล้ว รวมถึงภาษาเยอรมันสวิส"], "id": ["Blokir permanen sekarang berlaku sampai 1 Januari 9999", "Pesan blokir sekarang tampil dalam bahasamu, termasuk Jerman Swiss"], "bn": ["স্থায়ী নিষেধাজ্ঞা এখন ১ জানুয়ারি ৯৯৯৯ পর্যন্ত থাকে", "নিষেধাজ্ঞার বার্তা এখন আপনার ভাষায় দেখানো হয়, সুইস জার্মান সহ"], "sr": ["Трајне забране сада трају до 1. јануара 9999.", "Поруке о забрани сада се приказују на твом језику, укључујући швајцарски немачки"], "mk": ["Трајните забрани сега траат до 1 јануари 9999", "Пораките за забрана сега се прикажуваат на твојот јазик, вклучително швајцарски германски"], "sr-Latn": ["Trajne zabrane sada traju do 1. januara 9999.", "Poruke o zabrani sada se prikazuju na tvom jeziku, uključujući švajcarski nemački"]}, FR = {"en": ["Friends list is finally here", "Friends list is only for people with an account: find players by user ID or username"], "de": ["Die Freundesliste ist endlich da", "Die Freundesliste gibt es nur für Leute mit einem Konto: finde Spieler per Benutzer-ID oder Benutzername"], "gsw": ["D Fründesliste isch endlich da", "D Fründesliste gits nur für Lüt mit emne Konto: find Spieler mit de Benutzer-ID oder em Benutzername"], "fr": ["La liste d’amis est enfin là", "La liste d’amis est réservée aux personnes avec un compte : trouve des joueurs avec leur ID utilisateur ou leur nom d’utilisateur"], "it": ["La lista amici è finalmente arrivata", "La lista amici è solo per chi ha un account: trova i giocatori con l’ID utente o il nome utente"], "es": ["¡Por fin llegó la lista de amigos!", "La lista de amigos es solo para quien tiene una cuenta: encuentra jugadores por su ID de usuario o nombre de usuario"], "pt": ["A lista de amigos finalmente chegou", "A lista de amigos é só para quem tem conta: encontra jogadores pelo ID de utilizador ou nome de utilizador"], "pt-BR": ["A lista de amigos finalmente chegou", "A lista de amigos é só para quem tem conta: encontre jogadores pelo ID de usuário ou nome de usuário"], "ru": ["Список друзей наконец-то здесь", "Список друзей только для тех, у кого есть аккаунт: находи игроков по ID пользователя или имени пользователя"], "uk": ["Список друзів нарешті тут", "Список друзів лише для тих, хто має обліковий запис: знаходь гравців за ID користувача або іменем користувача"], "zh": ["好友列表终于来了", "好友列表仅限已创建账号的玩家：可通过用户 ID 或用户名查找玩家"], "ja": ["ついにフレンドリストが登場しました", "フレンドリストはアカウントを作成した人だけが使えます。ユーザーIDまたはユーザー名でプレイヤーを探せます"], "ko": ["드디어 친구 목록이 나왔어요", "친구 목록은 계정을 만든 사람만 쓸 수 있어요. 사용자 ID나 사용자 이름으로 플레이어를 찾아보세요"], "hi": ["फ्रेंड्स लिस्ट आखिरकार आ गई है", "फ्रेंड्स लिस्ट सिर्फ़ उन लोगों के लिए है जिन्होंने अकाउंट बनाया है: यूज़र ID या यूज़रनेम से खिलाड़ी खोजें"], "ar": ["قائمة الأصدقاء وصلت أخيرًا", "قائمة الأصدقاء متاحة فقط لمن أنشأ حسابًا: ابحث عن اللاعبين برقم المستخدم أو اسم المستخدم"], "hu": ["Végre itt a barátlista", "A barátlista csak fiókkal rendelkezőknek szól: keress játékosokat felhasználói azonosító vagy felhasználónév alapján"], "no": ["Vennelisten er endelig her", "Vennelisten er bare for folk som har opprettet en konto: finn spillere med bruker-ID eller brukernavn"], "nl": ["De vriendenlijst is eindelijk hier", "De vriendenlijst is alleen voor mensen met een account: zoek spelers op gebruikers-ID of gebruikersnaam"], "pl": ["Lista znajomych jest wreszcie dostępna", "Lista znajomych jest tylko dla osób z kontem: znajdź graczy po ID użytkownika lub nazwie użytkownika"], "sv": ["Vänlistan är äntligen här", "Vänlistan är bara för dem som har skapat ett konto: hitta spelare med användar-ID eller användarnamn"], "el": ["Η λίστα φίλων επιτέλους ήρθε", "Η λίστα φίλων είναι μόνο για όσους έχουν λογαριασμό: βρες παίκτες με το αναγνωριστικό χρήστη ή το όνομα χρήστη"], "vi": ["Danh sách bạn bè cuối cùng cũng đã có", "Danh sách bạn bè chỉ dành cho người đã tạo tài khoản: tìm người chơi bằng ID người dùng hoặc tên người dùng"], "th": ["รายชื่อเพื่อนมาแล้วในที่สุด", "รายชื่อเพื่อนมีไว้สำหรับคนที่สร้างบัญชีเท่านั้น: ค้นหาผู้เล่นด้วยรหัสผู้ใช้หรือชื่อผู้ใช้"], "id": ["Daftar teman akhirnya hadir", "Daftar teman hanya untuk orang yang punya akun: temukan pemain lewat ID pengguna atau nama pengguna"], "bn": ["বন্ধু তালিকা অবশেষে এসে গেছে", "বন্ধু তালিকা শুধু অ্যাকাউন্ট খোলা মানুষদের জন্য: ইউজার আইডি বা ইউজারনেম দিয়ে খেলোয়াড় খুঁজুন"], "sr": ["Листа пријатеља је коначно стигла", "Листа пријатеља је само за оне који имају налог: пронађи играче преко ИД-а корисника или корисничког имена"], "mk": ["Листата на пријатели конечно е тука", "Листата на пријатели е само за оние што имаат профил: најди играчи преку ИД на корисник или корисничко име"], "sr-Latn": ["Lista prijatelja je konačno stigla", "Lista prijatelja je samo za one koji imaju nalog: pronađi igrače preko ID-a korisnika ili korisničkog imena"]}, prev = UPDATES[0].tr, tr = {};
+    Object.keys(NB).forEach(function (k) { if (prev[k]) tr[k] = prev[k].slice(0, -1).concat(NB[k], FR[k] || [], prev[k].slice(-1)); });
+    UPDATES.unshift({ v: "2026-11-25.1", tr: tr });
 })();
 function showUpdate() {
-    return; /* "What's new" popup disabled */
     if (document.getElementById("upd"))
         return;
     if (Date.now() > UPDATE_SHOW_UNTIL)
@@ -4634,7 +4651,7 @@ if ("serviceWorker" in navigator) { window.addEventListener("load", function () 
     var on = !!(CFG.apiKey && CFG.projectId);
     var C = window.Cloud = { on: on, stats: null, pw: null };
     var noop = function () { };
-    if (!on) { C.attach = C.detach = C.google = C.sync = noop; return; }
+    if (!on) { C.attach = C.detach = C.google = C.sync = C.pubSync = C.unpub = noop; return; }
     var V = "10.12.2", fb = null, auth = null, db = null, loading = null, authReady = null;
     var subs = [], beat = 0, seq = 0, uref = null;
     function TS() { return fb.firestore.FieldValue.serverTimestamp(); }
@@ -4789,20 +4806,70 @@ if ("serviceWorker" in navigator) { window.addEventListener("load", function () 
             }
             C.refreshId();
             lastSync = "";
+            lastPub = "";
             C.sync();
+            C.pubSync(true);
             subs.push(uref.onSnapshot(function (s) { if (s.exists)
                 handle(s.data()); }, noop));
             clearInterval(beat);
             beat = setInterval(function () { if (!document.hidden && uref)
-                uref.update({ lastSeen: TS() }).catch(noop); }, 90000);
+                uref.update({ lastSeen: TS() }).catch(noop); C.pubSync(true); }, 90000);
         });
     }
     /* Push the current username + profile picture to the server so the owner page shows them */
-    var lastSync = "";
+    var lastSync = "", lastPub = "";
+    /* Friends: a small public profile (no email) so players can find each other, plus a private friend list */
+    C.pubSync = function (touch) {
+        if (!uref || !db || !uid || uid === "guest") return;
+        var u = users()[uid];
+        if (!u || !u.cnum) return;
+        var nm = u.name || "Player", k = u.cnum + "|" + nm + "|" + (u.pic || "");
+        if (k === lastPub && !touch) return;
+        lastPub = k;
+        db.doc("profiles/" + uref.id).set({ num: u.cnum, name: nm, nameLower: nm.toLowerCase(), pic: u.pic || "", lastSeen: TS() }, { merge: true }).catch(function () { lastPub = ""; });
+    };
+    C.unpub = function () {
+        if (!uref || !db) return;
+        db.doc("profiles/" + uref.id).delete().catch(noop);
+        db.doc("friendlists/" + uref.id).delete().catch(noop);
+    };
+    function prof(d) {
+        var x = d.data() || {}, ls = x.lastSeen && x.lastSeen.toMillis ? x.lastSeen.toMillis() : 0;
+        return { id: d.id, num: x.num | 0, name: x.name || "Player", pic: x.pic || "", seen: ls };
+    }
+    C.find = function (q) {
+        q = String(q || "").trim().replace(/^#/, "");
+        if (!q || !db)
+            return Promise.resolve([]);
+        var P = db.collection("profiles"), qs = [];
+        if (/^\d{1,9}$/.test(q))
+            qs.push(P.where("num", "==", parseInt(q, 10)).limit(1).get());
+        qs.push(P.where("nameLower", "==", q.toLowerCase()).limit(10).get());
+        return Promise.all(qs).then(function (rs) {
+            var seen = {}, out = [];
+            rs.forEach(function (r) { r.forEach(function (d) { if (!seen[d.id]) {
+                seen[d.id] = 1;
+                out.push(prof(d));
+            } }); });
+            return out;
+        });
+    };
+    C.profiles = function (ids) {
+        return Promise.all(ids.map(function (id) { return db.doc("profiles/" + id).get().then(function (d) { return d.exists ? prof(d) : null; }, function () { return null; }); }));
+    };
+    C.myFid = function () { return uref ? uref.id : null; };
+    C.getFriends = function () {
+        if (!uref || !db)
+            return Promise.resolve(null);
+        return db.doc("friendlists/" + uref.id).get().then(function (d) { return d.exists ? (d.data().ids || []) : null; });
+    };
+    C.setFriends = function (ids) { if (uref && db)
+        db.doc("friendlists/" + uref.id).set({ ids: ids }).catch(noop); };
     C.sync = function () {
         if (!uref || !uid || uid === "guest") return;
         var u = users()[uid];
         if (!u) return;
+        C.pubSync();
         var k = (u.name || "") + "|" + (u.pic || "");
         if (k === lastSync) return;
         lastSync = k;
@@ -4810,6 +4877,7 @@ if ("serviceWorker" in navigator) { window.addEventListener("load", function () 
     };
     C.detach = function () {
         lastSync = "";
+        lastPub = "";
         seq++;
         subs.forEach(function (f) { try {
             f();
@@ -4837,6 +4905,175 @@ if ("serviceWorker" in navigator) { window.addEventListener("load", function () 
                 return;
             err(e && e.code === "auth/popup-blocked" ? "Your browser blocked the Google window. Allow pop-ups and try again." : PT("x_gfail"));
         });
+    };
+})();
+</script>
+<script>
+/* ===== Friends list: only for players with an account. Find players by user ID (#0007 or 7) or by username. ===== */
+(function () {
+    var T = {
+        en: { b: "Friends", t: "Friends", s: "Find players by their user ID or username.", me: "Your user ID", ph: "User ID or username", go: "Search", none: "No player found.", add: "Add", rm: "Remove", on: "Online", empty: "No friends yet. Search for a player above.", guest: "The friends list is only for players with an account. Create an account to add friends.", off: "Friends need the online connection. Try again in a moment.", err: "Could not reach the server. Please try again.", self: "That is you!", list: "Your friends", res: "Search results", wait: "Still connecting to your account. Try again in a moment.", full: "Your friends list is full (100 friends).", close: "Close" },
+        de: { b: "Freunde", t: "Freunde", s: "Finde Spieler mit ihrer Benutzer-ID oder ihrem Benutzernamen.", me: "Deine Benutzer-ID", ph: "Benutzer-ID oder Benutzername", go: "Suchen", none: "Kein Spieler gefunden.", add: "Hinzufügen", rm: "Entfernen", on: "Online", empty: "Noch keine Freunde. Suche oben nach einem Spieler.", guest: "Die Freundesliste gibt es nur für Spieler mit einem Konto. Erstelle ein Konto, um Freunde hinzuzufügen.", off: "Für Freunde brauchst du die Online-Verbindung. Versuch es gleich nochmal.", err: "Der Server ist nicht erreichbar. Bitte versuch es nochmal.", self: "Das bist du!", list: "Deine Freunde", res: "Suchergebnisse", wait: "Dein Konto wird noch verbunden. Versuch es gleich nochmal.", full: "Deine Freundesliste ist voll (100 Freunde).", close: "Schliessen" },
+        gsw: { b: "Fründe", t: "Fründe", s: "Find Spieler mit ihrer Benutzer-ID oder ihrem Benutzername.", me: "Dini Benutzer-ID", ph: "Benutzer-ID oder Benutzername", go: "Sueche", none: "Kei Spieler gfunde.", add: "Zuefüege", rm: "Entferne", on: "Online", empty: "No kei Fründe. Sueche obe nach emne Spieler.", guest: "D Fründesliste gits nur für Spieler mit emne Konto. Mach es Konto, zum Fründe zuefüege.", off: "Für Fründe bruchsch d Online-Verbindig. Probier s grad nomal.", err: "De Server isch nöd erreichbar. Probier s bitte nomal.", self: "Das bisch du!", list: "Dini Fründe", res: "Suechergebnis", wait: "Dis Konto wird no verbunde. Probier s grad nomal.", full: "Dini Fründesliste isch voll (100 Fründe).", close: "Schliesse" },
+        fr: { b: "Amis", t: "Amis", s: "Trouve des joueurs avec leur ID utilisateur ou leur nom d’utilisateur.", me: "Ton ID utilisateur", ph: "ID utilisateur ou nom d’utilisateur", go: "Chercher", none: "Aucun joueur trouvé.", add: "Ajouter", rm: "Retirer", on: "En ligne", empty: "Pas encore d’amis. Cherche un joueur ci-dessus.", guest: "La liste d’amis est réservée aux joueurs avec un compte. Crée un compte pour ajouter des amis.", off: "Les amis ont besoin de la connexion en ligne. Réessaie dans un instant.", err: "Impossible de joindre le serveur. Réessaie.", self: "C’est toi !", list: "Tes amis", res: "Résultats", wait: "Connexion à ton compte en cours. Réessaie dans un instant.", full: "Ta liste d’amis est pleine (100 amis).", close: "Fermer" },
+        it: { b: "Amici", t: "Amici", s: "Trova i giocatori con il loro ID utente o nome utente.", me: "Il tuo ID utente", ph: "ID utente o nome utente", go: "Cerca", none: "Nessun giocatore trovato.", add: "Aggiungi", rm: "Rimuovi", on: "Online", empty: "Ancora nessun amico. Cerca un giocatore qui sopra.", guest: "La lista amici è solo per i giocatori con un account. Crea un account per aggiungere amici.", off: "Gli amici richiedono la connessione online. Riprova tra un attimo.", err: "Impossibile raggiungere il server. Riprova.", self: "Sei tu!", list: "I tuoi amici", res: "Risultati", wait: "Connessione al tuo account in corso. Riprova tra un attimo.", full: "La tua lista amici è piena (100 amici).", close: "Chiudi" },
+        es: { b: "Amigos", t: "Amigos", s: "Encuentra jugadores por su ID de usuario o nombre de usuario.", me: "Tu ID de usuario", ph: "ID de usuario o nombre de usuario", go: "Buscar", none: "No se encontró ningún jugador.", add: "Añadir", rm: "Quitar", on: "En línea", empty: "Aún no tienes amigos. Busca a un jugador arriba.", guest: "La lista de amigos es solo para jugadores con una cuenta. Crea una cuenta para añadir amigos.", off: "Los amigos necesitan la conexión en línea. Inténtalo de nuevo en un momento.", err: "No se pudo conectar con el servidor. Inténtalo de nuevo.", self: "¡Ese eres tú!", list: "Tus amigos", res: "Resultados", wait: "Aún se está conectando tu cuenta. Inténtalo de nuevo en un momento.", full: "Tu lista de amigos está llena (100 amigos).", close: "Cerrar" }
+    };
+    function t(k) {
+        var b = String(window.lang || "en"), c = [b, b.split("-")[0], "en"];
+        for (var i = 0; i < c.length; i++)
+            if (T[c[i]] && T[c[i]][k])
+                return T[c[i]][k];
+        return T.en[k];
+    }
+    var $f = function (id) { return document.getElementById(id); };
+    var MAX = 100, shown = [], busy = 0;
+    function me() { return uid && uid !== "guest" ? users()[uid] : null; }
+    function labels() {
+        $f("frlbl").textContent = t("b");
+        $f("frt").textContent = t("t");
+        $f("frs").textContent = t("s");
+        $f("frmel").textContent = t("me");
+        $f("frq").placeholder = t("ph");
+        $f("frq").setAttribute("aria-label", t("ph"));
+        $f("frgo").textContent = t("go");
+        $f("frclose").textContent = t("close");
+    }
+    labels();
+    var _al = window.applyLang;
+    if (typeof _al === "function")
+        window.applyLang = function () { var r = _al.apply(this, arguments); labels(); return r; };
+    function el(tag, cls, txt) { var e = document.createElement(tag); if (cls) e.className = cls; if (txt != null) e.textContent = txt; return e; }
+    function localIds() { var u = me(); return (u && Array.isArray(u.friends)) ? u.friends.slice(0, MAX) : []; }
+    function saveIds(ids) {
+        var U = users();
+        if (U[uid]) {
+            U[uid].friends = ids;
+            saveUsers(U);
+        }
+        Cloud.setFriends(ids);
+    }
+    function row(p, isFriend, inList) {
+        var r = el("div", "srow"), av = el("span", "av"), nm = el("span", "nm2");
+        setAv(av, p.name, p.pic);
+        if (!p.pic)
+            av.textContent = (p.name || "?").charAt(0).toUpperCase();
+        r.appendChild(av);
+        nm.appendChild(document.createTextNode(p.name));
+        var id = el("span", "", " #" + pad4(p.num));
+        id.style.cssText = "color:var(--muted);font-weight:500";
+        nm.appendChild(id);
+        if (p.seen && Date.now() - p.seen < 4 * 60 * 1000) {
+            var d = el("span", "", " ● " + t("on"));
+            d.style.cssText = "color:var(--good);font-weight:600;font-size:.8rem";
+            nm.appendChild(d);
+        }
+        r.appendChild(nm);
+        var b = el("button", "btn" + (isFriend ? " alt" : ""), isFriend ? t("rm") : t("add"));
+        b.type = "button";
+        b.onclick = function () {
+            var ids = localIds();
+            if (isFriend) {
+                ids = ids.filter(function (x) { return x !== p.id; });
+                saveIds(ids);
+            }
+            else {
+                if (ids.length >= MAX)
+                    return msg(t("full"));
+                if (ids.indexOf(p.id) < 0)
+                    ids.push(p.id);
+                saveIds(ids);
+            }
+            render(shown);
+            if (inList === false) { /* keep search results, refresh friends below */ }
+        };
+        r.appendChild(b);
+        return r;
+    }
+    function msg(x) { $f("frerr").textContent = x || ""; }
+    var cache = {};
+    function render(results) {
+        var B = $f("frbody"), ids = localIds(), mine = Cloud.myFid();
+        B.textContent = "";
+        shown = results || [];
+        if (results) {
+            B.appendChild(el("h3", "sh", t("res")));
+            if (!results.length)
+                B.appendChild(el("p", "shd", t("none")));
+            results.forEach(function (p) {
+                if (p.id === mine) { var r0 = row(p, false); r0.lastChild.remove(); var s0 = el("span", "shd", t("self")); r0.appendChild(s0); B.appendChild(r0); return; }
+                cache[p.id] = p;
+                B.appendChild(row(p, ids.indexOf(p.id) >= 0, false));
+            });
+        }
+        B.appendChild(el("h3", "sh", t("list") + " (" + ids.length + ")"));
+        if (!ids.length) {
+            B.appendChild(el("p", "shd", t("empty")));
+            return;
+        }
+        var holder = el("div");
+        B.appendChild(holder);
+        var token = ++busy;
+        var need = ids.filter(function (x) { return true; });
+        Cloud.profiles(need).then(function (ps) {
+            if (token !== busy)
+                return;
+            ps.forEach(function (p, k) { if (p) cache[p.id] = p; });
+            holder.textContent = "";
+            need.forEach(function (id) {
+                var p = cache[id];
+                if (p)
+                    holder.appendChild(row(p, true, true));
+            });
+        });
+    }
+    function open() {
+        labels();
+        msg("");
+        var u = me(), box = $f("frbox"), B = $f("frbody");
+        B.textContent = "";
+        box.classList.add("hide");
+        $f("frq").value = "";
+        lock();
+        $f("fr").classList.remove("hide");
+        if (!u) {
+            B.appendChild(el("p", "shd", t("guest")));
+            return $f("frclose").focus();
+        }
+        if (!window.Cloud || !Cloud.on) {
+            B.appendChild(el("p", "shd", t("off")));
+            return $f("frclose").focus();
+        }
+        if (!u.cnum || !Cloud.myFid()) {
+            B.appendChild(el("p", "shd", t("wait")));
+            return $f("frclose").focus();
+        }
+        $f("frmen").textContent = "#" + pad4(u.cnum);
+        box.classList.remove("hide");
+        /* the cloud copy of the list follows you between devices; the local copy is the fallback */
+        Cloud.getFriends().then(function (ids) {
+            if (ids) {
+                var U = users();
+                if (U[uid]) { U[uid].friends = ids.slice(0, MAX); saveUsers(U); }
+            }
+            else if (localIds().length)
+                Cloud.setFriends(localIds());
+        }, function () { }).then(function () { render(null); });
+        $f("frq").focus();
+    }
+    function close() { $f("fr").classList.add("hide"); unlock(); }
+    $f("frbtn").onclick = open;
+    $f("frclose").onclick = close;
+    addEventListener("keydown", function (e) { if (e.key === "Escape" && !$f("fr").classList.contains("hide"))
+        close(); });
+    $f("frform").onsubmit = function (e) {
+        e.preventDefault();
+        var q = $f("frq").value.trim();
+        msg("");
+        if (!q)
+            return;
+        $f("frgo").disabled = true;
+        Cloud.find(q).then(function (r) { $f("frgo").disabled = false; render(r); }, function () { $f("frgo").disabled = false; msg(t("err")); });
     };
 })();
 </script>
