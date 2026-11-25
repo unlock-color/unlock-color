@@ -4504,7 +4504,20 @@ $("aname").addEventListener("input", function () {
     });
 })();
 
-if ("serviceWorker" in navigator) { window.addEventListener("load", function () { navigator.serviceWorker.register("sw.js").catch(function () { }); }); }
+/* Auto-refresh: when this build is new on a device, drop the old saved copy (service worker + caches) once and reload. */
+var BUILD = "2026-11-25.3";
+if ("serviceWorker" in navigator) { window.addEventListener("load", function () {
+    if (lsGet("build") !== BUILD) {
+        lsSet("build", BUILD);
+        var done = function () { location.reload(); };
+        Promise.all([
+            window.caches && caches.keys ? caches.keys().then(function (ks) { return Promise.all(ks.map(function (k) { return caches.delete(k); })); }) : 0,
+            navigator.serviceWorker.getRegistrations().then(function (rs) { return Promise.all(rs.map(function (r) { return r.unregister(); })); })
+        ]).then(done, done);
+        return;
+    }
+    navigator.serviceWorker.register("sw.js").catch(function () { });
+}); }
 </script>
 <script>
 /* Translations of the 7 added questions (46-52). Others reuse existing translated sentences. */
