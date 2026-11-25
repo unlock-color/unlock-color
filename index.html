@@ -4831,7 +4831,7 @@ if ("serviceWorker" in navigator) { window.addEventListener("load", function () 
     C.unpub = function () {
         if (!uref || !db) return;
         db.doc("profiles/" + uref.id).delete().catch(noop);
-        db.doc("friendlists/" + uref.id).delete().catch(noop);
+        C.reqs().then(function (a) { a.forEach(function (r) { C.delReq(r.id).catch(noop); }); }, noop);
     };
     function prof(d) {
         var x = d.data() || {}, ls = x.lastSeen && x.lastSeen.toMillis ? x.lastSeen.toMillis() : 0;
@@ -4858,13 +4858,18 @@ if ("serviceWorker" in navigator) { window.addEventListener("load", function () 
         return Promise.all(ids.map(function (id) { return db.doc("profiles/" + id).get().then(function (d) { return d.exists ? prof(d) : null; }, function () { return null; }); }));
     };
     C.myFid = function () { return uref ? uref.id : null; };
-    C.getFriends = function () {
+    C.reqs = function () {
         if (!uref || !db)
-            return Promise.resolve(null);
-        return db.doc("friendlists/" + uref.id).get().then(function (d) { return d.exists ? (d.data().ids || []) : null; });
+            return Promise.resolve([]);
+        var R = db.collection("friendreqs"), mine = uref.id, out = {};
+        return Promise.all([R.where("from", "==", mine).get(), R.where("to", "==", mine).get()]).then(function (rs) {
+            rs.forEach(function (r) { r.forEach(function (d) { var x = d.data(); out[d.id] = { id: d.id, from: x.from, to: x.to, status: x.status }; }); });
+            return Object.keys(out).map(function (k) { return out[k]; });
+        });
     };
-    C.setFriends = function (ids) { if (uref && db)
-        db.doc("friendlists/" + uref.id).set({ ids: ids }).catch(noop); };
+    C.sendReq = function (to) { return db.doc("friendreqs/" + uref.id + "_" + to).set({ from: uref.id, to: to, status: "pending", created: TS() }); };
+    C.acceptReq = function (id) { return db.doc("friendreqs/" + id).update({ status: "accepted" }); };
+    C.delReq = function (id) { return db.doc("friendreqs/" + id).delete(); };
     C.sync = function () {
         if (!uref || !uid || uid === "guest") return;
         var u = users()[uid];
@@ -4912,12 +4917,12 @@ if ("serviceWorker" in navigator) { window.addEventListener("load", function () 
 /* ===== Friends list: only for players with an account. Find players by user ID (#0007 or 7) or by username. ===== */
 (function () {
     var T = {
-        en: { wait2: "Could not connect to your account. Log out, log in again, then try once more.", b: "Friends", t: "Friends", s: "Find players by their user ID or username.", me: "Your user ID", ph: "User ID or username", go: "Search", none: "No player found.", add: "Add", rm: "Remove", on: "Online", empty: "No friends yet. Search for a player above.", guest: "The friends list is only for players with an account. Create an account to add friends.", off: "Friends need the online connection. Try again in a moment.", err: "Could not reach the server. Please try again.", self: "That is you!", list: "Your friends", res: "Search results", wait: "Still connecting to your account. Try again in a moment.", full: "Your friends list is full (100 friends).", close: "Close" },
-        de: { wait2: "Dein Konto konnte nicht verbunden werden. Melde dich ab und wieder an und versuch es nochmal.", b: "Freunde", t: "Freunde", s: "Finde Spieler mit ihrer Benutzer-ID oder ihrem Benutzernamen.", me: "Deine Benutzer-ID", ph: "Benutzer-ID oder Benutzername", go: "Suchen", none: "Kein Spieler gefunden.", add: "Hinzufügen", rm: "Entfernen", on: "Online", empty: "Noch keine Freunde. Suche oben nach einem Spieler.", guest: "Die Freundesliste gibt es nur für Spieler mit einem Konto. Erstelle ein Konto, um Freunde hinzuzufügen.", off: "Für Freunde brauchst du die Online-Verbindung. Versuch es gleich nochmal.", err: "Der Server ist nicht erreichbar. Bitte versuch es nochmal.", self: "Das bist du!", list: "Deine Freunde", res: "Suchergebnisse", wait: "Dein Konto wird noch verbunden. Versuch es gleich nochmal.", full: "Deine Freundesliste ist voll (100 Freunde).", close: "Schliessen" },
-        gsw: { wait2: "Dis Konto het nöd chönne verbunde werde. Meld di ab und wieder aa und probier s nomal.", b: "Fründe", t: "Fründe", s: "Find Spieler mit ihrer Benutzer-ID oder ihrem Benutzername.", me: "Dini Benutzer-ID", ph: "Benutzer-ID oder Benutzername", go: "Sueche", none: "Kei Spieler gfunde.", add: "Zuefüege", rm: "Entferne", on: "Online", empty: "No kei Fründe. Sueche obe nach emne Spieler.", guest: "D Fründesliste gits nur für Spieler mit emne Konto. Mach es Konto, zum Fründe zuefüege.", off: "Für Fründe bruchsch d Online-Verbindig. Probier s grad nomal.", err: "De Server isch nöd erreichbar. Probier s bitte nomal.", self: "Das bisch du!", list: "Dini Fründe", res: "Suechergebnis", wait: "Dis Konto wird no verbunde. Probier s grad nomal.", full: "Dini Fründesliste isch voll (100 Fründe).", close: "Schliesse" },
-        fr: { wait2: "Impossible de connecter ton compte. Déconnecte-toi, reconnecte-toi, puis réessaie.", b: "Amis", t: "Amis", s: "Trouve des joueurs avec leur ID utilisateur ou leur nom d’utilisateur.", me: "Ton ID utilisateur", ph: "ID utilisateur ou nom d’utilisateur", go: "Chercher", none: "Aucun joueur trouvé.", add: "Ajouter", rm: "Retirer", on: "En ligne", empty: "Pas encore d’amis. Cherche un joueur ci-dessus.", guest: "La liste d’amis est réservée aux joueurs avec un compte. Crée un compte pour ajouter des amis.", off: "Les amis ont besoin de la connexion en ligne. Réessaie dans un instant.", err: "Impossible de joindre le serveur. Réessaie.", self: "C’est toi !", list: "Tes amis", res: "Résultats", wait: "Connexion à ton compte en cours. Réessaie dans un instant.", full: "Ta liste d’amis est pleine (100 amis).", close: "Fermer" },
-        it: { wait2: "Impossibile collegare il tuo account. Esci, accedi di nuovo e riprova.", b: "Amici", t: "Amici", s: "Trova i giocatori con il loro ID utente o nome utente.", me: "Il tuo ID utente", ph: "ID utente o nome utente", go: "Cerca", none: "Nessun giocatore trovato.", add: "Aggiungi", rm: "Rimuovi", on: "Online", empty: "Ancora nessun amico. Cerca un giocatore qui sopra.", guest: "La lista amici è solo per i giocatori con un account. Crea un account per aggiungere amici.", off: "Gli amici richiedono la connessione online. Riprova tra un attimo.", err: "Impossibile raggiungere il server. Riprova.", self: "Sei tu!", list: "I tuoi amici", res: "Risultati", wait: "Connessione al tuo account in corso. Riprova tra un attimo.", full: "La tua lista amici è piena (100 amici).", close: "Chiudi" },
-        es: { wait2: "No se pudo conectar tu cuenta. Cierra sesión, vuelve a entrar e inténtalo de nuevo.", b: "Amigos", t: "Amigos", s: "Encuentra jugadores por su ID de usuario o nombre de usuario.", me: "Tu ID de usuario", ph: "ID de usuario o nombre de usuario", go: "Buscar", none: "No se encontró ningún jugador.", add: "Añadir", rm: "Quitar", on: "En línea", empty: "Aún no tienes amigos. Busca a un jugador arriba.", guest: "La lista de amigos es solo para jugadores con una cuenta. Crea una cuenta para añadir amigos.", off: "Los amigos necesitan la conexión en línea. Inténtalo de nuevo en un momento.", err: "No se pudo conectar con el servidor. Inténtalo de nuevo.", self: "¡Ese eres tú!", list: "Tus amigos", res: "Resultados", wait: "Aún se está conectando tu cuenta. Inténtalo de nuevo en un momento.", full: "Tu lista de amigos está llena (100 amigos).", close: "Cerrar" }
+        en: { acc: "Accept", dec: "Decline", cn: "Cancel", rqd: "Requested", rin: "Friend requests", rout: "Sent requests", wait2: "Could not connect to your account. Log out, log in again, then try once more.", b: "Friends", t: "Friends", s: "Find players by their user ID or username.", me: "Your user ID", ph: "User ID or username", go: "Search", none: "No player found.", add: "Add", rm: "Remove", on: "Online", empty: "No friends yet. Search for a player above.", guest: "The friends list is only for players with an account. Create an account to add friends.", off: "Friends need the online connection. Try again in a moment.", err: "Could not reach the server. Please try again.", self: "That is you!", list: "Your friends", res: "Search results", wait: "Still connecting to your account. Try again in a moment.", full: "Your friends list is full (100 friends).", close: "Close" },
+        de: { acc: "Annehmen", dec: "Ablehnen", cn: "Abbrechen", rqd: "Angefragt", rin: "Freundschaftsanfragen", rout: "Gesendete Anfragen", wait2: "Dein Konto konnte nicht verbunden werden. Melde dich ab und wieder an und versuch es nochmal.", b: "Freunde", t: "Freunde", s: "Finde Spieler mit ihrer Benutzer-ID oder ihrem Benutzernamen.", me: "Deine Benutzer-ID", ph: "Benutzer-ID oder Benutzername", go: "Suchen", none: "Kein Spieler gefunden.", add: "Hinzufügen", rm: "Entfernen", on: "Online", empty: "Noch keine Freunde. Suche oben nach einem Spieler.", guest: "Die Freundesliste gibt es nur für Spieler mit einem Konto. Erstelle ein Konto, um Freunde hinzuzufügen.", off: "Für Freunde brauchst du die Online-Verbindung. Versuch es gleich nochmal.", err: "Der Server ist nicht erreichbar. Bitte versuch es nochmal.", self: "Das bist du!", list: "Deine Freunde", res: "Suchergebnisse", wait: "Dein Konto wird noch verbunden. Versuch es gleich nochmal.", full: "Deine Freundesliste ist voll (100 Freunde).", close: "Schliessen" },
+        gsw: { acc: "Aanäh", dec: "Ablehne", cn: "Abbräche", rqd: "Aagfrögt", rin: "Fründschaftsaafrage", rout: "Gschickti Aafrage", wait2: "Dis Konto het nöd chönne verbunde werde. Meld di ab und wieder aa und probier s nomal.", b: "Fründe", t: "Fründe", s: "Find Spieler mit ihrer Benutzer-ID oder ihrem Benutzername.", me: "Dini Benutzer-ID", ph: "Benutzer-ID oder Benutzername", go: "Sueche", none: "Kei Spieler gfunde.", add: "Zuefüege", rm: "Entferne", on: "Online", empty: "No kei Fründe. Sueche obe nach emne Spieler.", guest: "D Fründesliste gits nur für Spieler mit emne Konto. Mach es Konto, zum Fründe zuefüege.", off: "Für Fründe bruchsch d Online-Verbindig. Probier s grad nomal.", err: "De Server isch nöd erreichbar. Probier s bitte nomal.", self: "Das bisch du!", list: "Dini Fründe", res: "Suechergebnis", wait: "Dis Konto wird no verbunde. Probier s grad nomal.", full: "Dini Fründesliste isch voll (100 Fründe).", close: "Schliesse" },
+        fr: { acc: "Accepter", dec: "Refuser", cn: "Annuler", rqd: "Demandé", rin: "Demandes d’ami", rout: "Demandes envoyées", wait2: "Impossible de connecter ton compte. Déconnecte-toi, reconnecte-toi, puis réessaie.", b: "Amis", t: "Amis", s: "Trouve des joueurs avec leur ID utilisateur ou leur nom d’utilisateur.", me: "Ton ID utilisateur", ph: "ID utilisateur ou nom d’utilisateur", go: "Chercher", none: "Aucun joueur trouvé.", add: "Ajouter", rm: "Retirer", on: "En ligne", empty: "Pas encore d’amis. Cherche un joueur ci-dessus.", guest: "La liste d’amis est réservée aux joueurs avec un compte. Crée un compte pour ajouter des amis.", off: "Les amis ont besoin de la connexion en ligne. Réessaie dans un instant.", err: "Impossible de joindre le serveur. Réessaie.", self: "C’est toi !", list: "Tes amis", res: "Résultats", wait: "Connexion à ton compte en cours. Réessaie dans un instant.", full: "Ta liste d’amis est pleine (100 amis).", close: "Fermer" },
+        it: { acc: "Accetta", dec: "Rifiuta", cn: "Annulla", rqd: "Richiesto", rin: "Richieste di amicizia", rout: "Richieste inviate", wait2: "Impossibile collegare il tuo account. Esci, accedi di nuovo e riprova.", b: "Amici", t: "Amici", s: "Trova i giocatori con il loro ID utente o nome utente.", me: "Il tuo ID utente", ph: "ID utente o nome utente", go: "Cerca", none: "Nessun giocatore trovato.", add: "Aggiungi", rm: "Rimuovi", on: "Online", empty: "Ancora nessun amico. Cerca un giocatore qui sopra.", guest: "La lista amici è solo per i giocatori con un account. Crea un account per aggiungere amici.", off: "Gli amici richiedono la connessione online. Riprova tra un attimo.", err: "Impossibile raggiungere il server. Riprova.", self: "Sei tu!", list: "I tuoi amici", res: "Risultati", wait: "Connessione al tuo account in corso. Riprova tra un attimo.", full: "La tua lista amici è piena (100 amici).", close: "Chiudi" },
+        es: { acc: "Aceptar", dec: "Rechazar", cn: "Cancelar", rqd: "Solicitado", rin: "Solicitudes de amistad", rout: "Solicitudes enviadas", wait2: "No se pudo conectar tu cuenta. Cierra sesión, vuelve a entrar e inténtalo de nuevo.", b: "Amigos", t: "Amigos", s: "Encuentra jugadores por su ID de usuario o nombre de usuario.", me: "Tu ID de usuario", ph: "ID de usuario o nombre de usuario", go: "Buscar", none: "No se encontró ningún jugador.", add: "Añadir", rm: "Quitar", on: "En línea", empty: "Aún no tienes amigos. Busca a un jugador arriba.", guest: "La lista de amigos es solo para jugadores con una cuenta. Crea una cuenta para añadir amigos.", off: "Los amigos necesitan la conexión en línea. Inténtalo de nuevo en un momento.", err: "No se pudo conectar con el servidor. Inténtalo de nuevo.", self: "¡Ese eres tú!", list: "Tus amigos", res: "Resultados", wait: "Aún se está conectando tu cuenta. Inténtalo de nuevo en un momento.", full: "Tu lista de amigos está llena (100 amigos).", close: "Cerrar" }
     };
     function t(k) {
         var b = String(window.lang || "en"), c = [b, b.split("-")[0], "en"];
@@ -4927,10 +4932,11 @@ if ("serviceWorker" in navigator) { window.addEventListener("load", function () 
         return T.en[k];
     }
     var $f = function (id) { return document.getElementById(id); };
-    var MAX = 100, shown = [], busy = 0;
+    var reqs = [], cache = {}, lastResults = null, inN = 0, loadTok = 0;
     function me() { return uid && uid !== "guest" ? users()[uid] : null; }
+    function ready() { var u = me(); return !!(u && u.cnum && window.Cloud && Cloud.on && Cloud.myFid()); }
     function labels() {
-        $f("frlbl").textContent = t("b");
+        $f("frlbl").textContent = t("b") + (inN ? " (" + inN + ")" : "");
         $f("frt").textContent = t("t");
         $f("frs").textContent = t("s");
         $f("frmel").textContent = t("me");
@@ -4944,16 +4950,25 @@ if ("serviceWorker" in navigator) { window.addEventListener("load", function () 
     if (typeof _al === "function")
         window.applyLang = function () { var r = _al.apply(this, arguments); labels(); return r; };
     function el(tag, cls, txt) { var e = document.createElement(tag); if (cls) e.className = cls; if (txt != null) e.textContent = txt; return e; }
-    function localIds() { var u = me(); return (u && Array.isArray(u.friends)) ? u.friends.slice(0, MAX) : []; }
-    function saveIds(ids) {
-        var U = users();
-        if (U[uid]) {
-            U[uid].friends = ids;
-            saveUsers(U);
+    function msg(x) { $f("frerr").textContent = x || ""; }
+    function other(r) { return r.from === Cloud.myFid() ? r.to : r.from; }
+    function relOf(id) {
+        for (var i = 0; i < reqs.length; i++) {
+            var r = reqs[i];
+            if (other(r) !== id)
+                continue;
+            if (r.status === "accepted")
+                return { k: "friend", r: r };
+            return { k: r.from === Cloud.myFid() ? "out" : "in", r: r };
         }
-        Cloud.setFriends(ids);
+        return { k: "", r: null };
     }
-    function row(p, isFriend, inList) {
+    function act(fn) {
+        $f("frbody").querySelectorAll("button").forEach(function (b) { b.disabled = true; });
+        msg("");
+        Promise.resolve().then(fn).then(null, function () { msg(t("err")); }).then(load);
+    }
+    function row(p, btns) {
         var r = el("div", "srow"), av = el("span", "av"), nm = el("span", "nm2");
         setAv(av, p.name, p.pic);
         if (!p.pic)
@@ -4969,67 +4984,90 @@ if ("serviceWorker" in navigator) { window.addEventListener("load", function () 
             nm.appendChild(d);
         }
         r.appendChild(nm);
-        var b = el("button", "btn" + (isFriend ? " alt" : ""), isFriend ? t("rm") : t("add"));
-        b.type = "button";
-        b.onclick = function () {
-            var ids = localIds();
-            if (isFriend) {
-                ids = ids.filter(function (x) { return x !== p.id; });
-                saveIds(ids);
-            }
-            else {
-                if (ids.length >= MAX)
-                    return msg(t("full"));
-                if (ids.indexOf(p.id) < 0)
-                    ids.push(p.id);
-                saveIds(ids);
-            }
-            render(shown);
-            if (inList === false) { /* keep search results, refresh friends below */ }
-        };
-        r.appendChild(b);
+        btns.forEach(function (x) {
+            var b = el("button", "btn" + (x.alt ? " alt" : ""), x.txt);
+            b.type = "button";
+            if (x.off)
+                b.disabled = true;
+            else
+                b.onclick = function () { act(x.fn); };
+            b.style.marginLeft = "4px";
+            r.appendChild(b);
+        });
         return r;
     }
-    function msg(x) { $f("frerr").textContent = x || ""; }
-    var cache = {};
-    function render(results) {
-        var B = $f("frbody"), ids = localIds(), mine = Cloud.myFid();
+    function render() {
+        var B = $f("frbody"), mine = Cloud.myFid();
         B.textContent = "";
-        shown = results || [];
-        if (results) {
+        if (lastResults) {
             B.appendChild(el("h3", "sh", t("res")));
-            if (!results.length)
+            if (!lastResults.length)
                 B.appendChild(el("p", "shd", t("none")));
-            results.forEach(function (p) {
-                if (p.id === mine) { var r0 = row(p, false); r0.lastChild.remove(); var s0 = el("span", "shd", t("self")); r0.appendChild(s0); B.appendChild(r0); return; }
+            lastResults.forEach(function (p) {
                 cache[p.id] = p;
-                B.appendChild(row(p, ids.indexOf(p.id) >= 0, false));
+                if (p.id === mine) {
+                    var r0 = row(p, []);
+                    r0.appendChild(el("span", "shd", t("self")));
+                    return B.appendChild(r0);
+                }
+                var rel = relOf(p.id);
+                var btns = rel.k === "friend" ? [{ txt: t("rm"), alt: 1, fn: function () { return Cloud.delReq(rel.r.id); } }]
+                    : rel.k === "out" ? [{ txt: t("rqd"), off: 1 }]
+                        : rel.k === "in" ? [{ txt: t("acc"), fn: function () { return Cloud.acceptReq(rel.r.id); } }]
+                            : [{ txt: t("add"), fn: function () { return Cloud.sendReq(p.id); } }];
+                B.appendChild(row(p, btns));
             });
         }
-        B.appendChild(el("h3", "sh", t("list") + " (" + ids.length + ")"));
-        if (!ids.length) {
-            B.appendChild(el("p", "shd", t("empty")));
-            return;
-        }
-        var holder = el("div");
-        B.appendChild(holder);
-        var token = ++busy;
-        var need = ids.filter(function (x) { return true; });
-        Cloud.profiles(need).then(function (ps) {
-            if (token !== busy)
+        var inc = [], fr = [], out = [];
+        reqs.forEach(function (r) {
+            var p = cache[other(r)];
+            if (!p)
                 return;
-            ps.forEach(function (p, k) { if (p) cache[p.id] = p; });
-            holder.textContent = "";
-            need.forEach(function (id) {
-                var p = cache[id];
-                if (p)
-                    holder.appendChild(row(p, true, true));
-            });
+            if (r.status === "accepted")
+                fr.push([p, r]);
+            else if (r.to === mine)
+                inc.push([p, r]);
+            else
+                out.push([p, r]);
         });
+        if (inc.length) {
+            B.appendChild(el("h3", "sh", t("rin") + " (" + inc.length + ")"));
+            inc.forEach(function (x) { B.appendChild(row(x[0], [{ txt: t("acc"), fn: function () { return Cloud.acceptReq(x[1].id); } }, { txt: t("dec"), alt: 1, fn: function () { return Cloud.delReq(x[1].id); } }])); });
+        }
+        B.appendChild(el("h3", "sh", t("list") + " (" + fr.length + ")"));
+        if (!fr.length)
+            B.appendChild(el("p", "shd", t("empty")));
+        fr.forEach(function (x) { B.appendChild(row(x[0], [{ txt: t("rm"), alt: 1, fn: function () { return Cloud.delReq(x[1].id); } }])); });
+        if (out.length) {
+            B.appendChild(el("h3", "sh", t("rout") + " (" + out.length + ")"));
+            out.forEach(function (x) { B.appendChild(row(x[0], [{ txt: t("cn"), alt: 1, fn: function () { return Cloud.delReq(x[1].id); } }])); });
+        }
+    }
+    function load() {
+        if (!ready())
+            return;
+        var tok = ++loadTok;
+        return Cloud.reqs().then(function (rs) {
+            if (tok !== loadTok)
+                return;
+            reqs = rs;
+            var ids = {};
+            rs.forEach(function (r) { ids[other(r)] = 1; });
+            inN = rs.filter(function (r) { return r.status === "pending" && r.to === Cloud.myFid(); }).length;
+            labels();
+            return Cloud.profiles(Object.keys(ids)).then(function (ps) {
+                if (tok !== loadTok)
+                    return;
+                ps.forEach(function (p) { if (p) cache[p.id] = p; });
+                if (!$f("fr").classList.contains("hide"))
+                    render();
+            });
+        }).then(null, function () { if (!$f("fr").classList.contains("hide")) msg(t("err")); });
     }
     function open() {
         labels();
         msg("");
+        lastResults = null;
         var u = me(), box = $f("frbox"), B = $f("frbody");
         B.textContent = "";
         box.classList.add("hide");
@@ -5044,14 +5082,13 @@ if ("serviceWorker" in navigator) { window.addEventListener("load", function () 
             B.appendChild(el("p", "shd", t("off")));
             return $f("frclose").focus();
         }
-        if (!u.cnum || !Cloud.myFid()) {
+        if (!ready()) {
             var wp = el("p", "shd", t("wait")), n = 0;
             B.appendChild(wp);
             var iv = setInterval(function () {
                 if ($f("fr").classList.contains("hide"))
                     return clearInterval(iv);
-                var u2 = me();
-                if (u2 && u2.cnum && Cloud.myFid()) {
+                if (ready()) {
                     clearInterval(iv);
                     return open();
                 }
@@ -5064,15 +5101,8 @@ if ("serviceWorker" in navigator) { window.addEventListener("load", function () 
         }
         $f("frmen").textContent = "#" + pad4(u.cnum);
         box.classList.remove("hide");
-        /* the cloud copy of the list follows you between devices; the local copy is the fallback */
-        Cloud.getFriends().then(function (ids) {
-            if (ids) {
-                var U = users();
-                if (U[uid]) { U[uid].friends = ids.slice(0, MAX); saveUsers(U); }
-            }
-            else if (localIds().length)
-                Cloud.setFriends(localIds());
-        }, function () { }).then(function () { render(null); });
+        render();
+        load();
         $f("frq").focus();
     }
     function close() { $f("fr").classList.add("hide"); unlock(); }
@@ -5087,8 +5117,14 @@ if ("serviceWorker" in navigator) { window.addEventListener("load", function () 
         if (!q)
             return;
         $f("frgo").disabled = true;
-        Cloud.find(q).then(function (r) { $f("frgo").disabled = false; render(r); }, function () { $f("frgo").disabled = false; msg(t("err")); });
+        Cloud.find(q).then(function (r) { $f("frgo").disabled = false; lastResults = r; render(); }, function () { $f("frgo").disabled = false; msg(t("err")); });
     };
+    /* new requests show up as a number on the Friends button, and live while the screen is open */
+    function badge() { if (ready() && $f("fr").classList.contains("hide")) load(); }
+    setTimeout(badge, 6000);
+    setTimeout(badge, 20000);
+    setInterval(badge, 45000);
+    setInterval(function () { if (ready() && !$f("fr").classList.contains("hide") && !$f("frbox").classList.contains("hide")) load(); }, 12000);
 })();
 </script>
 </body>
