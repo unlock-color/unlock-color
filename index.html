@@ -839,7 +839,14 @@ var PUZZLES = [
     { g: "Fourth grade", q: "What do we call the instructions that tell a computer what to do?", o: ["A battery", "A program", "A cable", "A screen"], a: 1 },
     { g: "Fifth grade", q: "A game says: IF your score is 10 or more, you win. Your score is 7. What happens?", o: ["You win", "You do not win yet", "Your score becomes 10", "The game deletes itself"], a: 1 },
     { g: "Sixth grade", q: "What does this code print?", c: "n = 5\nrepeat 2 times:\n    n = n - 1\nprint(n)", o: ["2", "3", "4", "5"], a: 1 },
-    { g: "Seventh grade", q: "What does this code print? (Multiplication happens before addition.)", c: "a = 4\nb = 7\nprint(a + b * 2)", o: ["22", "18", "15", "11"], a: 1 }
+    { g: "Seventh grade", q: "What does this code print? (Multiplication happens before addition.)", c: "a = 4\nb = 7\nprint(a + b * 2)", o: ["22", "18", "15", "11"], a: 1 },
+    { g: "Eighth grade", q: "What is the binary number 1111 in decimal?", o: ["7", "14", "15", "16"], a: 2 },
+    { g: "Ninth grade", q: "What does this code print?", c: "x = 5\nif x > 3:\n    print(\"big\")\nelse:\n    print(\"small\")", o: ["big", "small", "5", "nothing"], a: 0 },
+    { g: "Tenth grade", q: "What does f(4) return?", c: "def f(n):\n    return 1 if n == 0 else 2 * f(n-1)", o: ["8", "10", "16", "24"], a: 2 },
+    { g: "Eleventh grade", q: "How many bits are in one byte?", o: ["4", "8", "16", "32"], a: 1 },
+    { g: "Twelfth grade", q: "How many different values can 3 bits store?", o: ["3", "6", "8", "9"], a: 2 },
+    { g: "College", q: "How fast is searching an unsorted list of n items, one by one?", o: ["O(n)", "O(log n)", "O(1)", "O(n²)"], a: 0 },
+    { g: "First grade", q: "A robot goes up 6 steps, then up 4 more steps. How many steps up in all?", o: ["8", "9", "10", "12"], a: 2 }
 ];
 var COLORS = ["#3B82F6", "#FACC15", "#FB923C", "#22C55E", "#EF4444", "#A855F7"];
 var TXT = ["#fff", "#1B2440", "#1B2440", "#1B2440", "#fff", "#fff"];
@@ -1587,7 +1594,7 @@ var PT = function (k) { return (UI[lang] && UI[lang][k]) || UI.en[k]; };
 var PZ = {};
 {
     var same = function (a, b) { return b; };
-    var G_1 = { de: function (n) { return n === 12 ? "Universität" : n + ". Klasse"; }, fr: function (n) { return n === 12 ? "Université" : (n === 1 ? "1re" : n + "e") + " année"; }, it: function (n) { return n === 12 ? "Università" : n + "ª classe"; }, es: function (n) { return n === 12 ? "Universidad" : n + ".º curso"; }, "es-MX": function (n) { return n === 12 ? "Universidad" : "Grado " + n; } };
+    var G_1 = { de: function (n) { return n === 13 ? "Universität" : n + ". Klasse"; }, fr: function (n) { return n === 13 ? "Université" : (n === 1 ? "1re" : n + "e") + " année"; }, it: function (n) { return n === 13 ? "Università" : n + "ª classe"; }, es: function (n) { return n === 13 ? "Universidad" : n + ".º curso"; }, "es-MX": function (n) { return n === 13 ? "Universidad" : "Grado " + n; } };
     var P = {
         de: [["Welches davon ist ein Computer?", ["Banane", "Schuh", "Laptop", "Löffel"]],
             ["Ein Roboter macht 3 Schritte vorwärts und dann 2 Schritte zurück. Wie weit ist er von seinem Startpunkt entfernt?", ["1 Schritt", "2 Schritte", "3 Schritte", "5 Schritte"]],
@@ -1860,7 +1867,7 @@ function porder() { if (PORDER.length === PICS.length)
     r.push(o[k]);
     if (k % 4 === 3 && nw.length)
         r.push(nw.shift());
-} return PORDER = r.concat(nw, dp); }
+} return PORDER = r.concat(nw); }
 function pidx(n) { var P = porder(), L = P.length; return P[((((D.lap | 0) * PUZZLES.length + n) % L) + L) % L]; }
 function nextLbl() { $("next").textContent = i >= PUZZLES.length ? U().again : U().next; }
 var i = 0, sel = 1, total = 0, filled = 0, locked = false, coins = 0, wrongs = 0, drawT = 0;
@@ -2790,7 +2797,7 @@ function autoName(n, email) {
 function social(provider, sub, name, email) {
     var id = provider + ":" + sub, U = users(), isNew = !U[id];
     if (!U[id]) {
-        if (authMode === "create") {
+        if (authMode === "create" && $("aname").value.trim()) {
             var un = $("aname").value.trim(), ne = nameCheck(un);
             if (ne)
                 return err(ne);
@@ -2833,7 +2840,7 @@ $("bg").onclick = function () {
         return Cloud.google();
     if (!AUTH_CONFIG.googleClientId)
         return err(PT("x_gsetup"));
-    if (authMode === "create") {
+    if (authMode === "create" && $("aname").value.trim()) {
         var ne = nameCheck($("aname").value.trim());
         if (ne)
             return err(ne);
@@ -3408,6 +3415,7 @@ var UPDATES = [{ v: "2026-11-24.1", tr: {
     UPDATES.unshift({ v: "2026-11-24.2", tr: tr });
 })();
 function showUpdate() {
+    return; /* "What's new" popup disabled */
     if (document.getElementById("upd"))
         return;
     if (Date.now() > UPDATE_SHOW_UNTIL)
@@ -4407,6 +4415,57 @@ $("aname").addEventListener("input", function () {
 if ("serviceWorker" in navigator) { window.addEventListener("load", function () { navigator.serviceWorker.register("sw.js").catch(function () { }); }); }
 </script>
 <script>
+/* Translations of the 7 added questions (46-52). Others reuse existing translated sentences. */
+(function () {
+  var C = {
+    de: ["Wie viele Bits hat ein Byte?", "Wie viele verschiedene Werte kann man mit 3 Bits speichern?", "Wie schnell ist es, eine unsortierte Liste mit n Einträgen der Reihe nach zu durchsuchen?"],
+    gsw: ["Wie viel Bits het es Byte?", "Wie viel verschideni Wärt chasch mit 3 Bits speichere?", "Wie schnäll isch es, e unsortierti Lischte mit n Iträg nachenand z durchsueche?"],
+    fr: ["Combien de bits y a-t-il dans un octet ?", "Combien de valeurs différentes peut-on stocker avec 3 bits ?", "Quelle est la vitesse de recherche dans une liste non triée de n éléments, un par un ?"],
+    it: ["Quanti bit ci sono in un byte?", "Quanti valori diversi si possono memorizzare con 3 bit?", "Quanto è veloce cercare in una lista non ordinata di n elementi, uno per uno?"],
+    es: ["¿Cuántos bits hay en un byte?", "¿Cuántos valores distintos se pueden guardar con 3 bits?", "¿Qué tan rápido es buscar en una lista sin ordenar de n elementos, uno por uno?"],
+    "sr-Latn": ["Koliko bitova ima u jednom bajtu?", "Koliko različitih vrednosti može da se sačuva sa 3 bita?", "Koliko je brza pretraga neuređene liste od n elemenata, jedan po jedan?"],
+    sr: ["Колико битова има у једном бајту?", "Колико различитих вредности може да се сачува са 3 бита?", "Колико је брза претрага неуређене листе од n елемената, један по један?"],
+    jam: ["How much bit deh inna one byte?", "How much different value yuh can store wid 3 bits?", "How fast is it fi search a mixed-up list of n things, one by one?"],
+    ru: ["Сколько бит в одном байте?", "Сколько разных значений можно хранить в 3 битах?", "Как быстро идёт поиск в неупорядоченном списке из n элементов по одному?"],
+    zh: ["一个字节有多少位？", "3 位可以存储多少种不同的值？", "在含 n 个元素的无序列表中逐个查找，速度如何？"],
+    hi: ["एक बाइट में कितने बिट होते हैं?", "3 बिट से कितने अलग-अलग मान स्टोर किए जा सकते हैं?", "n चीज़ों की बिना क्रम वाली सूची में एक-एक करके खोजना कितना तेज़ है?"],
+    mk: ["Колку бита има во еден бајт?", "Колку различни вредности може да се зачуваат со 3 бита?", "Колку брзо е пребарувањето на несортирана листа од n ставки, една по една?"],
+    pt: ["Quantos bits há num byte?", "Quantos valores diferentes se podem guardar com 3 bits?", "Qual é a velocidade de procurar numa lista não ordenada de n itens, um a um?"],
+    ar: ["كم بتًا في البايت الواحد؟", "كم قيمة مختلفة يمكن تخزينها بـ 3 بتات؟", "ما سرعة البحث في قائمة غير مرتبة من n عنصرًا، عنصرًا تلو الآخر؟"],
+    ja: ["1バイトは何ビットですか？", "3ビットで何通りの値を保存できますか？", "整列されていないn個のリストを1つずつ探す速さは？"],
+    ko: ["1바이트는 몇 비트일까요?", "3비트로 몇 가지 서로 다른 값을 저장할 수 있나요?", "정렬되지 않은 n개 목록을 하나씩 찾는 속도는 어느 정도일까요?"],
+    hu: ["Hány bit van egy bájtban?", "Hányféle különböző értéket tárolhatunk 3 biten?", "Milyen gyors egy n elemű rendezetlen listában egyesével keresni?"],
+    no: ["Hvor mange biter er det i én byte?", "Hvor mange ulike verdier kan 3 biter lagre?", "Hvor raskt er det å lete gjennom en usortert liste med n elementer, ett om gangen?"],
+    nl: ["Hoeveel bits zitten er in één byte?", "Hoeveel verschillende waarden kun je opslaan met 3 bits?", "Hoe snel is het om een ongesorteerde lijst van n items één voor één te doorzoeken?"],
+    pl: ["Ile bitów ma jeden bajt?", "Ile różnych wartości można zapisać na 3 bitach?", "Jak szybkie jest przeszukiwanie nieposortowanej listy n elementów jeden po drugim?"],
+    sv: ["Hur många bitar finns det i en byte?", "Hur många olika värden kan 3 bitar lagra?", "Hur snabbt är det att söka igenom en osorterad lista med n objekt, ett i taget?"],
+    el: ["Πόσα bit έχει ένα byte;", "Πόσες διαφορετικές τιμές μπορούν να αποθηκευτούν με 3 bit;", "Πόσο γρήγορη είναι η αναζήτηση σε μια μη ταξινομημένη λίστα n στοιχείων, ένα προς ένα;"],
+    uk: ["Скільки бітів в одному байті?", "Скільки різних значень можна зберегти в 3 бітах?", "Наскільки швидкий пошук у несортованому списку з n елементів по одному?"],
+    vi: ["Một byte có bao nhiêu bit?", "3 bit lưu được bao nhiêu giá trị khác nhau?", "Tìm từng mục một trong danh sách n mục chưa sắp xếp nhanh đến mức nào?"],
+    th: ["1 ไบต์มีกี่บิต?", "3 บิตเก็บค่าที่แตกต่างกันได้กี่ค่า?", "การค้นหาทีละรายการในรายการที่ไม่เรียงลำดับ n รายการเร็วแค่ไหน?"],
+    id: ["Berapa bit dalam satu byte?", "Berapa nilai berbeda yang dapat disimpan dengan 3 bit?", "Seberapa cepat mencari satu per satu di daftar tak berurutan berisi n item?"],
+    bn: ["এক বাইটে কতগুলো বিট থাকে?", "3 বিটে কতগুলো আলাদা মান রাখা যায়?", "n টি আইটেমের অগোছালো তালিকায় একটা একটা করে খোঁজা কত দ্রুত?"]
+  };
+  var AL = { "fr-CH": "fr", "es-MX": "es", "pt-BR": "pt", "ar-MA": "ar", "ar-QA": "ar" };
+  try {
+    Object.keys(LANGS).forEach(function (l) {
+      var z = PZ[l]; if (!z) return;
+      var t = C[l] || C[AL[l]]; if (!t) return;
+      var sw = function (n) { return z[n] && z[n].q; };
+      z[46] = { q: (sw(7) || "").replace("1011", "1111") };
+      z[47] = { q: sw(6) };
+      z[48] = { q: sw(22) };
+      z[49] = { q: t[0] };
+      z[50] = { q: t[1] };
+      z[51] = { q: t[2] };
+      z[52] = { q: (sw(15) || "").replace("2", "6").replace("3", "4").replace("২", "৬").replace("৩", "৪") };
+      for (var n0 = 46; n0 <= 52; n0++) { var gg = z[n0 % 13] && z[n0 % 13].g; if (gg) z[n0].g = gg; }
+      [46, 47, 48, 52].forEach(function (n) { if (!z[n].q || (n === 46 && z[n].q.indexOf("1111") < 0) || (n === 52 && z[n].q === sw(15))) delete z[n].q; });
+    });
+  } catch (e) { }
+})();
+</script>
+<script>
 /* Translate the pseudo-code words ("repeat N times", "for n in 1 to 3") inside questions */
 (function () {
   var R = {
@@ -4657,14 +4716,14 @@ if ("serviceWorker" in navigator) { window.addEventListener("load", function () 
             auth.signOut().catch(noop);
     };
     C.google = function () {
-        if (authMode === "create") {
+        if (authMode === "create" && $("aname").value.trim()) {
             var ne = nameCheck($("aname").value.trim());
             if (ne)
                 return err(ne);
         }
         if (!auth)
             return err("Still connecting to the server. Try again in a moment.");
-        auth.signInWithPopup(new fb.auth.GoogleAuthProvider()).then(function (r) {
+        (function () { var gp = new fb.auth.GoogleAuthProvider(); gp.setCustomParameters({ prompt: "select_account" }); return auth.signInWithPopup(gp); })().then(function (r) {
             var g = r.user.providerData.filter(function (d) { return d.providerId === "google.com"; })[0] || {};
             social("google", g.uid || r.user.uid, r.user.displayName, r.user.email);
         }).catch(function (e) {
