@@ -426,6 +426,29 @@ html,body{max-width:100%;overflow-x:hidden}
   </div>
 </div>
 
+<div id="chat" class="ov hide" role="dialog" aria-modal="true" aria-labelledby="cht">
+  <div class="gbox">
+    <h2 id="cht">Chat</h2>
+    <p class="shd" id="chenc"></p>
+    <p class="shd" id="chcode" style="font-family:ui-monospace,monospace;word-break:break-all"></p>
+    <p class="shd" id="chnote"></p>
+    <div id="chsetup" class="hide">
+      <p class="gs" id="chsetups"></p>
+      <input id="chpw" type="password" autocomplete="new-password" maxlength="100" style="display:block;width:100%;margin:0 0 8px;font:inherit;font-size:1rem;color:var(--ink);background:var(--bg);border:1.5px solid var(--line);border-radius:10px;padding:12px">
+      <input id="chpw2" type="password" autocomplete="new-password" maxlength="100" style="display:block;width:100%;margin:0 0 8px;font:inherit;font-size:1rem;color:var(--ink);background:var(--bg);border:1.5px solid var(--line);border-radius:10px;padding:12px">
+      <p class="err" id="chpwerr" role="alert"></p>
+      <button class="btn" id="chpwgo" type="button">Create</button>
+      <button class="link" id="chreset" type="button" style="color:var(--bad)"></button>
+    </div>
+    <div id="chbox" class="hide" style="display:flex;flex-direction:column;min-height:0;flex:1 1 auto">
+      <div id="chmsgs" style="overflow-y:auto;min-height:180px;max-height:46vh;flex:1 1 auto;display:flex;flex-direction:column;gap:6px;padding:4px 0"></div>
+      <form id="chform" style="display:flex;gap:8px;align-items:stretch;margin:8px 0 0"><input id="chtext" type="text" autocomplete="off" maxlength="500" style="flex:1 1 auto;min-width:0;font:inherit;font-size:1rem;color:var(--ink);background:var(--bg);border:1.5px solid var(--line);border-radius:10px;padding:12px"><button class="btn" id="chsend" type="submit" style="width:auto;margin:0;flex:none">Send</button></form>
+    </div>
+    <p class="err" id="cherr" role="alert"></p>
+    <button class="btn alt" id="chback" type="button">Back</button>
+  </div>
+</div>
+
 <div id="stats" class="ov hide" role="dialog" aria-modal="true" aria-labelledby="st">
   <div class="gbox">
     <h2 id="st">Your stats</h2>
@@ -3433,8 +3456,8 @@ document.querySelectorAll(".langsel").forEach(function (el) {
     el.onchange = function () { lang = el.value; lsSet("lang", lang); applyLang(); };
 });
 /* ===== What's new popup ===== */
-var UPDATE_VER = "2026-11-25.1";
-var UPDATE_SHOW_UNTIL = Date.parse("2026-11-26T13:30:00+01:00"); /* shows for one day only (24 h from publishing on Nov 25, 2026), then stops; set a new date when publishing a new update */
+var UPDATE_VER = "2026-11-25.2";
+var UPDATE_SHOW_UNTIL = Date.parse("2026-11-26T14:30:00+01:00"); /* shows for one day only (24 h from publishing on Nov 25, 2026), then stops; set a new date when publishing a new update */
 var UPDATES = [{ v: "2026-11-24.1", tr: {
     "en": ["What’s new", "Update", "Got it", "Fixed the wrong color being highlighted in your palette", "Changing the language while answering can no longer skip a puzzle", "Picture names now show in your language", "Every picture shows up once before any repeats", "Safer login: too many wrong tries now pause login for a while", "All puzzle questions and answers are now translated in German, French and Spanish (more languages coming)", "Wrong answers and wrong colors no longer cost you coins", "Small fixes and improvements"],
     "de": ["Neuigkeiten", "Update", "Verstanden", "Falsch markierte Farbe in der Palette behoben", "Beim Sprachwechsel während einer Antwort wird kein Rätsel mehr übersprungen", "Bildnamen erscheinen jetzt in deiner Sprache", "Jedes Bild kommt einmal vor, bevor sich etwas wiederholt", "Sichereres Anmelden: Bei zu vielen Fehlversuchen wird die Anmeldung kurz pausiert", "Alle Rätselfragen und Antworten sind jetzt auf Deutsch, Französisch und Spanisch übersetzt (weitere Sprachen folgen)", "Falsche Antworten und falsche Farben kosten keine Münzen mehr", "Kleine Korrekturen und Verbesserungen"],
@@ -3467,9 +3490,9 @@ var UPDATES = [{ v: "2026-11-24.1", tr: {
 /* New entry: built on the previous entry\u2019s headings; shown for one day only */
 (function () {
     /* 2026-11-25.1 = everything from 2026-11-24.1 and 2026-11-24.2, plus the friends list */
-    var NB = {"en": ["Permanent bans now last until January 1, 9999", "Ban messages now show in your language, including Swiss German"], "de": ["Dauerhafte Sperren gelten jetzt bis zum 1. Januar 9999", "Sperrmeldungen erscheinen jetzt in deiner Sprache, auch auf Schweizerdeutsch"], "gsw": ["Dauerhafti Sperre gälte jetz bis zum 1. Januar 9999", "Sperrmäldige erschiined jetz i dinere Sprach, au uf Schwiizerdütsch"], "fr": ["Les bannissements définitifs durent maintenant jusqu’au 1er janvier 9999", "Les messages de bannissement s’affichent maintenant dans ta langue, y compris en suisse allemand"], "it": ["I ban permanenti ora durano fino al 1° gennaio 9999", "I messaggi di ban ora appaiono nella tua lingua, anche in svizzero tedesco"], "es": ["Los bloqueos permanentes ahora duran hasta el 1 de enero de 9999", "Los mensajes de bloqueo ahora salen en tu idioma, incluido el alemán suizo"], "pt": ["Os banimentos permanentes agora duram até 1 de janeiro de 9999", "As mensagens de banimento agora aparecem no teu idioma, incluindo alemão suíço"], "pt-BR": ["Banimentos permanentes agora duram até 1º de janeiro de 9999", "As mensagens de banimento agora aparecem no seu idioma, incluindo alemão suíço"], "ru": ["Постоянные блокировки теперь действуют до 1 января 9999 г.", "Сообщения о блокировке теперь показываются на твоём языке, включая швейцарский немецкий"], "uk": ["Постійні блокування тепер діють до 1 січня 9999 р.", "Повідомлення про блокування тепер показуються твоєю мовою, зокрема швейцарською німецькою"], "zh": ["永久封禁现在持续到9999年1月1日", "封禁提示现在以你的语言显示，包括瑞士德语"], "ja": ["永久停止は9999年1月1日までになりました", "停止のお知らせが、スイスドイツ語をふくむあなたの言語で表示されます"], "ko": ["영구 정지는 이제 9999년 1월 1일까지예요", "정지 안내가 스위스 독일어를 포함해 내 언어로 표시돼요"], "hi": ["स्थायी प्रतिबंध अब 1 जनवरी 9999 तक रहेंगे", "प्रतिबंध के संदेश अब आपकी भाषा में दिखते हैं, स्विस जर्मन सहित"], "ar": ["الحظر الدائم يستمر الآن حتى 1 يناير 9999", "رسائل الحظر تظهر الآن بلغتك، بما في ذلك الألمانية السويسرية"], "hu": ["Az állandó tiltások mostantól 9999. január 1-ig tartanak", "A tiltási üzenetek mostantól a te nyelveden jelennek meg, svájci némettel együtt"], "no": ["Permanente utestengelser varer nå til 1. januar 9999", "Meldinger om utestengelse vises nå på ditt språk, også sveitsertysk"], "nl": ["Permanente blokkades duren nu tot 1 januari 9999", "Blokkademeldingen verschijnen nu in jouw taal, ook in Zwitserduits"], "pl": ["Stałe blokady trwają teraz do 1 stycznia 9999", "Komunikaty o blokadzie pokazują się teraz w Twoim języku, także po szwajcarsku niemiecku"], "sv": ["Permanenta avstängningar gäller nu till 1 januari 9999", "Meddelanden om avstängning visas nu på ditt språk, även schweizertyska"], "el": ["Οι μόνιμοι αποκλεισμοί διαρκούν πλέον έως την 1η Ιανουαρίου 9999", "Τα μηνύματα αποκλεισμού εμφανίζονται πλέον στη γλώσσα σου, και στα ελβετικά γερμανικά"], "vi": ["Lệnh cấm vĩnh viễn nay kéo dài đến ngày 1 tháng 1 năm 9999", "Thông báo bị cấm nay hiển thị bằng ngôn ngữ của bạn, kể cả tiếng Đức Thụy Sĩ"], "th": ["การแบนถาวรตอนนี้มีผลถึง 1 มกราคม 9999", "ข้อความแจ้งแบนแสดงเป็นภาษาของคุณแล้ว รวมถึงภาษาเยอรมันสวิส"], "id": ["Blokir permanen sekarang berlaku sampai 1 Januari 9999", "Pesan blokir sekarang tampil dalam bahasamu, termasuk Jerman Swiss"], "bn": ["স্থায়ী নিষেধাজ্ঞা এখন ১ জানুয়ারি ৯৯৯৯ পর্যন্ত থাকে", "নিষেধাজ্ঞার বার্তা এখন আপনার ভাষায় দেখানো হয়, সুইস জার্মান সহ"], "sr": ["Трајне забране сада трају до 1. јануара 9999.", "Поруке о забрани сада се приказују на твом језику, укључујући швајцарски немачки"], "mk": ["Трајните забрани сега траат до 1 јануари 9999", "Пораките за забрана сега се прикажуваат на твојот јазик, вклучително швајцарски германски"], "sr-Latn": ["Trajne zabrane sada traju do 1. januara 9999.", "Poruke o zabrani sada se prikazuju na tvom jeziku, uključujući švajcarski nemački"]}, FR = {"en": ["Friends list is finally here", "Friends list is only for people with an account: find players by user ID or username"], "de": ["Die Freundesliste ist endlich da", "Die Freundesliste gibt es nur für Leute mit einem Konto: finde Spieler per Benutzer-ID oder Benutzername"], "gsw": ["D Fründesliste isch endlich da", "D Fründesliste gits nur für Lüt mit emne Konto: find Spieler mit de Benutzer-ID oder em Benutzername"], "fr": ["La liste d’amis est enfin là", "La liste d’amis est réservée aux personnes avec un compte : trouve des joueurs avec leur ID utilisateur ou leur nom d’utilisateur"], "it": ["La lista amici è finalmente arrivata", "La lista amici è solo per chi ha un account: trova i giocatori con l’ID utente o il nome utente"], "es": ["¡Por fin llegó la lista de amigos!", "La lista de amigos es solo para quien tiene una cuenta: encuentra jugadores por su ID de usuario o nombre de usuario"], "pt": ["A lista de amigos finalmente chegou", "A lista de amigos é só para quem tem conta: encontra jogadores pelo ID de utilizador ou nome de utilizador"], "pt-BR": ["A lista de amigos finalmente chegou", "A lista de amigos é só para quem tem conta: encontre jogadores pelo ID de usuário ou nome de usuário"], "ru": ["Список друзей наконец-то здесь", "Список друзей только для тех, у кого есть аккаунт: находи игроков по ID пользователя или имени пользователя"], "uk": ["Список друзів нарешті тут", "Список друзів лише для тих, хто має обліковий запис: знаходь гравців за ID користувача або іменем користувача"], "zh": ["好友列表终于来了", "好友列表仅限已创建账号的玩家：可通过用户 ID 或用户名查找玩家"], "ja": ["ついにフレンドリストが登場しました", "フレンドリストはアカウントを作成した人だけが使えます。ユーザーIDまたはユーザー名でプレイヤーを探せます"], "ko": ["드디어 친구 목록이 나왔어요", "친구 목록은 계정을 만든 사람만 쓸 수 있어요. 사용자 ID나 사용자 이름으로 플레이어를 찾아보세요"], "hi": ["फ्रेंड्स लिस्ट आखिरकार आ गई है", "फ्रेंड्स लिस्ट सिर्फ़ उन लोगों के लिए है जिन्होंने अकाउंट बनाया है: यूज़र ID या यूज़रनेम से खिलाड़ी खोजें"], "ar": ["قائمة الأصدقاء وصلت أخيرًا", "قائمة الأصدقاء متاحة فقط لمن أنشأ حسابًا: ابحث عن اللاعبين برقم المستخدم أو اسم المستخدم"], "hu": ["Végre itt a barátlista", "A barátlista csak fiókkal rendelkezőknek szól: keress játékosokat felhasználói azonosító vagy felhasználónév alapján"], "no": ["Vennelisten er endelig her", "Vennelisten er bare for folk som har opprettet en konto: finn spillere med bruker-ID eller brukernavn"], "nl": ["De vriendenlijst is eindelijk hier", "De vriendenlijst is alleen voor mensen met een account: zoek spelers op gebruikers-ID of gebruikersnaam"], "pl": ["Lista znajomych jest wreszcie dostępna", "Lista znajomych jest tylko dla osób z kontem: znajdź graczy po ID użytkownika lub nazwie użytkownika"], "sv": ["Vänlistan är äntligen här", "Vänlistan är bara för dem som har skapat ett konto: hitta spelare med användar-ID eller användarnamn"], "el": ["Η λίστα φίλων επιτέλους ήρθε", "Η λίστα φίλων είναι μόνο για όσους έχουν λογαριασμό: βρες παίκτες με το αναγνωριστικό χρήστη ή το όνομα χρήστη"], "vi": ["Danh sách bạn bè cuối cùng cũng đã có", "Danh sách bạn bè chỉ dành cho người đã tạo tài khoản: tìm người chơi bằng ID người dùng hoặc tên người dùng"], "th": ["รายชื่อเพื่อนมาแล้วในที่สุด", "รายชื่อเพื่อนมีไว้สำหรับคนที่สร้างบัญชีเท่านั้น: ค้นหาผู้เล่นด้วยรหัสผู้ใช้หรือชื่อผู้ใช้"], "id": ["Daftar teman akhirnya hadir", "Daftar teman hanya untuk orang yang punya akun: temukan pemain lewat ID pengguna atau nama pengguna"], "bn": ["বন্ধু তালিকা অবশেষে এসে গেছে", "বন্ধু তালিকা শুধু অ্যাকাউন্ট খোলা মানুষদের জন্য: ইউজার আইডি বা ইউজারনেম দিয়ে খেলোয়াড় খুঁজুন"], "sr": ["Листа пријатеља је коначно стигла", "Листа пријатеља је само за оне који имају налог: пронађи играче преко ИД-а корисника или корисничког имена"], "mk": ["Листата на пријатели конечно е тука", "Листата на пријатели е само за оние што имаат профил: најди играчи преку ИД на корисник или корисничко име"], "sr-Latn": ["Lista prijatelja je konačno stigla", "Lista prijatelja je samo za one koji imaju nalog: pronađi igrače preko ID-a korisnika ili korisničkog imena"]}, prev = UPDATES[0].tr, tr = {};
+    var NB = {"en": ["Permanent bans now last until January 1, 9999", "Ban messages now show in your language, including Swiss German"], "de": ["Dauerhafte Sperren gelten jetzt bis zum 1. Januar 9999", "Sperrmeldungen erscheinen jetzt in deiner Sprache, auch auf Schweizerdeutsch"], "gsw": ["Dauerhafti Sperre gälte jetz bis zum 1. Januar 9999", "Sperrmäldige erschiined jetz i dinere Sprach, au uf Schwiizerdütsch"], "fr": ["Les bannissements définitifs durent maintenant jusqu’au 1er janvier 9999", "Les messages de bannissement s’affichent maintenant dans ta langue, y compris en suisse allemand"], "it": ["I ban permanenti ora durano fino al 1° gennaio 9999", "I messaggi di ban ora appaiono nella tua lingua, anche in svizzero tedesco"], "es": ["Los bloqueos permanentes ahora duran hasta el 1 de enero de 9999", "Los mensajes de bloqueo ahora salen en tu idioma, incluido el alemán suizo"], "pt": ["Os banimentos permanentes agora duram até 1 de janeiro de 9999", "As mensagens de banimento agora aparecem no teu idioma, incluindo alemão suíço"], "pt-BR": ["Banimentos permanentes agora duram até 1º de janeiro de 9999", "As mensagens de banimento agora aparecem no seu idioma, incluindo alemão suíço"], "ru": ["Постоянные блокировки теперь действуют до 1 января 9999 г.", "Сообщения о блокировке теперь показываются на твоём языке, включая швейцарский немецкий"], "uk": ["Постійні блокування тепер діють до 1 січня 9999 р.", "Повідомлення про блокування тепер показуються твоєю мовою, зокрема швейцарською німецькою"], "zh": ["永久封禁现在持续到9999年1月1日", "封禁提示现在以你的语言显示，包括瑞士德语"], "ja": ["永久停止は9999年1月1日までになりました", "停止のお知らせが、スイスドイツ語をふくむあなたの言語で表示されます"], "ko": ["영구 정지는 이제 9999년 1월 1일까지예요", "정지 안내가 스위스 독일어를 포함해 내 언어로 표시돼요"], "hi": ["स्थायी प्रतिबंध अब 1 जनवरी 9999 तक रहेंगे", "प्रतिबंध के संदेश अब आपकी भाषा में दिखते हैं, स्विस जर्मन सहित"], "ar": ["الحظر الدائم يستمر الآن حتى 1 يناير 9999", "رسائل الحظر تظهر الآن بلغتك، بما في ذلك الألمانية السويسرية"], "hu": ["Az állandó tiltások mostantól 9999. január 1-ig tartanak", "A tiltási üzenetek mostantól a te nyelveden jelennek meg, svájci némettel együtt"], "no": ["Permanente utestengelser varer nå til 1. januar 9999", "Meldinger om utestengelse vises nå på ditt språk, også sveitsertysk"], "nl": ["Permanente blokkades duren nu tot 1 januari 9999", "Blokkademeldingen verschijnen nu in jouw taal, ook in Zwitserduits"], "pl": ["Stałe blokady trwają teraz do 1 stycznia 9999", "Komunikaty o blokadzie pokazują się teraz w Twoim języku, także po szwajcarsku niemiecku"], "sv": ["Permanenta avstängningar gäller nu till 1 januari 9999", "Meddelanden om avstängning visas nu på ditt språk, även schweizertyska"], "el": ["Οι μόνιμοι αποκλεισμοί διαρκούν πλέον έως την 1η Ιανουαρίου 9999", "Τα μηνύματα αποκλεισμού εμφανίζονται πλέον στη γλώσσα σου, και στα ελβετικά γερμανικά"], "vi": ["Lệnh cấm vĩnh viễn nay kéo dài đến ngày 1 tháng 1 năm 9999", "Thông báo bị cấm nay hiển thị bằng ngôn ngữ của bạn, kể cả tiếng Đức Thụy Sĩ"], "th": ["การแบนถาวรตอนนี้มีผลถึง 1 มกราคม 9999", "ข้อความแจ้งแบนแสดงเป็นภาษาของคุณแล้ว รวมถึงภาษาเยอรมันสวิส"], "id": ["Blokir permanen sekarang berlaku sampai 1 Januari 9999", "Pesan blokir sekarang tampil dalam bahasamu, termasuk Jerman Swiss"], "bn": ["স্থায়ী নিষেধাজ্ঞা এখন ১ জানুয়ারি ৯৯৯৯ পর্যন্ত থাকে", "নিষেধাজ্ঞার বার্তা এখন আপনার ভাষায় দেখানো হয়, সুইস জার্মান সহ"], "sr": ["Трајне забране сада трају до 1. јануара 9999.", "Поруке о забрани сада се приказују на твом језику, укључујући швајцарски немачки"], "mk": ["Трајните забрани сега траат до 1 јануари 9999", "Пораките за забрана сега се прикажуваат на твојот јазик, вклучително швајцарски германски"], "sr-Latn": ["Trajne zabrane sada traju do 1. januara 9999.", "Poruke o zabrani sada se prikazuju na tvom jeziku, uključujući švajcarski nemački"]}, FR = {"en": ["Friends list is finally here", "Friends list is only for people with an account: find players by user ID or username", "Private chat with friends, end-to-end encrypted"], "de": ["Die Freundesliste ist endlich da", "Die Freundesliste gibt es nur für Leute mit einem Konto: finde Spieler per Benutzer-ID oder Benutzername", "Privater Chat mit Freunden, Ende-zu-Ende-verschlüsselt"], "gsw": ["D Fründesliste isch endlich da", "D Fründesliste gits nur für Lüt mit emne Konto: find Spieler mit de Benutzer-ID oder em Benutzername", "Private Chat mit Fründe, Ände-zu-Ände-verschlüsslet"], "fr": ["La liste d’amis est enfin là", "La liste d’amis est réservée aux personnes avec un compte : trouve des joueurs avec leur ID utilisateur ou leur nom d’utilisateur", "Discussion privée avec tes amis, chiffrée de bout en bout"], "it": ["La lista amici è finalmente arrivata", "La lista amici è solo per chi ha un account: trova i giocatori con l’ID utente o il nome utente", "Chat privata con gli amici, crittografata end-to-end"], "es": ["¡Por fin llegó la lista de amigos!", "La lista de amigos es solo para quien tiene una cuenta: encuentra jugadores por su ID de usuario o nombre de usuario", "Chat privado con tus amigos, cifrado de extremo a extremo"], "pt": ["A lista de amigos finalmente chegou", "A lista de amigos é só para quem tem conta: encontra jogadores pelo ID de utilizador ou nome de utilizador", "Chat privado com amigos, com criptografia de ponta a ponta"], "pt-BR": ["A lista de amigos finalmente chegou", "A lista de amigos é só para quem tem conta: encontre jogadores pelo ID de usuário ou nome de usuário", "Chat privado com amigos, com criptografia de ponta a ponta"], "ru": ["Список друзей наконец-то здесь", "Список друзей только для тех, у кого есть аккаунт: находи игроков по ID пользователя или имени пользователя", "Личный чат с друзьями со сквозным шифрованием"], "uk": ["Список друзів нарешті тут", "Список друзів лише для тих, хто має обліковий запис: знаходь гравців за ID користувача або іменем користувача", "Приватний чат із друзями зі наскрізним шифруванням"], "zh": ["好友列表终于来了", "好友列表仅限已创建账号的玩家：可通过用户 ID 或用户名查找玩家", "与好友的私密聊天，端到端加密"], "ja": ["ついにフレンドリストが登場しました", "フレンドリストはアカウントを作成した人だけが使えます。ユーザーIDまたはユーザー名でプレイヤーを探せます", "フレンドとのプライベートチャット（エンドツーエンド暗号化）"], "ko": ["드디어 친구 목록이 나왔어요", "친구 목록은 계정을 만든 사람만 쓸 수 있어요. 사용자 ID나 사용자 이름으로 플레이어를 찾아보세요", "친구와의 비공개 채팅, 종단간 암호화"], "hi": ["फ्रेंड्स लिस्ट आखिरकार आ गई है", "फ्रेंड्स लिस्ट सिर्फ़ उन लोगों के लिए है जिन्होंने अकाउंट बनाया है: यूज़र ID या यूज़रनेम से खिलाड़ी खोजें", "दोस्तों के साथ निजी चैट, एंड-टू-एंड एन्क्रिप्टेड"], "ar": ["قائمة الأصدقاء وصلت أخيرًا", "قائمة الأصدقاء متاحة فقط لمن أنشأ حسابًا: ابحث عن اللاعبين برقم المستخدم أو اسم المستخدم", "دردشة خاصة مع الأصدقاء بتشفير من طرف إلى طرف"], "hu": ["Végre itt a barátlista", "A barátlista csak fiókkal rendelkezőknek szól: keress játékosokat felhasználói azonosító vagy felhasználónév alapján", "Privát csevegés a barátokkal, végpontok közötti titkosítással"], "no": ["Vennelisten er endelig her", "Vennelisten er bare for folk som har opprettet en konto: finn spillere med bruker-ID eller brukernavn", "Privat chat med venner, ende-til-ende-kryptert"], "nl": ["De vriendenlijst is eindelijk hier", "De vriendenlijst is alleen voor mensen met een account: zoek spelers op gebruikers-ID of gebruikersnaam", "Privéchat met vrienden, end-to-end versleuteld"], "pl": ["Lista znajomych jest wreszcie dostępna", "Lista znajomych jest tylko dla osób z kontem: znajdź graczy po ID użytkownika lub nazwie użytkownika", "Prywatny czat ze znajomymi, szyfrowany end-to-end"], "sv": ["Vänlistan är äntligen här", "Vänlistan är bara för dem som har skapat ett konto: hitta spelare med användar-ID eller användarnamn", "Privat chatt med vänner, end-to-end-krypterad"], "el": ["Η λίστα φίλων επιτέλους ήρθε", "Η λίστα φίλων είναι μόνο για όσους έχουν λογαριασμό: βρες παίκτες με το αναγνωριστικό χρήστη ή το όνομα χρήστη", "Ιδιωτική συνομιλία με φίλους, με κρυπτογράφηση από άκρο σε άκρο"], "vi": ["Danh sách bạn bè cuối cùng cũng đã có", "Danh sách bạn bè chỉ dành cho người đã tạo tài khoản: tìm người chơi bằng ID người dùng hoặc tên người dùng", "Trò chuyện riêng với bạn bè, mã hóa đầu cuối"], "th": ["รายชื่อเพื่อนมาแล้วในที่สุด", "รายชื่อเพื่อนมีไว้สำหรับคนที่สร้างบัญชีเท่านั้น: ค้นหาผู้เล่นด้วยรหัสผู้ใช้หรือชื่อผู้ใช้", "แชตส่วนตัวกับเพื่อน เข้ารหัสแบบต้นทางถึงปลายทาง"], "id": ["Daftar teman akhirnya hadir", "Daftar teman hanya untuk orang yang punya akun: temukan pemain lewat ID pengguna atau nama pengguna", "Obrolan pribadi dengan teman, terenkripsi ujung ke ujung"], "bn": ["বন্ধু তালিকা অবশেষে এসে গেছে", "বন্ধু তালিকা শুধু অ্যাকাউন্ট খোলা মানুষদের জন্য: ইউজার আইডি বা ইউজারনেম দিয়ে খেলোয়াড় খুঁজুন", "বন্ধুদের সাথে ব্যক্তিগত চ্যাট, এন্ড-টু-এন্ড এনক্রিপ্টেড"], "sr": ["Листа пријатеља је коначно стигла", "Листа пријатеља је само за оне који имају налог: пронађи играче преко ИД-а корисника или корисничког имена", "Приватно ћаскање са пријатељима, са шифровањем с краја на крај"], "mk": ["Листата на пријатели конечно е тука", "Листата на пријатели е само за оние што имаат профил: најди играчи преку ИД на корисник или корисничко име", "Приватен разговор со пријатели, со шифрирање од крај до крај"], "sr-Latn": ["Lista prijatelja je konačno stigla", "Lista prijatelja je samo za one koji imaju nalog: pronađi igrače preko ID-a korisnika ili korisničkog imena", "Privatno ćaskanje sa prijateljima, sa šifrovanjem s kraja na kraj"]}, prev = UPDATES[0].tr, tr = {};
     Object.keys(NB).forEach(function (k) { if (prev[k]) tr[k] = prev[k].slice(0, -1).concat(NB[k], FR[k] || [], prev[k].slice(-1)); });
-    UPDATES.unshift({ v: "2026-11-25.1", tr: tr });
+    UPDATES.unshift({ v: "2026-11-25.2", tr: tr });
 })();
 function showUpdate() {
     if (document.getElementById("upd"))
@@ -4832,6 +4855,8 @@ if ("serviceWorker" in navigator) { window.addEventListener("load", function () 
         if (!uref || !db) return;
         db.doc("profiles/" + uref.id).delete().catch(noop);
         C.reqs().then(function (a) { a.forEach(function (r) { C.delReq(r.id).catch(noop); }); }, noop);
+        db.doc("keys/" + uref.id).delete().catch(noop);
+        db.doc("keyvault/" + uref.id).delete().catch(noop);
     };
     function prof(d) {
         var x = d.data() || {}, ls = x.lastSeen && x.lastSeen.toMillis ? x.lastSeen.toMillis() : 0;
@@ -4870,6 +4895,18 @@ if ("serviceWorker" in navigator) { window.addEventListener("load", function () 
     C.sendReq = function (to) { return db.doc("friendreqs/" + uref.id + "_" + to).set({ from: uref.id, to: to, status: "pending", created: TS() }); };
     C.acceptReq = function (id) { return db.doc("friendreqs/" + id).update({ status: "accepted" }); };
     C.delReq = function (id) { return db.doc("friendreqs/" + id).delete(); };
+    /* Encrypted chat. The server stores only public keys, a password-locked copy of your private key, and ciphertext. */
+    function cidOf(a, b) { return [a, b].sort().join("_"); }
+    C.getPub = function (fid) { return db.doc("keys/" + fid).get().then(function (d) { return d.exists ? (d.data().pub || null) : null; }); };
+    C.getVault = function () { return db.doc("keyvault/" + uref.id).get().then(function (d) { return d.exists ? d.data() : null; }); };
+    C.setKeys = function (pub, vault) { var b = db.batch(); b.set(db.doc("keys/" + uref.id), { pub: pub }); b.set(db.doc("keyvault/" + uref.id), vault); return b.commit(); };
+    C.chatListen = function (fid, cb, ecb) {
+        return db.collection("chats/" + cidOf(uref.id, fid) + "/messages").orderBy("t").limitToLast(200).onSnapshot(function (s) {
+            cb(s.docs.map(function (d) { var x = d.data({ serverTimestamps: "estimate" }); return { id: d.id, from: x.from, iv: x.iv, ct: x.ct, t: x.t && x.t.toMillis ? x.t.toMillis() : Date.now() }; }));
+        }, ecb || noop);
+    };
+    C.chatSend = function (fid, m) { return db.collection("chats/" + cidOf(uref.id, fid) + "/messages").add({ from: uref.id, iv: m.iv, ct: m.ct, t: TS() }); };
+    C.chatDel = function (fid, id) { return db.doc("chats/" + cidOf(uref.id, fid) + "/messages/" + id).delete(); };
     C.sync = function () {
         if (!uref || !uid || uid === "guest") return;
         var u = users()[uid];
@@ -4917,12 +4954,12 @@ if ("serviceWorker" in navigator) { window.addEventListener("load", function () 
 /* ===== Friends list: only for players with an account. Find players by user ID (#0007 or 7) or by username. ===== */
 (function () {
     var T = {
-        en: { acc: "Accept", dec: "Decline", cn: "Cancel", rqd: "Requested", rin: "Friend requests", rout: "Sent requests", wait2: "Could not connect to your account. Log out, log in again, then try once more.", b: "Friends", t: "Friends", s: "Find players by their user ID or username.", me: "Your user ID", ph: "User ID or username", go: "Search", none: "No player found.", add: "Add", rm: "Remove", on: "Online", empty: "No friends yet. Search for a player above.", guest: "The friends list is only for players with an account. Create an account to add friends.", off: "Friends need the online connection. Try again in a moment.", err: "Could not reach the server. Please try again.", self: "That is you!", list: "Your friends", res: "Search results", wait: "Still connecting to your account. Try again in a moment.", full: "Your friends list is full (100 friends).", close: "Close" },
-        de: { acc: "Annehmen", dec: "Ablehnen", cn: "Abbrechen", rqd: "Angefragt", rin: "Freundschaftsanfragen", rout: "Gesendete Anfragen", wait2: "Dein Konto konnte nicht verbunden werden. Melde dich ab und wieder an und versuch es nochmal.", b: "Freunde", t: "Freunde", s: "Finde Spieler mit ihrer Benutzer-ID oder ihrem Benutzernamen.", me: "Deine Benutzer-ID", ph: "Benutzer-ID oder Benutzername", go: "Suchen", none: "Kein Spieler gefunden.", add: "Hinzufügen", rm: "Entfernen", on: "Online", empty: "Noch keine Freunde. Suche oben nach einem Spieler.", guest: "Die Freundesliste gibt es nur für Spieler mit einem Konto. Erstelle ein Konto, um Freunde hinzuzufügen.", off: "Für Freunde brauchst du die Online-Verbindung. Versuch es gleich nochmal.", err: "Der Server ist nicht erreichbar. Bitte versuch es nochmal.", self: "Das bist du!", list: "Deine Freunde", res: "Suchergebnisse", wait: "Dein Konto wird noch verbunden. Versuch es gleich nochmal.", full: "Deine Freundesliste ist voll (100 Freunde).", close: "Schliessen" },
-        gsw: { acc: "Aanäh", dec: "Ablehne", cn: "Abbräche", rqd: "Aagfrögt", rin: "Fründschaftsaafrage", rout: "Gschickti Aafrage", wait2: "Dis Konto het nöd chönne verbunde werde. Meld di ab und wieder aa und probier s nomal.", b: "Fründe", t: "Fründe", s: "Find Spieler mit ihrer Benutzer-ID oder ihrem Benutzername.", me: "Dini Benutzer-ID", ph: "Benutzer-ID oder Benutzername", go: "Sueche", none: "Kei Spieler gfunde.", add: "Zuefüege", rm: "Entferne", on: "Online", empty: "No kei Fründe. Sueche obe nach emne Spieler.", guest: "D Fründesliste gits nur für Spieler mit emne Konto. Mach es Konto, zum Fründe zuefüege.", off: "Für Fründe bruchsch d Online-Verbindig. Probier s grad nomal.", err: "De Server isch nöd erreichbar. Probier s bitte nomal.", self: "Das bisch du!", list: "Dini Fründe", res: "Suechergebnis", wait: "Dis Konto wird no verbunde. Probier s grad nomal.", full: "Dini Fründesliste isch voll (100 Fründe).", close: "Schliesse" },
-        fr: { acc: "Accepter", dec: "Refuser", cn: "Annuler", rqd: "Demandé", rin: "Demandes d’ami", rout: "Demandes envoyées", wait2: "Impossible de connecter ton compte. Déconnecte-toi, reconnecte-toi, puis réessaie.", b: "Amis", t: "Amis", s: "Trouve des joueurs avec leur ID utilisateur ou leur nom d’utilisateur.", me: "Ton ID utilisateur", ph: "ID utilisateur ou nom d’utilisateur", go: "Chercher", none: "Aucun joueur trouvé.", add: "Ajouter", rm: "Retirer", on: "En ligne", empty: "Pas encore d’amis. Cherche un joueur ci-dessus.", guest: "La liste d’amis est réservée aux joueurs avec un compte. Crée un compte pour ajouter des amis.", off: "Les amis ont besoin de la connexion en ligne. Réessaie dans un instant.", err: "Impossible de joindre le serveur. Réessaie.", self: "C’est toi !", list: "Tes amis", res: "Résultats", wait: "Connexion à ton compte en cours. Réessaie dans un instant.", full: "Ta liste d’amis est pleine (100 amis).", close: "Fermer" },
-        it: { acc: "Accetta", dec: "Rifiuta", cn: "Annulla", rqd: "Richiesto", rin: "Richieste di amicizia", rout: "Richieste inviate", wait2: "Impossibile collegare il tuo account. Esci, accedi di nuovo e riprova.", b: "Amici", t: "Amici", s: "Trova i giocatori con il loro ID utente o nome utente.", me: "Il tuo ID utente", ph: "ID utente o nome utente", go: "Cerca", none: "Nessun giocatore trovato.", add: "Aggiungi", rm: "Rimuovi", on: "Online", empty: "Ancora nessun amico. Cerca un giocatore qui sopra.", guest: "La lista amici è solo per i giocatori con un account. Crea un account per aggiungere amici.", off: "Gli amici richiedono la connessione online. Riprova tra un attimo.", err: "Impossibile raggiungere il server. Riprova.", self: "Sei tu!", list: "I tuoi amici", res: "Risultati", wait: "Connessione al tuo account in corso. Riprova tra un attimo.", full: "La tua lista amici è piena (100 amici).", close: "Chiudi" },
-        es: { acc: "Aceptar", dec: "Rechazar", cn: "Cancelar", rqd: "Solicitado", rin: "Solicitudes de amistad", rout: "Solicitudes enviadas", wait2: "No se pudo conectar tu cuenta. Cierra sesión, vuelve a entrar e inténtalo de nuevo.", b: "Amigos", t: "Amigos", s: "Encuentra jugadores por su ID de usuario o nombre de usuario.", me: "Tu ID de usuario", ph: "ID de usuario o nombre de usuario", go: "Buscar", none: "No se encontró ningún jugador.", add: "Añadir", rm: "Quitar", on: "En línea", empty: "Aún no tienes amigos. Busca a un jugador arriba.", guest: "La lista de amigos es solo para jugadores con una cuenta. Crea una cuenta para añadir amigos.", off: "Los amigos necesitan la conexión en línea. Inténtalo de nuevo en un momento.", err: "No se pudo conectar con el servidor. Inténtalo de nuevo.", self: "¡Ese eres tú!", list: "Tus amigos", res: "Resultados", wait: "Aún se está conectando tu cuenta. Inténtalo de nuevo en un momento.", full: "Tu lista de amigos está llena (100 amigos).", close: "Cerrar" }
+        en: { chatb: "Chat", acc: "Accept", dec: "Decline", cn: "Cancel", rqd: "Requested", rin: "Friend requests", rout: "Sent requests", wait2: "Could not connect to your account. Log out, log in again, then try once more.", b: "Friends", t: "Friends", s: "Find players by their user ID or username.", me: "Your user ID", ph: "User ID or username", go: "Search", none: "No player found.", add: "Add", rm: "Remove", on: "Online", empty: "No friends yet. Search for a player above.", guest: "The friends list is only for players with an account. Create an account to add friends.", off: "Friends need the online connection. Try again in a moment.", err: "Could not reach the server. Please try again.", self: "That is you!", list: "Your friends", res: "Search results", wait: "Still connecting to your account. Try again in a moment.", full: "Your friends list is full (100 friends).", close: "Close" },
+        de: { chatb: "Chat", acc: "Annehmen", dec: "Ablehnen", cn: "Abbrechen", rqd: "Angefragt", rin: "Freundschaftsanfragen", rout: "Gesendete Anfragen", wait2: "Dein Konto konnte nicht verbunden werden. Melde dich ab und wieder an und versuch es nochmal.", b: "Freunde", t: "Freunde", s: "Finde Spieler mit ihrer Benutzer-ID oder ihrem Benutzernamen.", me: "Deine Benutzer-ID", ph: "Benutzer-ID oder Benutzername", go: "Suchen", none: "Kein Spieler gefunden.", add: "Hinzufügen", rm: "Entfernen", on: "Online", empty: "Noch keine Freunde. Suche oben nach einem Spieler.", guest: "Die Freundesliste gibt es nur für Spieler mit einem Konto. Erstelle ein Konto, um Freunde hinzuzufügen.", off: "Für Freunde brauchst du die Online-Verbindung. Versuch es gleich nochmal.", err: "Der Server ist nicht erreichbar. Bitte versuch es nochmal.", self: "Das bist du!", list: "Deine Freunde", res: "Suchergebnisse", wait: "Dein Konto wird noch verbunden. Versuch es gleich nochmal.", full: "Deine Freundesliste ist voll (100 Freunde).", close: "Schliessen" },
+        gsw: { chatb: "Chat", acc: "Aanäh", dec: "Ablehne", cn: "Abbräche", rqd: "Aagfrögt", rin: "Fründschaftsaafrage", rout: "Gschickti Aafrage", wait2: "Dis Konto het nöd chönne verbunde werde. Meld di ab und wieder aa und probier s nomal.", b: "Fründe", t: "Fründe", s: "Find Spieler mit ihrer Benutzer-ID oder ihrem Benutzername.", me: "Dini Benutzer-ID", ph: "Benutzer-ID oder Benutzername", go: "Sueche", none: "Kei Spieler gfunde.", add: "Zuefüege", rm: "Entferne", on: "Online", empty: "No kei Fründe. Sueche obe nach emne Spieler.", guest: "D Fründesliste gits nur für Spieler mit emne Konto. Mach es Konto, zum Fründe zuefüege.", off: "Für Fründe bruchsch d Online-Verbindig. Probier s grad nomal.", err: "De Server isch nöd erreichbar. Probier s bitte nomal.", self: "Das bisch du!", list: "Dini Fründe", res: "Suechergebnis", wait: "Dis Konto wird no verbunde. Probier s grad nomal.", full: "Dini Fründesliste isch voll (100 Fründe).", close: "Schliesse" },
+        fr: { chatb: "Discussion", acc: "Accepter", dec: "Refuser", cn: "Annuler", rqd: "Demandé", rin: "Demandes d’ami", rout: "Demandes envoyées", wait2: "Impossible de connecter ton compte. Déconnecte-toi, reconnecte-toi, puis réessaie.", b: "Amis", t: "Amis", s: "Trouve des joueurs avec leur ID utilisateur ou leur nom d’utilisateur.", me: "Ton ID utilisateur", ph: "ID utilisateur ou nom d’utilisateur", go: "Chercher", none: "Aucun joueur trouvé.", add: "Ajouter", rm: "Retirer", on: "En ligne", empty: "Pas encore d’amis. Cherche un joueur ci-dessus.", guest: "La liste d’amis est réservée aux joueurs avec un compte. Crée un compte pour ajouter des amis.", off: "Les amis ont besoin de la connexion en ligne. Réessaie dans un instant.", err: "Impossible de joindre le serveur. Réessaie.", self: "C’est toi !", list: "Tes amis", res: "Résultats", wait: "Connexion à ton compte en cours. Réessaie dans un instant.", full: "Ta liste d’amis est pleine (100 amis).", close: "Fermer" },
+        it: { chatb: "Chat", acc: "Accetta", dec: "Rifiuta", cn: "Annulla", rqd: "Richiesto", rin: "Richieste di amicizia", rout: "Richieste inviate", wait2: "Impossibile collegare il tuo account. Esci, accedi di nuovo e riprova.", b: "Amici", t: "Amici", s: "Trova i giocatori con il loro ID utente o nome utente.", me: "Il tuo ID utente", ph: "ID utente o nome utente", go: "Cerca", none: "Nessun giocatore trovato.", add: "Aggiungi", rm: "Rimuovi", on: "Online", empty: "Ancora nessun amico. Cerca un giocatore qui sopra.", guest: "La lista amici è solo per i giocatori con un account. Crea un account per aggiungere amici.", off: "Gli amici richiedono la connessione online. Riprova tra un attimo.", err: "Impossibile raggiungere il server. Riprova.", self: "Sei tu!", list: "I tuoi amici", res: "Risultati", wait: "Connessione al tuo account in corso. Riprova tra un attimo.", full: "La tua lista amici è piena (100 amici).", close: "Chiudi" },
+        es: { chatb: "Chat", acc: "Aceptar", dec: "Rechazar", cn: "Cancelar", rqd: "Solicitado", rin: "Solicitudes de amistad", rout: "Solicitudes enviadas", wait2: "No se pudo conectar tu cuenta. Cierra sesión, vuelve a entrar e inténtalo de nuevo.", b: "Amigos", t: "Amigos", s: "Encuentra jugadores por su ID de usuario o nombre de usuario.", me: "Tu ID de usuario", ph: "ID de usuario o nombre de usuario", go: "Buscar", none: "No se encontró ningún jugador.", add: "Añadir", rm: "Quitar", on: "En línea", empty: "Aún no tienes amigos. Busca a un jugador arriba.", guest: "La lista de amigos es solo para jugadores con una cuenta. Crea una cuenta para añadir amigos.", off: "Los amigos necesitan la conexión en línea. Inténtalo de nuevo en un momento.", err: "No se pudo conectar con el servidor. Inténtalo de nuevo.", self: "¡Ese eres tú!", list: "Tus amigos", res: "Resultados", wait: "Aún se está conectando tu cuenta. Inténtalo de nuevo en un momento.", full: "Tu lista de amigos está llena (100 amigos).", close: "Cerrar" }
     };
     function t(k) {
         var b = String(window.lang || "en"), c = [b, b.split("-")[0], "en"];
@@ -4963,6 +5000,7 @@ if ("serviceWorker" in navigator) { window.addEventListener("load", function () 
         }
         return { k: "", r: null };
     }
+    function chatBtn(p) { return { txt: "💬", aria: t("chatb"), now: 1, alt: 1, fn: function () { if (window.UCChat) UCChat.open(p); } }; }
     function act(fn) {
         $f("frbody").querySelectorAll("button").forEach(function (b) { b.disabled = true; });
         msg("");
@@ -4987,10 +5025,12 @@ if ("serviceWorker" in navigator) { window.addEventListener("load", function () 
         btns.forEach(function (x) {
             var b = el("button", "btn" + (x.alt ? " alt" : ""), x.txt);
             b.type = "button";
+            if (x.aria)
+                b.setAttribute("aria-label", x.aria);
             if (x.off)
                 b.disabled = true;
             else
-                b.onclick = function () { act(x.fn); };
+                b.onclick = x.now ? x.fn : function () { act(x.fn); };
             b.style.marginLeft = "4px";
             r.appendChild(b);
         });
@@ -5011,7 +5051,7 @@ if ("serviceWorker" in navigator) { window.addEventListener("load", function () 
                     return B.appendChild(r0);
                 }
                 var rel = relOf(p.id);
-                var btns = rel.k === "friend" ? [{ txt: t("rm"), alt: 1, fn: function () { return Cloud.delReq(rel.r.id); } }]
+                var btns = rel.k === "friend" ? [chatBtn(p), { txt: t("rm"), alt: 1, fn: function () { return Cloud.delReq(rel.r.id); } }]
                     : rel.k === "out" ? [{ txt: t("rqd"), off: 1 }]
                         : rel.k === "in" ? [{ txt: t("acc"), fn: function () { return Cloud.acceptReq(rel.r.id); } }]
                             : [{ txt: t("add"), fn: function () { return Cloud.sendReq(p.id); } }];
@@ -5037,7 +5077,7 @@ if ("serviceWorker" in navigator) { window.addEventListener("load", function () 
         B.appendChild(el("h3", "sh", t("list") + " (" + fr.length + ")"));
         if (!fr.length)
             B.appendChild(el("p", "shd", t("empty")));
-        fr.forEach(function (x) { B.appendChild(row(x[0], [{ txt: t("rm"), alt: 1, fn: function () { return Cloud.delReq(x[1].id); } }])); });
+        fr.forEach(function (x) { B.appendChild(row(x[0], [chatBtn(x[0]), { txt: t("rm"), alt: 1, fn: function () { return Cloud.delReq(x[1].id); } }])); });
         if (out.length) {
             B.appendChild(el("h3", "sh", t("rout") + " (" + out.length + ")"));
             out.forEach(function (x) { B.appendChild(row(x[0], [{ txt: t("cn"), alt: 1, fn: function () { return Cloud.delReq(x[1].id); } }])); });
@@ -5108,7 +5148,7 @@ if ("serviceWorker" in navigator) { window.addEventListener("load", function () 
     function close() { $f("fr").classList.add("hide"); unlock(); }
     $f("frbtn").onclick = open;
     $f("frclose").onclick = close;
-    addEventListener("keydown", function (e) { if (e.key === "Escape" && !$f("fr").classList.contains("hide"))
+    addEventListener("keydown", function (e) { if (e.key === "Escape" && !$f("fr").classList.contains("hide") && $f("chat").classList.contains("hide"))
         close(); });
     $f("frform").onsubmit = function (e) {
         e.preventDefault();
@@ -5125,6 +5165,282 @@ if ("serviceWorker" in navigator) { window.addEventListener("load", function () 
     setTimeout(badge, 20000);
     setInterval(badge, 45000);
     setInterval(function () { if (ready() && !$f("fr").classList.contains("hide") && !$f("frbox").classList.contains("hide")) load(); }, 12000);
+})();
+</script>
+<script>
+/* ===== Private chat between friends, end-to-end encrypted (Web Crypto: ECDH P-256 + HKDF + AES-GCM-256).
+   Your private key never leaves your devices unlocked: the server only holds it locked with your chat password. ===== */
+(function () {
+    var T = {
+        en: { t: "Chat with {0}", enc: "End-to-end encrypted. Only you and {0} can read these messages.", code: "Security code", ph: "Write a message", send: "Send", empty: "No messages yet. Say hi!", nokey: "{0} has not set up chat yet. Ask them to open Chat once.", st: "Set a chat password", ss: "This password protects your messages on all your devices. It cannot be recovered. If you forget it, your old messages are lost.", pw: "Chat password (at least 8 characters)", pw2: "Repeat password", create: "Create", ut: "Enter your chat password", us: "Your messages are locked on this device.", unlock: "Unlock", bad: "Wrong password.", short: "Use at least 8 characters.", mism: "The passwords do not match.", forgot: "Forgot your password? Reset chat", forgot2: "Tap again: your old messages will be lost", cant: "This message can’t be read", del: "Delete message", back: "Back", err: "Could not send. Please try again.", busy: "One moment…", loaderr: "Could not load the chat. Please try again.", nc: "Your browser does not support encrypted chat." },
+        de: { t: "Chat mit {0}", enc: "Ende-zu-Ende-verschlüsselt. Nur du und {0} können diese Nachrichten lesen.", code: "Sicherheitscode", ph: "Nachricht schreiben", send: "Senden", empty: "Noch keine Nachrichten. Sag Hallo!", nokey: "{0} hat den Chat noch nicht eingerichtet. Bitte die Person, den Chat einmal zu öffnen.", st: "Chat-Passwort festlegen", ss: "Dieses Passwort schützt deine Nachrichten auf allen deinen Geräten. Es kann nicht wiederhergestellt werden. Wenn du es vergisst, sind deine alten Nachrichten weg.", pw: "Chat-Passwort (mindestens 8 Zeichen)", pw2: "Passwort wiederholen", create: "Erstellen", ut: "Gib dein Chat-Passwort ein", us: "Deine Nachrichten sind auf diesem Gerät gesperrt.", unlock: "Entsperren", bad: "Falsches Passwort.", short: "Nimm mindestens 8 Zeichen.", mism: "Die Passwörter stimmen nicht überein.", forgot: "Passwort vergessen? Chat zurücksetzen", forgot2: "Nochmal tippen: deine alten Nachrichten gehen verloren", cant: "Diese Nachricht kann nicht gelesen werden", del: "Nachricht löschen", back: "Zurück", err: "Senden fehlgeschlagen. Bitte versuch es nochmal.", busy: "Einen Moment…", loaderr: "Der Chat konnte nicht geladen werden. Bitte versuch es nochmal.", nc: "Dein Browser unterstützt den verschlüsselten Chat nicht." },
+        gsw: { t: "Chat mit {0}", enc: "Ände-zu-Ände-verschlüsslet. Nur du und {0} chönd die Nachrichte läse.", code: "Sicherheitscode", ph: "Nachricht schriibe", send: "Schicke", empty: "No kei Nachrichte. Sag Hoi!", nokey: "{0} het de Chat no nöd igrichtet. Bitte d Person, de Chat einisch z öffne.", st: "Chat-Passwort festlege", ss: "Das Passwort schützt dini Nachrichte uf allne dine Gräte. Es cha nöd wiederhärgstellt werde. Wenn du es vergissisch, sind dini alte Nachrichte weg.", pw: "Chat-Passwort (mindestens 8 Zeiche)", pw2: "Passwort widerhole", create: "Erstelle", ut: "Gib dis Chat-Passwort ii", us: "Dini Nachrichte sind uf dem Grät gsperrt.", unlock: "Entsperre", bad: "Falsches Passwort.", short: "Nimm mindestens 8 Zeiche.", mism: "D Passwörter stimmed nöd überii.", forgot: "Passwort vergässe? Chat zrugsetze", forgot2: "Nomal tippe: dini alte Nachrichte gönd verlore", cant: "Die Nachricht cha nöd gläse werde", del: "Nachricht lösche", back: "Zrugg", err: "Schicke het nöd klappet. Probier s bitte nomal.", busy: "Eine Moment…", loaderr: "De Chat het nöd chönne glade werde. Probier s bitte nomal.", nc: "Din Browser unterstützt de verschlüsslet Chat nöd." },
+        fr: { t: "Discussion avec {0}", enc: "Chiffrement de bout en bout. Seuls toi et {0} pouvez lire ces messages.", code: "Code de sécurité", ph: "Écris un message", send: "Envoyer", empty: "Pas encore de messages. Dis bonjour !", nokey: "{0} n’a pas encore configuré la discussion. Demande à cette personne de l’ouvrir une fois.", st: "Définis un mot de passe de discussion", ss: "Ce mot de passe protège tes messages sur tous tes appareils. Il est impossible de le récupérer. Si tu l’oublies, tes anciens messages sont perdus.", pw: "Mot de passe de discussion (8 caractères minimum)", pw2: "Répète le mot de passe", create: "Créer", ut: "Saisis ton mot de passe de discussion", us: "Tes messages sont verrouillés sur cet appareil.", unlock: "Déverrouiller", bad: "Mot de passe incorrect.", short: "Utilise au moins 8 caractères.", mism: "Les mots de passe ne correspondent pas.", forgot: "Mot de passe oublié ? Réinitialiser la discussion", forgot2: "Touche encore : tes anciens messages seront perdus", cant: "Ce message est illisible", del: "Supprimer le message", back: "Retour", err: "Envoi impossible. Réessaie.", busy: "Un instant…", loaderr: "Impossible de charger la discussion. Réessaie.", nc: "Ton navigateur ne prend pas en charge la discussion chiffrée." },
+        it: { t: "Chat con {0}", enc: "Crittografia end-to-end. Solo tu e {0} potete leggere questi messaggi.", code: "Codice di sicurezza", ph: "Scrivi un messaggio", send: "Invia", empty: "Ancora nessun messaggio. Saluta!", nokey: "{0} non ha ancora configurato la chat. Chiedi alla persona di aprirla una volta.", st: "Imposta una password per la chat", ss: "Questa password protegge i tuoi messaggi su tutti i tuoi dispositivi. Non si può recuperare. Se la dimentichi, i vecchi messaggi andranno persi.", pw: "Password della chat (almeno 8 caratteri)", pw2: "Ripeti la password", create: "Crea", ut: "Inserisci la password della chat", us: "I tuoi messaggi sono bloccati su questo dispositivo.", unlock: "Sblocca", bad: "Password errata.", short: "Usa almeno 8 caratteri.", mism: "Le password non coincidono.", forgot: "Password dimenticata? Reimposta la chat", forgot2: "Tocca di nuovo: i vecchi messaggi andranno persi", cant: "Questo messaggio non può essere letto", del: "Elimina messaggio", back: "Indietro", err: "Invio non riuscito. Riprova.", busy: "Un attimo…", loaderr: "Impossibile caricare la chat. Riprova.", nc: "Il tuo browser non supporta la chat crittografata." },
+        es: { t: "Chat con {0}", enc: "Cifrado de extremo a extremo. Solo tú y {0} podéis leer estos mensajes.", code: "Código de seguridad", ph: "Escribe un mensaje", send: "Enviar", empty: "Aún no hay mensajes. ¡Saluda!", nokey: "{0} aún no ha configurado el chat. Pídele que lo abra una vez.", st: "Crea una contraseña del chat", ss: "Esta contraseña protege tus mensajes en todos tus dispositivos. No se puede recuperar. Si la olvidas, se pierden tus mensajes antiguos.", pw: "Contraseña del chat (mínimo 8 caracteres)", pw2: "Repite la contraseña", create: "Crear", ut: "Introduce tu contraseña del chat", us: "Tus mensajes están bloqueados en este dispositivo.", unlock: "Desbloquear", bad: "Contraseña incorrecta.", short: "Usa al menos 8 caracteres.", mism: "Las contraseñas no coinciden.", forgot: "¿Olvidaste la contraseña? Restablecer el chat", forgot2: "Toca otra vez: se perderán tus mensajes antiguos", cant: "No se puede leer este mensaje", del: "Eliminar mensaje", back: "Volver", err: "No se pudo enviar. Inténtalo de nuevo.", busy: "Un momento…", loaderr: "No se pudo cargar el chat. Inténtalo de nuevo.", nc: "Tu navegador no admite el chat cifrado." }
+    };
+    function t(k, a) {
+        var b = String(window.lang || "en"), c = [b, b.split("-")[0], "en"], s = T.en[k];
+        for (var i = 0; i < c.length; i++)
+            if (T[c[i]] && T[c[i]][k]) {
+                s = T[c[i]][k];
+                break;
+            }
+        return a == null ? s : s.replace(/\{0\}/g, a);
+    }
+    var $c = function (id) { return document.getElementById(id); };
+    var S = window.crypto && crypto.subtle, enc = new TextEncoder(), dec = new TextDecoder();
+    var st = { friend: null, unsub: null, priv: null, myPub: "", shared: null, cid: "", tok: 0, rt: 0, plain: {}, mode: "", armed: false };
+    function b64(buf) { var a = new Uint8Array(buf), s = ""; for (var i = 0; i < a.length; i++) s += String.fromCharCode(a[i]); return btoa(s); }
+    function unb64(s) { var r = atob(s), a = new Uint8Array(r.length); for (var i = 0; i < r.length; i++) a[i] = r.charCodeAt(i); return a; }
+    function cidOf(a, b) { return [a, b].sort().join("_"); }
+    var EC = { name: "ECDH", namedCurve: "P-256" };
+    /* the unlocked private key is kept on this device only, as a key the browser will not let scripts export */
+    function idb() { return new Promise(function (res, rej) { var r = indexedDB.open("uc_chat", 1); r.onupgradeneeded = function () { r.result.createObjectStore("k"); }; r.onsuccess = function () { res(r.result); }; r.onerror = function () { rej(r.error); }; }); }
+    function idbGet(k) { return idb().then(function (d) { return new Promise(function (res, rej) { var q = d.transaction("k").objectStore("k").get(k); q.onsuccess = function () { res(q.result); }; q.onerror = function () { rej(q.error); }; }); }); }
+    function idbPut(k, v) { return idb().then(function (d) { return new Promise(function (res, rej) { var tx = d.transaction("k", "readwrite"); tx.objectStore("k").put(v, k); tx.oncomplete = function () { res(); }; tx.onerror = function () { rej(tx.error); }; }); }); }
+    function pwKey(pw, salt, usage) {
+        return S.importKey("raw", enc.encode(pw), "PBKDF2", false, ["deriveKey"]).then(function (k) { return S.deriveKey({ name: "PBKDF2", salt: salt, iterations: 310000, hash: "SHA-256" }, k, { name: "AES-GCM", length: 256 }, false, usage); });
+    }
+    function importPriv(pkcs8) { return S.importKey("pkcs8", pkcs8, EC, false, ["deriveBits"]); }
+    function makeKeys(pw) {
+        return S.generateKey(EC, true, ["deriveBits"]).then(function (kp) {
+            return Promise.all([S.exportKey("raw", kp.publicKey), S.exportKey("pkcs8", kp.privateKey)]).then(function (x) {
+                var salt = crypto.getRandomValues(new Uint8Array(16)), iv = crypto.getRandomValues(new Uint8Array(12));
+                return pwKey(pw, salt, ["encrypt"]).then(function (k) { return S.encrypt({ name: "AES-GCM", iv: iv }, k, x[1]); }).then(function (w) {
+                    return { pub: b64(x[0]), vault: { w: b64(w), s: b64(salt), i: b64(iv) }, pkcs8: x[1] };
+                });
+            });
+        });
+    }
+    function sharedKey(friendPub, cid) {
+        return S.importKey("raw", unb64(friendPub), EC, false, []).then(function (pk) { return S.deriveBits({ name: "ECDH", public: pk }, st.priv, 256); })
+            .then(function (bits) { return S.importKey("raw", bits, "HKDF", false, ["deriveKey"]); })
+            .then(function (hk) { return S.deriveKey({ name: "HKDF", hash: "SHA-256", salt: enc.encode(cid), info: enc.encode("unlock-color-chat-v1") }, hk, { name: "AES-GCM", length: 256 }, false, ["encrypt", "decrypt"]); });
+    }
+    /* both friends see the same code: if it matches, nobody swapped the keys in between */
+    function secCode(a, b) {
+        return S.digest("SHA-256", enc.encode([a, b].sort().join("|"))).then(function (h) {
+            var hex = Array.prototype.map.call(new Uint8Array(h).slice(0, 10), function (x) { return ("0" + x.toString(16)).slice(-2); }).join("");
+            return hex.match(/.{1,5}/g).join(" ");
+        });
+    }
+    function mode(m, txt) {
+        st.mode = m;
+        $c("chsetup").classList.toggle("hide", m !== "setup" && m !== "unlock");
+        $c("chbox").classList.toggle("hide", m !== "chat");
+        $c("chnote").textContent = (m === "busy" ? t("busy") : m === "msg" ? txt : "");
+        $c("chnote").classList.toggle("hide", m !== "busy" && m !== "msg");
+        $c("chcode").classList.toggle("hide", m !== "chat");
+    }
+    function setupUI(kind, tok) {
+        st.armed = false;
+        mode(kind);
+        $c("chpw").value = "";
+        $c("chpw2").value = "";
+        $c("chpwerr").textContent = "";
+        $c("chsetups").textContent = kind === "setup" ? t("st") + ". " + t("ss") : t("ut") + ". " + t("us");
+        $c("chpw").placeholder = t("pw");
+        $c("chpw").setAttribute("aria-label", t("pw"));
+        $c("chpw2").placeholder = t("pw2");
+        $c("chpw2").setAttribute("aria-label", t("pw2"));
+        $c("chpw2").classList.toggle("hide", kind !== "setup");
+        $c("chpwgo").textContent = kind === "setup" ? t("create") : t("unlock");
+        $c("chreset").textContent = t("forgot");
+        $c("chreset").classList.toggle("hide", kind !== "unlock");
+        $c("chpwgo").onclick = function () { kind === "setup" ? doSetup(tok) : doUnlock(tok); };
+        $c("chreset").onclick = function () {
+            if (!st.armed) {
+                st.armed = true;
+                $c("chreset").textContent = t("forgot2");
+                return;
+            }
+            setupUI("setup", tok);
+        };
+        $c("chpw").focus();
+    }
+    function fail(x) { $c("chpwerr").textContent = x; $c("chpwgo").disabled = false; }
+    function doSetup(tok) {
+        var a = $c("chpw").value, b = $c("chpw2").value;
+        if (a.length < 8)
+            return fail(t("short"));
+        if (a !== b)
+            return fail(t("mism"));
+        $c("chpwgo").disabled = true;
+        $c("chpwerr").textContent = "";
+        makeKeys(a).then(function (k) {
+            return Cloud.setKeys(k.pub, k.vault).then(function () { return importPriv(k.pkcs8); }).then(function (pk) {
+                st.priv = pk;
+                st.myPub = k.pub;
+                return idbPut("priv:" + Cloud.myFid(), { key: pk, pub: k.pub });
+            });
+        }).then(function () { $c("chpwgo").disabled = false; if (tok === st.tok) return begin(tok); }, function () { fail(t("err")); });
+    }
+    function doUnlock(tok) {
+        var a = $c("chpw").value;
+        if (!a)
+            return;
+        $c("chpwgo").disabled = true;
+        $c("chpwerr").textContent = "";
+        Cloud.getVault().then(function (v) {
+            if (!v)
+                throw new Error("novault");
+            return pwKey(a, unb64(v.s), ["decrypt"]).then(function (k) { return S.decrypt({ name: "AES-GCM", iv: unb64(v.i) }, k, unb64(v.w)); }).then(null, function () { var e = new Error("bad"); e.bad = 1; throw e; });
+        }).then(function (pkcs8) {
+            return importPriv(pkcs8).then(function (pk) { st.priv = pk; return idbPut("priv:" + Cloud.myFid(), { key: pk, pub: st.myPub }); });
+        }).then(function () { $c("chpwgo").disabled = false; if (tok === st.tok) return begin(tok); }, function (e) { fail(e && e.bad ? t("bad") : t("err")); });
+    }
+    /* make sure we hold the private key that matches the public key on the server, then open the conversation */
+    function begin(tok) {
+        mode("busy");
+        return Cloud.getPub(Cloud.myFid()).then(function (cloudPub) {
+            if (tok !== st.tok)
+                return;
+            if (!cloudPub)
+                return setupUI("setup", tok);
+            st.myPub = cloudPub;
+            if (st.priv && st.privPub === cloudPub)
+                return startChat(tok);
+            return idbGet("priv:" + Cloud.myFid()).then(function (rec) { return rec; }, function () { return null; }).then(function (rec) {
+                if (tok !== st.tok)
+                    return;
+                if (rec && rec.key && rec.pub === cloudPub) {
+                    st.priv = rec.key;
+                    st.privPub = cloudPub;
+                    return startChat(tok);
+                }
+                st.priv = null;
+                setupUI("unlock", tok);
+            });
+        });
+    }
+    function startChat(tok) {
+        var p = st.friend, cid = cidOf(Cloud.myFid(), p.id);
+        st.privPub = st.myPub;
+        return Cloud.getPub(p.id).then(function (fp) {
+            if (tok !== st.tok)
+                return;
+            if (!fp)
+                return mode("msg", t("nokey", p.name));
+            st.cid = cid;
+            return Promise.all([sharedKey(fp, cid), secCode(st.myPub, fp)]).then(function (r) {
+                if (tok !== st.tok)
+                    return;
+                st.shared = r[0];
+                $c("chcode").textContent = t("code") + ": " + r[1];
+                mode("chat");
+                st.unsub = Cloud.chatListen(p.id, function (list) { if (tok === st.tok) show(list); }, function () { if (tok === st.tok) $c("cherr").textContent = t("loaderr"); });
+                $c("chtext").focus();
+            });
+        });
+    }
+    function show(list) {
+        var tk = ++st.rt;
+        Promise.all(list.map(function (m) {
+            if (st.plain[m.id] !== undefined)
+                return st.plain[m.id];
+            return S.decrypt({ name: "AES-GCM", iv: unb64(m.iv), additionalData: enc.encode(st.cid) }, st.shared, unb64(m.ct)).then(function (b) { return dec.decode(b); }, function () { return null; }).then(function (x) { st.plain[m.id] = x; return x; });
+        })).then(function (texts) {
+            if (tk !== st.rt)
+                return;
+            var B = $c("chmsgs"), me = Cloud.myFid(), near = B.scrollHeight - B.scrollTop - B.clientHeight < 80;
+            B.textContent = "";
+            if (!list.length) {
+                var e = document.createElement("p");
+                e.className = "shd";
+                e.textContent = t("empty");
+                B.appendChild(e);
+            }
+            list.forEach(function (m, i) {
+                var mine = m.from === me, d = document.createElement("div"), x = document.createElement("div"), tm = document.createElement("div");
+                d.style.cssText = "max-width:82%;padding:8px 12px;border-radius:14px;align-self:" + (mine ? "flex-end" : "flex-start") + ";" + (mine ? "background:var(--accent);color:var(--on-accent)" : "background:var(--bg);border:1px solid var(--line);color:var(--ink)");
+                x.style.cssText = "white-space:pre-wrap;word-break:break-word";
+                if (texts[i] == null) {
+                    x.textContent = "🔒 " + t("cant");
+                    x.style.fontStyle = "italic";
+                }
+                else
+                    x.textContent = texts[i];
+                var when = "";
+                try { when = new Date(m.t).toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }); } catch (_) { }
+                tm.style.cssText = "font-size:.7rem;opacity:.7;margin-top:2px;text-align:right";
+                tm.textContent = when;
+                if (mine) {
+                    var del = document.createElement("button");
+                    del.type = "button";
+                    del.textContent = "×";
+                    del.setAttribute("aria-label", t("del"));
+                    del.style.cssText = "background:none;border:0;color:inherit;opacity:.7;font-size:1rem;cursor:pointer;margin-left:8px;padding:0 2px";
+                    del.onclick = function () { Cloud.chatDel(st.friend.id, m.id).then(null, function () { $c("cherr").textContent = t("err"); }); };
+                    tm.appendChild(del);
+                }
+                d.appendChild(x);
+                d.appendChild(tm);
+                B.appendChild(d);
+            });
+            if (near || tk === 1)
+                B.scrollTop = B.scrollHeight;
+        });
+    }
+    function labels() {
+        $c("chtext").placeholder = t("ph");
+        $c("chtext").setAttribute("aria-label", t("ph"));
+        $c("chsend").textContent = t("send");
+        $c("chback").textContent = t("back");
+    }
+    function open(p) {
+        st.friend = p;
+        st.tok++;
+        st.plain = {};
+        st.rt = 0;
+        st.shared = null;
+        var tok = st.tok;
+        labels();
+        $c("cht").textContent = t("t", p.name);
+        $c("chenc").textContent = t("enc", p.name);
+        $c("chcode").textContent = "";
+        $c("cherr").textContent = "";
+        $c("chmsgs").textContent = "";
+        $c("chtext").value = "";
+        lock();
+        $c("chat").classList.remove("hide");
+        if (!S || !window.indexedDB)
+            return mode("msg", t("nc"));
+        begin(tok).then(null, function () { if (tok === st.tok) mode("msg", t("loaderr")); });
+    }
+    function close() {
+        st.tok++;
+        if (st.unsub) {
+            try { st.unsub(); } catch (_) { }
+            st.unsub = null;
+        }
+        st.shared = null;
+        $c("chpw").value = "";
+        $c("chpw2").value = "";
+        $c("chat").classList.add("hide");
+        if ($c("fr").classList.contains("hide"))
+            unlock();
+    }
+    $c("chback").onclick = close;
+    addEventListener("keydown", function (e) { if (e.key === "Escape" && !$c("chat").classList.contains("hide"))
+        close(); });
+    $c("chpw").addEventListener("keydown", function (e) { if (e.key === "Enter") { e.preventDefault(); $c("chpwgo").click(); } });
+    $c("chpw2").addEventListener("keydown", function (e) { if (e.key === "Enter") { e.preventDefault(); $c("chpwgo").click(); } });
+    $c("chform").onsubmit = function (e) {
+        e.preventDefault();
+        var inp = $c("chtext"), v = inp.value.trim();
+        if (!v || !st.shared)
+            return;
+        v = v.slice(0, 500);
+        var iv = crypto.getRandomValues(new Uint8Array(12)), tok = st.tok;
+        inp.value = "";
+        $c("cherr").textContent = "";
+        S.encrypt({ name: "AES-GCM", iv: iv, additionalData: enc.encode(st.cid) }, st.shared, enc.encode(v))
+            .then(function (ct) { return Cloud.chatSend(st.friend.id, { iv: b64(iv), ct: b64(ct) }); })
+            .then(null, function () { if (tok === st.tok) { $c("cherr").textContent = t("err"); inp.value = v; } });
+    };
+    labels();
+    window.UCChat = { open: open };
 })();
 </script>
 </body>
