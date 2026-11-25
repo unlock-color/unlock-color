@@ -4928,9 +4928,10 @@ if ("serviceWorker" in navigator) { window.addEventListener("load", function () 
     C.grpWatch = function (cb) { return db.collection("groups").where("members", "array-contains", uref.id).onSnapshot(function (s) { cb(s.docs.map(gm)); }, noop); };
     C.grpGet = function (gid) { return db.doc("groups/" + gid).get().then(function (d) { return d.exists ? gm(d) : null; }); };
     C.grpKey = function (gid) { return db.doc("groups/" + gid + "/keys/" + uref.id).get().then(function (d) { return d.exists ? d.data() : null; }); };
-    C.grpCreate = function (gid, name, w) { var b = db.batch(); b.set(db.doc("groups/" + gid), { name: name, owner: uref.id, members: [uref.id], created: TS() }); b.set(db.doc("groups/" + gid + "/keys/" + uref.id), { by: uref.id, iv: w.iv, ct: w.ct }); return b.commit(); };
-    C.grpAdd = function (gid, uid, w) { var b = db.batch(); b.update(db.doc("groups/" + gid), { members: fb.firestore.FieldValue.arrayUnion(uid) }); b.set(db.doc("groups/" + gid + "/keys/" + uid), { by: uref.id, iv: w.iv, ct: w.ct }); return b.commit(); };
+    C.grpCreate = function (gid, name, w) { var b = db.batch(); b.set(db.doc("groups/" + gid), { name: name, owner: uref.id, members: [uref.id], created: TS() }); b.set(db.doc("groups/" + gid + "/keys/" + uref.id), { by: uref.id, byPub: w.byPub, iv: w.iv, ct: w.ct }); return b.commit(); };
+    C.grpAdd = function (gid, uid, w) { var b = db.batch(); b.update(db.doc("groups/" + gid), { members: fb.firestore.FieldValue.arrayUnion(uid) }); b.set(db.doc("groups/" + gid + "/keys/" + uid), { by: uref.id, byPub: w.byPub, iv: w.iv, ct: w.ct }); return b.commit(); };
     C.grpRemove = function (gid, uid) { var b = db.batch(); b.update(db.doc("groups/" + gid), { members: fb.firestore.FieldValue.arrayRemove(uid) }); b.delete(db.doc("groups/" + gid + "/keys/" + uid)); return b.commit(); };
+    C.grpDelete = function (gid, members) { var b = db.batch(); members.forEach(function (u) { b.delete(db.doc("groups/" + gid + "/keys/" + u)); }); b.delete(db.doc("groups/" + gid)); return b.commit(); };
     C.grpListen = function (gid, cb, ecb) {
         return db.collection("groups/" + gid + "/messages").orderBy("t").limitToLast(200).onSnapshot(function (s) {
             cb(s.docs.map(function (d) { var x = d.data({ serverTimestamps: "estimate" }); return { id: d.id, from: x.from, iv: x.iv, ct: x.ct, t: x.t && x.t.toMillis ? x.t.toMillis() : Date.now() }; }));
@@ -5525,9 +5526,9 @@ if ("serviceWorker" in navigator) { window.addEventListener("load", function () 
     var $g = function (i) { return document.getElementById(i); };
     var S = window.crypto && crypto.subtle, enc = new TextEncoder(), dec = new TextDecoder(), EC = { name: "ECDH", namedCurve: "P-256" };
     var INP = "display:block;font:inherit;font-size:1rem;color:var(--ink);background:var(--bg);border:1.5px solid var(--line);border-radius:10px;padding:12px";
-    var TX = { t: "Groups", mine: "Your groups", none: "No groups yet.", newg: "New group", name: "Group name", pick: "Add friends (only people you added)", create: "Create group", mem: "Members", rm: "Remove", leave: "Leave", addb: "Add", addf: "Add one of your friends", send: "Send", ph: "Write a message", enc: "End-to-end encrypted. Only members can read these messages.", onlyfr: "You can only add your own friends. Members can add their own friends too.", nokey: "Set your chat password first: open a friend chat once, then come back.", fnokey: "That friend has not set up chat yet.", err: "Something went wrong. Try again.", nofr: "No friends to add yet.", cant: "Could not decrypt this message", back: "Back", open: "Open", you: "you", nc: "Encrypted chat is not supported in this browser.", skipped: "Created. These friends have not set up chat yet, add them later: " };
+    var TX = { t: "Groups", safe: "Safety code:", safeh: "All members should see the same code. If it differs, someone’s key was swapped.", delg: "Delete group", delc: "Delete this group for everyone?", mine: "Your groups", none: "No groups yet.", newg: "New group", name: "Group name", pick: "Add friends (only people you added)", create: "Create group", mem: "Members", rm: "Remove", leave: "Leave", addb: "Add", addf: "Add one of your friends", send: "Send", ph: "Write a message", enc: "End-to-end encrypted. Only members can read these messages.", onlyfr: "You can only add your own friends. Members can add their own friends too.", nokey: "Set your chat password first: open a friend chat once, then come back.", fnokey: "That friend has not set up chat yet.", err: "Something went wrong. Try again.", nofr: "No friends to add yet.", cant: "Could not decrypt this message", back: "Back", open: "Open", you: "you", nc: "Encrypted chat is not supported in this browser.", skipped: "Created. These friends have not set up chat yet, add them later: " };
     function t(k) { return TX[k]; }
-    var G = { groups: [], cur: null, gk: null, raw: null, mk: null, unW: null, unM: null, plain: {}, names: {}, friends: [], tok: 0, rt: 0, view: "" };
+    var G = { groups: [], cur: null, gk: null, raw: null, mk: null, unW: null, unM: null, plain: {}, names: {}, miss: {}, friends: [], tok: 0, rt: 0, view: "" };
     function el(tag, cls, txt) { var e = document.createElement(tag); if (cls) e.className = cls; if (txt != null) e.textContent = txt; return e; }
     function err(x) { $g("gerr").textContent = x || ""; }
     function emsg(e) { return e && e.message === "nokey" ? t("nokey") : e && e.message === "fnokey" ? t("fnokey") : t("err"); }
@@ -5556,19 +5557,27 @@ if ("serviceWorker" in navigator) { window.addEventListener("load", function () 
     function wrap(gid, raw, mk, to) {
         return Cloud.getPub(to).then(function (p) { if (!p) throw new Error("fnokey"); return pair(mk.priv, p, gid); }).then(function (k) {
             var iv = crypto.getRandomValues(new Uint8Array(12));
-            return S.encrypt({ name: "AES-GCM", iv: iv, additionalData: enc.encode(gid + "|" + to) }, k, raw).then(function (ct) { return { iv: b64(iv), ct: b64(ct) }; });
+            return S.encrypt({ name: "AES-GCM", iv: iv, additionalData: enc.encode(gid + "|" + to) }, k, raw).then(function (ct) { return { byPub: mk.pub, iv: b64(iv), ct: b64(ct) }; });
+        });
+    }
+    function safetyCode(ids) {
+        return Promise.all(ids.map(function (i) { return Cloud.getPub(i).then(function (p) { return i + ":" + (p || ""); }, function () { return i + ":"; }); })).then(function (a) {
+            return S.digest("SHA-256", enc.encode(a.sort().join("|")));
+        }).then(function (h) {
+            var x = Array.prototype.map.call(new Uint8Array(h).slice(0, 8), function (b) { return ("0" + b.toString(16)).slice(-2); }).join("").toUpperCase();
+            return x.replace(/(.{4})/g, "$1 ").trim();
         });
     }
     function ensureNames(ids) {
-        var miss = ids.filter(function (i, n) { return i && !G.names[i] && ids.indexOf(i) === n; });
+        var miss = ids.filter(function (i, n) { return i && !G.names[i] && !G.miss[i] && ids.indexOf(i) === n; });
         if (!miss.length) return Promise.resolve();
-        return Cloud.profiles(miss).then(function (ps) { ps.forEach(function (p) { if (p) G.names[p.id] = p.name; }); }, function () { });
+        return Cloud.profiles(miss).then(function (ps) { ps.forEach(function (p) { if (p) G.names[p.id] = p.name; }); miss.forEach(function (i) { if (!G.names[i]) G.miss[i] = 1; }); }, function () { });
     }
     function loadFriends() {
         var me = Cloud.myFid();
         return Cloud.reqs().then(function (rs) {
             return Cloud.profiles(rs.filter(function (r) { return r.status === "accepted"; }).map(function (r) { return r.from === me ? r.to : r.from; }));
-        }).then(function (ps) { G.friends = ps.filter(Boolean); G.friends.forEach(function (p) { G.names[p.id] = p.name; }); }, function () { G.friends = []; });
+        }).then(function (ps) { G.ffail = false; G.friends = ps.filter(Boolean); G.friends.forEach(function (p) { G.names[p.id] = p.name; }); }, function () { G.friends = []; G.ffail = true; });
     }
     function mkBtn(txt, fn, alt) {
         var b = el("button", "btn" + (alt === false ? "" : " alt"), txt);
@@ -5590,7 +5599,7 @@ if ("serviceWorker" in navigator) { window.addEventListener("load", function () 
         B.appendChild(el("h3", "sh", t("newg")));
         var nm = el("input"); nm.type = "text"; nm.maxLength = 30; nm.autocomplete = "off"; nm.placeholder = t("name"); nm.setAttribute("aria-label", t("name")); nm.style.cssText = INP + ";width:100%;margin:0 0 8px";
         B.appendChild(nm);
-        B.appendChild(el("p", "shd", G.friends.length ? t("pick") : t("nofr")));
+        B.appendChild(el("p", "shd", G.ffail ? t("err") : G.friends.length ? t("pick") : t("nofr")));
         var checks = [];
         G.friends.forEach(function (p) {
             var r = el("label", "srow"), c = el("input"); c.type = "checkbox"; c.value = p.id; checks.push(c);
@@ -5633,7 +5642,7 @@ if ("serviceWorker" in navigator) { window.addEventListener("load", function () 
             if (tok !== G.tok) return;
             var mk = x[0], g = x[1], w = x[2];
             if (!g || !w) throw new Error("gone");
-            return Cloud.getPub(w.by).then(function (p) { return pair(mk.priv, p, gid); })
+            return (w.byPub ? Promise.resolve(w.byPub) : Cloud.getPub(w.by)).then(function (p) { return pair(mk.priv, p, gid); })
                 .then(function (k) { return S.decrypt({ name: "AES-GCM", iv: unb64(w.iv), additionalData: enc.encode(gid + "|" + Cloud.myFid()) }, k, unb64(w.ct)); })
                 .then(function (raw) { return S.importKey("raw", raw, "AES-GCM", false, ["encrypt", "decrypt"]).then(function (k) { return [raw, k]; }); })
                 .then(function (y) {
@@ -5653,7 +5662,7 @@ if ("serviceWorker" in navigator) { window.addEventListener("load", function () 
         f.appendChild(inp); f.appendChild(sb); B.appendChild(f);
         f.onsubmit = function (e) {
             e.preventDefault();
-            var v = inp.value.trim().slice(0, 500); if (!v || !G.gk) return;
+            var v = inp.value.trim().slice(0, 500); if (!v) return; if (!G.gk) { err(t("err")); return; }
             var iv = crypto.getRandomValues(new Uint8Array(12)), gid = g.id; inp.value = ""; err("");
             S.encrypt({ name: "AES-GCM", iv: iv, additionalData: enc.encode(gid) }, G.gk, enc.encode(v))
                 .then(function (ct) { return Cloud.grpSend(gid, { iv: b64(iv), ct: b64(ct) }); })
@@ -5676,10 +5685,13 @@ if ("serviceWorker" in navigator) { window.addEventListener("load", function () 
         M.appendChild(el("h3", "sh", t("mem") + " (" + g.members.length + ")"));
         g.members.forEach(function (id) {
             var r = el("div", "srow"); r.appendChild(el("span", "nm2", nameOf(id) + (id === g.owner ? " ★" : "")));
-            if (id === me) r.appendChild(mkBtn(t("leave"), function () { return Cloud.grpRemove(g.id, me).then(showList); }));
+            if (id === me && g.owner === me) { var dg = el("button", "btn alt", t("delg")); dg.type = "button"; dg.onclick = function () { if (!confirm(t("delc"))) return; dg.disabled = true; err(""); Cloud.grpDelete(g.id, g.members).then(showList, function () { dg.disabled = false; err(t("err")); }); }; r.appendChild(dg); }
+            else if (id === me) r.appendChild(mkBtn(t("leave"), function () { return Cloud.grpRemove(g.id, me).then(showList); }));
             else if (g.owner === me) r.appendChild(mkBtn(t("rm"), function () { return Cloud.grpRemove(g.id, id).then(reload); }));
             M.appendChild(r);
         });
+        var sc = el("p", "shd", ""); M.appendChild(sc);
+        safetyCode(g.members).then(function (c) { if (G.cur === g) sc.textContent = t("safe") + " " + c + " \u2014 " + t("safeh"); }, function () { });
         var cand = G.friends.filter(function (p) { return g.members.indexOf(p.id) < 0; });
         if (cand.length && g.members.length < 20) {
             var r2 = el("div", "srow"), sel = el("select"); sel.setAttribute("aria-label", t("addf")); sel.style.cssText = INP + ";flex:1;min-width:0;padding:10px";
