@@ -27,7 +27,7 @@ pre{direction:ltr;text-align:left}[dir=rtl] .gtxt ul{padding-left:0;padding-righ
 .opt.gone{opacity:.3;text-decoration:line-through}
 .sh{margin:14px 0 2px;font-size:1rem;font-weight:800}.shd{margin:0 0 4px;color:var(--muted);font-size:.85rem}
 .srow{display:flex;align-items:center;gap:10px;padding:8px 0;border-bottom:1px solid var(--line)}
-.srow .nm2{flex:1;font-weight:700;min-width:0}.srow .btn{width:auto;margin:0;padding:10px 14px;flex:none}
+.srow .nm2{flex:1;font-weight:700;min-width:0}.srow .av.fav{width:44px;height:44px;font-size:1.2rem;font-weight:800}.srow .btn{width:auto;margin:0;padding:10px 14px;flex:none}
 .sdot{width:30px;height:30px;border-radius:50%;flex:none;box-shadow:0 0 0 2px var(--line)}.sem{font-size:1.6rem;width:30px;text-align:center;flex:none}
 #upd{position:fixed;top:0;right:0;bottom:0;left:0;z-index:80;display:flex;align-items:center;justify-content:center;padding:16px;background:var(--scrim)}
 #upd .ubox{background:var(--surface);color:var(--ink);border:2px solid var(--line);border-radius:20px;max-width:420px;width:100%;max-height:85vh;overflow:auto;padding:20px}
@@ -2257,8 +2257,10 @@ function loadData(id) { try {
     }
 }
 catch (_) { } return blank(); }
-function persist() { if (uid)
-    lsSet("data:" + uid, JSON.stringify(D)); }
+function persist() { if (uid) {
+    lsSet("data:" + uid, JSON.stringify(D));
+    try { if (window.Cloud && Cloud.progSave) Cloud.progSave(); } catch (_) { }
+} }
 function track(ok) { var s = D.st; s.answered++; if (ok) {
     s.correct++;
     if (!wrongs)
@@ -2411,8 +2413,9 @@ function enter(id, gname) {
     unlock();
     applyLang();
     showUpdate();
-    if (window.Cloud)
+    if (window.Cloud && !window.__skipAttach)
         Cloud.attach(id);
+    window.__skipAttach = false;
 }
 function setMode(m) {
     authMode = m;
@@ -2843,8 +2846,26 @@ function autoName(n, email) {
     }
     return cand.slice(0, 20);
 }
-function social(provider, sub, name, email) {
+function social(provider, sub, name, email, verified) {
     var id = provider + ":" + sub, U = users(), isNew = !U[id];
+    /* Same person, same account: if Google (verified email) matches an account that already exists on this
+       device (e.g. one made with email + password), log into that account instead of making a second, empty one. */
+    var em = String(email || "").trim().toLowerCase();
+    if (em && verified !== false) {
+        var best = U[id] || null;
+        Object.keys(U).forEach(function (k) {
+            var c = U[k];
+            if (!c || k === "guest" || String(c.email || "").trim().toLowerCase() !== em)
+                return;
+            if (!best || (c.created || 0) < (best.created || 0))
+                best = c;
+        });
+        if (best && best.id && best.id !== id) {
+            logEv("login", provider, best.id);
+            enter(best.id);
+            return;
+        }
+    }
     if (!U[id]) {
         if (authMode === "create" && $("aname").value.trim()) {
             var un = $("aname").value.trim(), ne = nameCheck(un);
@@ -2910,7 +2931,7 @@ $("bg").onclick = function () {
                         p = _a.sent();
                         if (!p.sub)
                             throw 0;
-                        social("google", p.sub, p.name || p.given_name, p.email);
+                        social("google", p.sub, p.name || p.given_name, p.email, p.email_verified !== false);
                         return [3 /*break*/, 4];
                     case 3:
                         _5 = _a.sent();
@@ -4688,7 +4709,7 @@ if ("serviceWorker" in navigator) { window.addEventListener("load", function () 
     var on = !!(CFG.apiKey && CFG.projectId);
     var C = window.Cloud = { on: on, stats: null, pw: null };
     var noop = function () { };
-    if (!on) { C.attach = C.detach = C.google = C.sync = C.pubSync = C.unpub = noop; return; }
+    if (!on) { C.attach = C.detach = C.google = C.sync = C.pubSync = C.unpub = C.progSave = C.progFlush = C.progInit = noop; return; }
     var V = "10.12.2", fb = null, auth = null, db = null, loading = null, authReady = null;
     var subs = [], beat = 0, seq = 0, uref = null;
     function TS() { return fb.firestore.FieldValue.serverTimestamp(); }
@@ -4838,6 +4859,14 @@ if ("serviceWorker" in navigator) { window.addEventListener("load", function () 
                 return;
             var U = users();
             if (U[localId]) {
+                /* First time this device links to an existing cloud account: keep the cloud name/picture
+                   instead of overwriting them with an auto-generated local name. */
+                if (!U[localId].cnum && d.name && d.status !== "banned") {
+                    if (U[localId].provider !== "email" || !U[localId].name)
+                        U[localId].name = d.name;
+                    if (d.pic && !U[localId].pic)
+                        U[localId].pic = d.pic;
+                }
                 U[localId].cnum = d.num;
                 U[localId].cuid = fu.uid;
                 saveUsers(U);
@@ -4850,8 +4879,9 @@ if ("serviceWorker" in navigator) { window.addEventListener("load", function () 
             subs.push(uref.onSnapshot(function (s) { if (s.exists)
                 handle(s.data()); }, noop));
             clearInterval(beat);
+            C.progInit(localId, my);
             beat = setInterval(function () { if (!document.hidden && uref)
-                uref.update({ lastSeen: TS() }).catch(noop); C.pubSync(true); }, 90000);
+                uref.update({ lastSeen: TS() }).catch(noop); C.pubSync(true); if (!progReady && uid && uid !== "guest") C.progInit(uid, seq); }, 90000);
         });
     }
     /* Push the current username + profile picture to the server so the owner page shows them */
@@ -4869,6 +4899,7 @@ if ("serviceWorker" in navigator) { window.addEventListener("load", function () 
     C.unpub = function () {
         if (!uref || !db) return;
         db.doc("profiles/" + uref.id).delete().catch(noop);
+        db.doc("progress/" + uref.id).delete().catch(noop);
         C.reqs().then(function (a) { a.forEach(function (r) { C.delReq(r.id).catch(noop); }); }, noop);
         db.doc("keys/" + uref.id).delete().catch(noop);
         db.doc("keyvault/" + uref.id).delete().catch(noop);
@@ -4884,7 +4915,10 @@ if ("serviceWorker" in navigator) { window.addEventListener("load", function () 
         var P = db.collection("profiles"), qs = [];
         if (/^\d{1,9}$/.test(q))
             qs.push(P.where("num", "==", parseInt(q, 10)).limit(1).get());
-        qs.push(P.where("nameLower", "==", q.toLowerCase()).limit(10).get());
+        var ql = q.toLowerCase();
+        qs.push(P.where("nameLower", "==", ql).limit(10).get());
+        if (ql.length >= 2)
+            qs.push(P.where("nameLower", ">=", ql).where("nameLower", "<=", ql + "\uf8ff").limit(10).get().catch(function () { return []; }));
         return Promise.all(qs).then(function (rs) {
             var seen = {}, out = [];
             rs.forEach(function (r) { r.forEach(function (d) { if (!seen[d.id]) {
@@ -4939,6 +4973,64 @@ if ("serviceWorker" in navigator) { window.addEventListener("load", function () 
     };
     C.grpSend = function (gid, m) { return db.collection("groups/" + gid + "/messages").add({ from: uref.id, iv: m.iv, ct: m.ct, t: TS() }); };
     C.grpDel = function (gid, id) { return db.doc("groups/" + gid + "/messages/" + id).delete(); };
+    /* ---- Progress sync: coins, puzzle position, stats and shop items follow the account across devices.
+       The picture library stays on the device. Nothing is ever uploaded until the cloud copy was read first. ---- */
+    var progReady = false, progT = 0, progLast = "";
+    function unionArr(a, b) { var o = [], seen = {}; (a || []).concat(b || []).forEach(function (x) { var k = JSON.stringify(x); if (!seen[k]) { seen[k] = 1; o.push(x); } }); return o; }
+    function cloudAhead(a, b) {
+        var sa = (a.st && a.st.answered) | 0, sb = (b.st && b.st.answered) | 0;
+        if (sa !== sb) return sa > sb;
+        return ((a.lap | 0) * 100000 + (a.i | 0)) > ((b.lap | 0) * 100000 + (b.i | 0));
+    }
+    function progData() {
+        var o = { i: D.i | 0, lap: D.lap | 0, coins: Math.max(0, D.coins | 0), shop: D.shop || {}, st: D.st || {} };
+        o = JSON.parse(JSON.stringify(o));
+        o.t = Date.now();
+        return o;
+    }
+    C.progInit = function (localId, my) {
+        clearTimeout(progT);
+        progReady = false;
+        if (!uref || !db || !localId || localId === "guest") return;
+        var ref = db.doc("progress/" + uref.id);
+        ref.get().then(function (snap) {
+            if (my !== seq || uid !== localId || !uref) return;
+            var cl = snap.exists ? snap.data() : null;
+            if (cl && cloudAhead(cl, D)) {
+                var s = cl.shop || {}, l = D.shop || {};
+                D.i = cl.i | 0;
+                D.lap = cl.lap | 0;
+                D.coins = Math.max(0, cl.coins | 0);
+                D.st = Object.assign({}, D.st, cl.st || {});
+                D.shop = Object.assign({}, l, s, { col: unionArr(s.col, l.col), bad: unionArr(s.bad, l.bad), hints: Math.max(s.hints | 0, l.hints | 0) });
+                lsSet("data:" + localId, JSON.stringify(D));
+                progLast = "";
+                progReady = true;
+                window.__skipAttach = true;
+                enter(localId);
+                C.progFlush();
+            }
+            else {
+                progReady = true;
+                C.progFlush();
+            }
+        }).catch(function () { progReady = false; });
+    };
+    C.progSave = function () {
+        if (!progReady || !uref || !db || !uid || uid === "guest") return;
+        clearTimeout(progT);
+        progT = setTimeout(C.progFlush, 2500);
+    };
+    C.progFlush = function () {
+        clearTimeout(progT);
+        if (!progReady || !uref || !db || !uid || uid === "guest") return Promise.resolve();
+        var p = progData(), k = JSON.stringify(Object.assign({}, p, { t: 0 }));
+        if (k === progLast) return Promise.resolve();
+        progLast = k;
+        return db.doc("progress/" + uref.id).set(p).then(noop, function () { progLast = ""; });
+    };
+    addEventListener("pagehide", function () { C.progFlush(); });
+    document.addEventListener("visibilitychange", function () { if (document.hidden) C.progFlush(); });
     C.sync = function () {
         if (!uref || !uid || uid === "guest") return;
         var u = users()[uid];
@@ -4950,9 +5042,14 @@ if ("serviceWorker" in navigator) { window.addEventListener("load", function () 
         uref.update({ name: u.name || "Player", pic: u.pic || fb.firestore.FieldValue.delete() }).catch(function () { lastSync = ""; });
     };
     C.detach = function () {
+        var pf = C.progFlush();
+        progReady = false;
+        clearTimeout(progT);
+        progLast = "";
         lastSync = "";
         lastPub = "";
         seq++;
+        var mySeq = seq;
         subs.forEach(function (f) { try {
             f();
         }
@@ -4961,7 +5058,7 @@ if ("serviceWorker" in navigator) { window.addEventListener("load", function () 
         clearInterval(beat);
         uref = null;
         if (auth)
-            auth.signOut().catch(noop);
+            Promise.race([Promise.resolve(pf), new Promise(function (r) { setTimeout(r, 3000); })]).then(function () { if (seq === mySeq) auth.signOut().catch(noop); });
     };
     C.google = function () {
         if (authMode === "create" && $("aname").value.trim()) {
@@ -4973,7 +5070,7 @@ if ("serviceWorker" in navigator) { window.addEventListener("load", function () 
             return err("Still connecting to the server. Try again in a moment.");
         (function () { var gp = new fb.auth.GoogleAuthProvider(); gp.setCustomParameters({ prompt: "select_account" }); return auth.signInWithPopup(gp); })().then(function (r) {
             var g = r.user.providerData.filter(function (d) { return d.providerId === "google.com"; })[0] || {};
-            social("google", g.uid || r.user.uid, r.user.displayName, r.user.email);
+            social("google", g.uid || r.user.uid, r.user.displayName, r.user.email, r.user.emailVerified !== false);
         }).catch(function (e) {
             if (e && (e.code === "auth/popup-closed-by-user" || e.code === "auth/cancelled-popup-request"))
                 return;
@@ -5062,9 +5159,17 @@ if ("serviceWorker" in navigator) { window.addEventListener("load", function () 
     }
     function row(p, btns) {
         var r = el("div", "srow"), av = el("span", "av"), nm = el("span", "nm2");
+        av.classList.add("fav");
         setAv(av, p.name, p.pic);
         if (!p.pic)
             av.textContent = (p.name || "?").charAt(0).toUpperCase();
+        else {
+            var im = av.querySelector("img");
+            if (im) {
+                im.alt = p.name || "";
+                im.onerror = function () { av.textContent = (p.name || "?").charAt(0).toUpperCase(); };
+            }
+        }
         r.appendChild(av);
         nm.appendChild(document.createTextNode(p.name));
         var id = el("span", "", " #" + pad4(p.num));
