@@ -3491,8 +3491,8 @@ document.querySelectorAll(".langsel").forEach(function (el) {
     el.onchange = function () { lang = el.value; lsSet("lang", lang); applyLang(); };
 });
 /* ===== What's new popup ===== */
-var UPDATE_VER = "2026-11-25.2";
-var UPDATE_SHOW_UNTIL = Date.parse("2026-11-26T14:30:00+01:00"); /* shows for one day only (24 h from publishing on Nov 25, 2026), then stops; set a new date when publishing a new update */
+var UPDATE_VER = "2026-11-25.3";
+var UPDATE_SHOW_UNTIL = Date.parse("2026-11-26T22:30:00+01:00"); /* shows for one day only (24 h from publishing on Nov 25, 2026), then stops; set a new date when publishing a new update */
 var UPDATES = [{ v: "2026-11-24.1", tr: {
     "en": ["What’s new", "Update", "Got it", "Fixed the wrong color being highlighted in your palette", "Changing the language while answering can no longer skip a puzzle", "Picture names now show in your language", "Every picture shows up once before any repeats", "Safer login: too many wrong tries now pause login for a while", "All puzzle questions and answers are now translated in German, French and Spanish (more languages coming)", "Wrong answers and wrong colors no longer cost you coins", "Small fixes and improvements"],
     "de": ["Neuigkeiten", "Update", "Verstanden", "Falsch markierte Farbe in der Palette behoben", "Beim Sprachwechsel während einer Antwort wird kein Rätsel mehr übersprungen", "Bildnamen erscheinen jetzt in deiner Sprache", "Jedes Bild kommt einmal vor, bevor sich etwas wiederholt", "Sichereres Anmelden: Bei zu vielen Fehlversuchen wird die Anmeldung kurz pausiert", "Alle Rätselfragen und Antworten sind jetzt auf Deutsch, Französisch und Spanisch übersetzt (weitere Sprachen folgen)", "Falsche Antworten und falsche Farben kosten keine Münzen mehr", "Kleine Korrekturen und Verbesserungen"],
@@ -3522,12 +3522,12 @@ var UPDATES = [{ v: "2026-11-24.1", tr: {
     "sr": ["Шта је ново", "Ажурирање", "Разумем", "Исправљено је истицање погрешне боје у палети", "Промена језика током одговарања више не прескаче загонетку", "Називи слика сада се приказују на твом језику", "Свака слика се појављује једном пре него што се нешто понови", "Безбеднија пријава: превише погрешних покушаја накратко паузира пријаву", "Сва питања и одговори загонетки сада су преведени на немачки, француски и шпански (долазе и други језици)", "Погрешни одговори и погрешне боје више не одузимају новчиће", "Мање исправке и побољшања"],
     "mk": ["Што е ново", "Ажурирање", "Разбрав", "Поправено е истакнувањето на погрешна боја во палетата", "Менувањето јазик додека одговараш веќе не прескока загатка", "Имињата на сликите сега се прикажуваат на твојот јазик", "Секоја слика се појавува еднаш пред нешто да се повтори", "Побезбедна најава: премногу погрешни обиди ја паузираат најавата накратко", "Сите прашања и одговори на загатките сега се преведени на германски, француски и шпански (доаѓаат и други јазици)", "Погрешните одговори и погрешните бои повеќе не одземаат монети", "Мали поправки и подобрувања"],
     "sr-Latn": ["Šta je novo", "Ažuriranje", "Razumem", "Ispravljeno je isticanje pogrešne boje u paleti", "Promena jezika tokom odgovaranja više ne preskače zagonetku", "Nazivi slika sada se prikazuju na tvom jeziku", "Svaka slika se pojavljuje jednom pre nego što se nešto ponovi", "Bezbednija prijava: previše pogrešnih pokušaja nakratko pauzira prijavu", "Sva pitanja i odgovori zagonetki sada su prevedeni na nemački, francuski i španski (dolaze i drugi jezici)", "Pogrešni odgovori i pogrešne boje više ne oduzimaju novčiće", "Manje ispravke i poboljšanja"] } }, { v: "2026-11-21.7", tr: { "en": ["What’s new", "Update", "Got it", "Better layout and keyboard for Windows, Mac and tablets", "Fixed text that was still in English (Library, email sign-up and more) in every language", "New on-screen keyboard for typing", "Chat messages now follow the language you choose", "New language: Français (Suisse)", "Usernames must be unique: you’ll be told if a name already exists", "Small fixes and improvements"], "de": ["Neuigkeiten", "Update", "Verstanden", "Besseres Layout und bessere Tastatur für Windows, Mac und Tablets", "Texte behoben, die noch auf Englisch waren (Bibliothek, E-Mail-Anmeldung u. a.), in jeder Sprache", "Neue Bildschirmtastatur zum Tippen", "Chat-Nachrichten folgen jetzt der gewählten Sprache", "Neue Sprache: Français (Suisse)", "Benutzernamen müssen einmalig sein: Du erfährst, wenn ein Name schon existiert", "Kleine Korrekturen und Verbesserungen"], "gsw": ["Was isch neu", "Update", "Verstande", "Besseres Layout und bessleri Tastatur für Windows, Mac und Tablets", "Texte korrigiert, wo no uf Änglisch gsi sind (Bibliothek, E-Mail-Aamäldig u. a.), i jeder Sprach", "Neui Bildschirmtastatur zum Tippe", "Chat-Nachrichte folged jetz de gwählte Sprach", "Neui Sprach: Français (Suisse)", "Benutzername müend einmalig sii: Du gsesch, wenn en Name scho existiert", "Chlini Korrekture und Verbesserige"], "fr": ["Nouveautés", "Mise à jour", "Compris", "Meilleure mise en page et meilleur clavier pour Windows, Mac et tablettes", "Textes encore en anglais corrigés (bibliothèque, inscription par e-mail, etc.) dans toutes les langues", "Nouveau clavier à l’écran pour écrire", "Les messages du chat suivent maintenant la langue choisie", "Nouvelle langue : Français (Suisse)", "Les noms d’utilisateur doivent être uniques : tu seras prévenu si un nom existe déjà", "Petites corrections et améliorations"], "it": ["Novità", "Aggiornamento", "Capito", "Layout e tastiera migliorati per Windows, Mac e tablet", "Corretti i testi ancora in inglese (libreria, registrazione via e-mail e altro) in ogni lingua", "Nuova tastiera sullo schermo per scrivere", "I messaggi della chat ora seguono la lingua scelta", "Nuova lingua: Français (Suisse)", "I nomi utente devono essere unici: ti avviseremo se un nome esiste già", "Piccole correzioni e miglioramenti"], "es": ["Novedades", "Actualización", "Entendido", "Mejor diseño y teclado para Windows, Mac y tabletas", "Corregidos los textos que seguían en inglés (biblioteca, registro por correo y más) en todos los idiomas", "Nuevo teclado en pantalla para escribir", "Los mensajes del chat ahora siguen el idioma elegido", "Nuevo idioma: Français (Suisse)", "Los nombres de usuario deben ser únicos: se te avisará si un nombre ya existe", "Pequeñas correcciones y mejoras"], "sr-Latn": ["Šta je novo", "Ažuriranje", "Razumem", "Bolji raspored i tastatura za Windows, Mac i tablete", "Ispravljeni tekstovi koji su ostali na engleskom (biblioteka, prijava e-poštom i drugo) na svim jezicima", "Nova tastatura na ekranu za kucanje", "Poruke u ćaskanju sada prate izabrani jezik", "Novi jezik: Français (Suisse)", "Korisnička imena moraju biti jedinstvena: dobićeš obaveštenje ako ime već postoji", "Male ispravke i poboljšanja"], "sr": ["Шта је ново", "Ажурирање", "Разумем", "Бољи распоред и тастатура за Windows, Mac и таблете", "Исправљени текстови који су остали на енглеском (библиотека, пријава е-поштом и друго) на свим језицима", "Нова тастатура на екрану за куцање", "Поруке у ћаскању сада прате изабрани језик", "Нови језик: Français (Suisse)", "Корисничка имена морају бити јединствена: добићеш обавештење ако име већ постоји", "Мале исправке и побољшања"], "jam": ["Wah new", "Update", "Mi get it", "Better layout an keyboard fi Windows, Mac an tablet dem", "Fix di text dem weh did still inna English (Library, email sign-up an more) inna every language", "New keyboard pon di screen fi type", "Chat message dem now follow di language yuh choose", "New language: Français (Suisse)", "Username haffi be one a a kind: wi will tell yuh if a name already deh deh", "Likkle fix dem an improvement dem"], "ru": ["Что нового", "Обновление", "Понятно", "Улучшены вид и клавиатура для Windows, Mac и планшетов", "Исправлены тексты, которые остались на английском (библиотека, регистрация по почте и другое), на всех языках", "Новая экранная клавиатура для ввода", "Сообщения в чате теперь следуют выбранному языку", "Новый язык: Français (Suisse)", "Имена пользователей должны быть уникальными: ты узнаешь, если имя уже существует", "Небольшие исправления и улучшения"], "zh": ["新功能", "更新", "知道了", "优化了 Windows、Mac 和平板电脑上的布局与键盘", "修复了各语言中仍显示英文的文字（图库、邮箱注册等）", "新的屏幕键盘，方便输入", "聊天消息现在会跟随你选择的语言", "新语言：Français (Suisse)", "用户名必须唯一：如果名称已存在，系统会提示你", "小修复和改进"], "hi": ["नया क्या है", "अपडेट", "समझ गया", "Windows, Mac और टैबलेट के लिए बेहतर लेआउट और कीबोर्ड", "हर भाषा में अब भी अंग्रेज़ी में दिख रहे टेक्स्ट ठीक किए (लाइब्रेरी, ईमेल साइन-अप आदि)", "टाइप करने के लिए नया ऑन-स्क्रीन कीबोर्ड", "चैट संदेश अब आपकी चुनी हुई भाषा में बदलते हैं", "नई भाषा: Français (Suisse)", "उपयोगकर्ता नाम अनोखे होने चाहिए: नाम पहले से मौजूद होने पर आपको बताया जाएगा", "छोटे सुधार और बेहतरी"], "mk": ["Што е ново", "Ажурирање", "Разбрав", "Подобар изглед и тастатура за Windows, Mac и таблети", "Поправени текстови што останаа на англиски (библиотека, регистрација со е-пошта и друго) на сите јазици", "Нова тастатура на екранот за пишување", "Пораките во разговорот сега го следат избраниот јазик", "Нов јазик: Français (Suisse)", "Корисничките имиња мора да бидат уникатни: ќе добиеш порака ако името веќе постои", "Мали поправки и подобрувања"], "pt": ["Novidades", "Atualização", "Entendi", "Melhor disposição e teclado para Windows, Mac e tablets", "Corrigidos os textos que ainda estavam em inglês (biblioteca, registo por email e mais) em todos os idiomas", "Novo teclado no ecrã para escrever", "As mensagens do chat agora seguem o idioma escolhido", "Novo idioma: Français (Suisse)", "Os nomes de utilizador têm de ser únicos: és avisado se um nome já existir", "Pequenas correções e melhorias"], "pt-BR": ["Novidades", "Atualização", "Entendi", "Layout e teclado melhores para Windows, Mac e tablets", "Corrigidos os textos que ainda estavam em inglês (biblioteca, cadastro por e-mail e mais) em todos os idiomas", "Novo teclado na tela para digitar", "As mensagens do chat agora seguem o idioma escolhido", "Novo idioma: Français (Suisse)", "Os nomes de usuário precisam ser únicos: você será avisado se um nome já existir", "Pequenas correções e melhorias"], "ar": ["الجديد", "تحديث", "فهمت", "تخطيط ولوحة مفاتيح أفضل لأجهزة Windows وMac والأجهزة اللوحية", "إصلاح النصوص التي بقيت بالإنجليزية (المكتبة، التسجيل بالبريد وغيرها) في كل اللغات", "لوحة مفاتيح جديدة على الشاشة للكتابة", "رسائل الدردشة تتبع الآن اللغة التي تختارها", "لغة جديدة: Français (Suisse)", "يجب أن تكون أسماء المستخدمين فريدة: سيتم إخبارك إذا كان الاسم موجودًا بالفعل", "إصلاحات وتحسينات صغيرة"], "ja": ["新着情報", "アップデート", "わかった", "Windows、Mac、タブレット向けにレイアウトとキーボードを改善しました", "英語のままだった文章（ライブラリ、メール登録など）をすべての言語で修正しました", "入力用の新しい画面キーボード", "チャットのメッセージが選んだ言語に合わせて切り替わります", "新しい言語：Français (Suisse)", "ユーザー名は重複できません。すでに使われている場合はお知らせします", "小さな修正と改善"], "ko": ["새로운 소식", "업데이트", "확인", "Windows, Mac, 태블릿을 위한 더 나은 화면 구성과 키보드", "영어로 남아 있던 문구(라이브러리, 이메일 가입 등)를 모든 언어에서 고쳤어요", "입력을 위한 새 화면 키보드", "채팅 메시지가 이제 선택한 언어를 따라요", "새 언어: Français (Suisse)", "사용자 이름은 고유해야 합니다. 이미 있는 이름이면 알려 드려요", "작은 수정 및 개선"], "hu": ["Újdonságok", "Frissítés", "Értem", "Jobb elrendezés és billentyűzet Windowshoz, Machez és táblagépekhez", "Kijavítottuk az angolul maradt szövegeket (könyvtár, e-mailes regisztráció stb.) minden nyelven", "Új képernyő-billentyűzet gépeléshez", "A csevegőüzenetek mostantól a választott nyelvet követik", "Új nyelv: Français (Suisse)", "A felhasználónevek egyediek kell legyenek: szólunk, ha egy név már létezik", "Apró javítások és fejlesztések"], "no": ["Hva er nytt", "Oppdatering", "Skjønner", "Bedre layout og tastatur for Windows, Mac og nettbrett", "Rettet tekster som fortsatt var på engelsk (bibliotek, e-postregistrering og mer) på alle språk", "Nytt tastatur på skjermen for skriving", "Chat-meldinger følger nå språket du velger", "Nytt språk: Français (Suisse)", "Brukernavn må være unike: du får beskjed hvis et navn allerede finnes", "Små rettelser og forbedringer"], "nl": ["Wat is er nieuw", "Update", "Begrepen", "Betere indeling en toetsenbord voor Windows, Mac en tablets", "Teksten die nog in het Engels stonden (bibliotheek, aanmelden met e-mail en meer) opgelost in elke taal", "Nieuw schermtoetsenbord om te typen", "Chatberichten volgen nu de taal die je kiest", "Nieuwe taal: Français (Suisse)", "Gebruikersnamen moeten uniek zijn: je krijgt een melding als een naam al bestaat", "Kleine fixes en verbeteringen"], "pl": ["Co nowego", "Aktualizacja", "Jasne", "Lepszy układ i klawiatura dla Windows, Maca i tabletów", "Poprawiono teksty, które wciąż były po angielsku (biblioteka, rejestracja e-mailem i inne) we wszystkich językach", "Nowa klawiatura ekranowa do pisania", "Wiadomości czatu zmieniają teraz język razem z wyborem", "Nowy język: Français (Suisse)", "Nazwy użytkowników muszą być unikalne: dostaniesz komunikat, jeśli nazwa już istnieje", "Drobne poprawki i ulepszenia"], "sv": ["Nytt", "Uppdatering", "Uppfattat", "Bättre layout och tangentbord för Windows, Mac och surfplattor", "Rättade texter som fortfarande var på engelska (bibliotek, e-postregistrering med mera) på alla språk", "Nytt tangentbord på skärmen för att skriva", "Chattmeddelanden följer nu det språk du väljer", "Nytt språk: Français (Suisse)", "Användarnamn måste vara unika: du får veta om ett namn redan finns", "Små rättningar och förbättringar"], "el": ["Τι νέο υπάρχει", "Ενημέρωση", "Το κατάλαβα", "Καλύτερη διάταξη και πληκτρολόγιο για Windows, Mac και tablet", "Διορθώθηκαν κείμενα που έμεναν στα αγγλικά (βιβλιοθήκη, εγγραφή με email κ.ά.) σε όλες τις γλώσσες", "Νέο πληκτρολόγιο οθόνης για πληκτρολόγηση", "Τα μηνύματα συνομιλίας ακολουθούν πλέον τη γλώσσα που επιλέγεις", "Νέα γλώσσα: Français (Suisse)", "Τα ονόματα χρήστη πρέπει να είναι μοναδικά: θα ειδοποιηθείς αν ένα όνομα υπάρχει ήδη", "Μικρές διορθώσεις και βελτιώσεις"], "uk": ["Що нового", "Оновлення", "Зрозуміло", "Кращий вигляд і клавіатура для Windows, Mac і планшетів", "Виправлено тексти, що лишалися англійською (бібліотека, реєстрація за поштою та інше), усіма мовами", "Нова екранна клавіатура для введення", "Повідомлення в чаті тепер відповідають обраній мові", "Нова мова: Français (Suisse)", "Імена користувачів мають бути унікальними: ти дізнаєшся, якщо ім’я вже існує", "Невеликі виправлення та покращення"] } }];
-/* New entry: built on the previous entry\u2019s headings; shown for one day only */
+/* New entry: ONLY what is new since 2026-11-25.2 (older items were removed on purpose). Headings and the last line come from the previous entry; shown for one day only.
+   pics: index of an item -> little picture drawn under it (see UCMsg.pic) */
 (function () {
-    /* 2026-11-25.1 = everything from 2026-11-24.1 and 2026-11-24.2, plus the friends list */
-    var NB = {"en": ["Permanent bans now last until January 1, 9999", "Ban messages now show in your language, including Swiss German"], "de": ["Dauerhafte Sperren gelten jetzt bis zum 1. Januar 9999", "Sperrmeldungen erscheinen jetzt in deiner Sprache, auch auf Schweizerdeutsch"], "gsw": ["Dauerhafti Sperre gälte jetz bis zum 1. Januar 9999", "Sperrmäldige erschiined jetz i dinere Sprach, au uf Schwiizerdütsch"], "fr": ["Les bannissements définitifs durent maintenant jusqu’au 1er janvier 9999", "Les messages de bannissement s’affichent maintenant dans ta langue, y compris en suisse allemand"], "it": ["I ban permanenti ora durano fino al 1° gennaio 9999", "I messaggi di ban ora appaiono nella tua lingua, anche in svizzero tedesco"], "es": ["Los bloqueos permanentes ahora duran hasta el 1 de enero de 9999", "Los mensajes de bloqueo ahora salen en tu idioma, incluido el alemán suizo"], "pt": ["Os banimentos permanentes agora duram até 1 de janeiro de 9999", "As mensagens de banimento agora aparecem no teu idioma, incluindo alemão suíço"], "pt-BR": ["Banimentos permanentes agora duram até 1º de janeiro de 9999", "As mensagens de banimento agora aparecem no seu idioma, incluindo alemão suíço"], "ru": ["Постоянные блокировки теперь действуют до 1 января 9999 г.", "Сообщения о блокировке теперь показываются на твоём языке, включая швейцарский немецкий"], "uk": ["Постійні блокування тепер діють до 1 січня 9999 р.", "Повідомлення про блокування тепер показуються твоєю мовою, зокрема швейцарською німецькою"], "zh": ["永久封禁现在持续到9999年1月1日", "封禁提示现在以你的语言显示，包括瑞士德语"], "ja": ["永久停止は9999年1月1日までになりました", "停止のお知らせが、スイスドイツ語をふくむあなたの言語で表示されます"], "ko": ["영구 정지는 이제 9999년 1월 1일까지예요", "정지 안내가 스위스 독일어를 포함해 내 언어로 표시돼요"], "hi": ["स्थायी प्रतिबंध अब 1 जनवरी 9999 तक रहेंगे", "प्रतिबंध के संदेश अब आपकी भाषा में दिखते हैं, स्विस जर्मन सहित"], "ar": ["الحظر الدائم يستمر الآن حتى 1 يناير 9999", "رسائل الحظر تظهر الآن بلغتك، بما في ذلك الألمانية السويسرية"], "hu": ["Az állandó tiltások mostantól 9999. január 1-ig tartanak", "A tiltási üzenetek mostantól a te nyelveden jelennek meg, svájci némettel együtt"], "no": ["Permanente utestengelser varer nå til 1. januar 9999", "Meldinger om utestengelse vises nå på ditt språk, også sveitsertysk"], "nl": ["Permanente blokkades duren nu tot 1 januari 9999", "Blokkademeldingen verschijnen nu in jouw taal, ook in Zwitserduits"], "pl": ["Stałe blokady trwają teraz do 1 stycznia 9999", "Komunikaty o blokadzie pokazują się teraz w Twoim języku, także po szwajcarsku niemiecku"], "sv": ["Permanenta avstängningar gäller nu till 1 januari 9999", "Meddelanden om avstängning visas nu på ditt språk, även schweizertyska"], "el": ["Οι μόνιμοι αποκλεισμοί διαρκούν πλέον έως την 1η Ιανουαρίου 9999", "Τα μηνύματα αποκλεισμού εμφανίζονται πλέον στη γλώσσα σου, και στα ελβετικά γερμανικά"], "vi": ["Lệnh cấm vĩnh viễn nay kéo dài đến ngày 1 tháng 1 năm 9999", "Thông báo bị cấm nay hiển thị bằng ngôn ngữ của bạn, kể cả tiếng Đức Thụy Sĩ"], "th": ["การแบนถาวรตอนนี้มีผลถึง 1 มกราคม 9999", "ข้อความแจ้งแบนแสดงเป็นภาษาของคุณแล้ว รวมถึงภาษาเยอรมันสวิส"], "id": ["Blokir permanen sekarang berlaku sampai 1 Januari 9999", "Pesan blokir sekarang tampil dalam bahasamu, termasuk Jerman Swiss"], "bn": ["স্থায়ী নিষেধাজ্ঞা এখন ১ জানুয়ারি ৯৯৯৯ পর্যন্ত থাকে", "নিষেধাজ্ঞার বার্তা এখন আপনার ভাষায় দেখানো হয়, সুইস জার্মান সহ"], "sr": ["Трајне забране сада трају до 1. јануара 9999.", "Поруке о забрани сада се приказују на твом језику, укључујући швајцарски немачки"], "mk": ["Трајните забрани сега траат до 1 јануари 9999", "Пораките за забрана сега се прикажуваат на твојот јазик, вклучително швајцарски германски"], "sr-Latn": ["Trajne zabrane sada traju do 1. januara 9999.", "Poruke o zabrani sada se prikazuju na tvom jeziku, uključujući švajcarski nemački"]}, FR = {"en": ["Friends list is finally here", "Friends list is only for people with an account: find players by user ID or username", "Private chat with friends, end-to-end encrypted"], "de": ["Die Freundesliste ist endlich da", "Die Freundesliste gibt es nur für Leute mit einem Konto: finde Spieler per Benutzer-ID oder Benutzername", "Privater Chat mit Freunden, Ende-zu-Ende-verschlüsselt"], "gsw": ["D Fründesliste isch endlich da", "D Fründesliste gits nur für Lüt mit emne Konto: find Spieler mit de Benutzer-ID oder em Benutzername", "Private Chat mit Fründe, Ände-zu-Ände-verschlüsslet"], "fr": ["La liste d’amis est enfin là", "La liste d’amis est réservée aux personnes avec un compte : trouve des joueurs avec leur ID utilisateur ou leur nom d’utilisateur", "Discussion privée avec tes amis, chiffrée de bout en bout"], "it": ["La lista amici è finalmente arrivata", "La lista amici è solo per chi ha un account: trova i giocatori con l’ID utente o il nome utente", "Chat privata con gli amici, crittografata end-to-end"], "es": ["¡Por fin llegó la lista de amigos!", "La lista de amigos es solo para quien tiene una cuenta: encuentra jugadores por su ID de usuario o nombre de usuario", "Chat privado con tus amigos, cifrado de extremo a extremo"], "pt": ["A lista de amigos finalmente chegou", "A lista de amigos é só para quem tem conta: encontra jogadores pelo ID de utilizador ou nome de utilizador", "Chat privado com amigos, com criptografia de ponta a ponta"], "pt-BR": ["A lista de amigos finalmente chegou", "A lista de amigos é só para quem tem conta: encontre jogadores pelo ID de usuário ou nome de usuário", "Chat privado com amigos, com criptografia de ponta a ponta"], "ru": ["Список друзей наконец-то здесь", "Список друзей только для тех, у кого есть аккаунт: находи игроков по ID пользователя или имени пользователя", "Личный чат с друзьями со сквозным шифрованием"], "uk": ["Список друзів нарешті тут", "Список друзів лише для тих, хто має обліковий запис: знаходь гравців за ID користувача або іменем користувача", "Приватний чат із друзями зі наскрізним шифруванням"], "zh": ["好友列表终于来了", "好友列表仅限已创建账号的玩家：可通过用户 ID 或用户名查找玩家", "与好友的私密聊天，端到端加密"], "ja": ["ついにフレンドリストが登場しました", "フレンドリストはアカウントを作成した人だけが使えます。ユーザーIDまたはユーザー名でプレイヤーを探せます", "フレンドとのプライベートチャット（エンドツーエンド暗号化）"], "ko": ["드디어 친구 목록이 나왔어요", "친구 목록은 계정을 만든 사람만 쓸 수 있어요. 사용자 ID나 사용자 이름으로 플레이어를 찾아보세요", "친구와의 비공개 채팅, 종단간 암호화"], "hi": ["फ्रेंड्स लिस्ट आखिरकार आ गई है", "फ्रेंड्स लिस्ट सिर्फ़ उन लोगों के लिए है जिन्होंने अकाउंट बनाया है: यूज़र ID या यूज़रनेम से खिलाड़ी खोजें", "दोस्तों के साथ निजी चैट, एंड-टू-एंड एन्क्रिप्टेड"], "ar": ["قائمة الأصدقاء وصلت أخيرًا", "قائمة الأصدقاء متاحة فقط لمن أنشأ حسابًا: ابحث عن اللاعبين برقم المستخدم أو اسم المستخدم", "دردشة خاصة مع الأصدقاء بتشفير من طرف إلى طرف"], "hu": ["Végre itt a barátlista", "A barátlista csak fiókkal rendelkezőknek szól: keress játékosokat felhasználói azonosító vagy felhasználónév alapján", "Privát csevegés a barátokkal, végpontok közötti titkosítással"], "no": ["Vennelisten er endelig her", "Vennelisten er bare for folk som har opprettet en konto: finn spillere med bruker-ID eller brukernavn", "Privat chat med venner, ende-til-ende-kryptert"], "nl": ["De vriendenlijst is eindelijk hier", "De vriendenlijst is alleen voor mensen met een account: zoek spelers op gebruikers-ID of gebruikersnaam", "Privéchat met vrienden, end-to-end versleuteld"], "pl": ["Lista znajomych jest wreszcie dostępna", "Lista znajomych jest tylko dla osób z kontem: znajdź graczy po ID użytkownika lub nazwie użytkownika", "Prywatny czat ze znajomymi, szyfrowany end-to-end"], "sv": ["Vänlistan är äntligen här", "Vänlistan är bara för dem som har skapat ett konto: hitta spelare med användar-ID eller användarnamn", "Privat chatt med vänner, end-to-end-krypterad"], "el": ["Η λίστα φίλων επιτέλους ήρθε", "Η λίστα φίλων είναι μόνο για όσους έχουν λογαριασμό: βρες παίκτες με το αναγνωριστικό χρήστη ή το όνομα χρήστη", "Ιδιωτική συνομιλία με φίλους, με κρυπτογράφηση από άκρο σε άκρο"], "vi": ["Danh sách bạn bè cuối cùng cũng đã có", "Danh sách bạn bè chỉ dành cho người đã tạo tài khoản: tìm người chơi bằng ID người dùng hoặc tên người dùng", "Trò chuyện riêng với bạn bè, mã hóa đầu cuối"], "th": ["รายชื่อเพื่อนมาแล้วในที่สุด", "รายชื่อเพื่อนมีไว้สำหรับคนที่สร้างบัญชีเท่านั้น: ค้นหาผู้เล่นด้วยรหัสผู้ใช้หรือชื่อผู้ใช้", "แชตส่วนตัวกับเพื่อน เข้ารหัสแบบต้นทางถึงปลายทาง"], "id": ["Daftar teman akhirnya hadir", "Daftar teman hanya untuk orang yang punya akun: temukan pemain lewat ID pengguna atau nama pengguna", "Obrolan pribadi dengan teman, terenkripsi ujung ke ujung"], "bn": ["বন্ধু তালিকা অবশেষে এসে গেছে", "বন্ধু তালিকা শুধু অ্যাকাউন্ট খোলা মানুষদের জন্য: ইউজার আইডি বা ইউজারনেম দিয়ে খেলোয়াড় খুঁজুন", "বন্ধুদের সাথে ব্যক্তিগত চ্যাট, এন্ড-টু-এন্ড এনক্রিপ্টেড"], "sr": ["Листа пријатеља је коначно стигла", "Листа пријатеља је само за оне који имају налог: пронађи играче преко ИД-а корисника или корисничког имена", "Приватно ћаскање са пријатељима, са шифровањем с краја на крај"], "mk": ["Листата на пријатели конечно е тука", "Листата на пријатели е само за оние што имаат профил: најди играчи преку ИД на корисник или корисничко име", "Приватен разговор со пријатели, со шифрирање од крај до крај"], "sr-Latn": ["Lista prijatelja je konačno stigla", "Lista prijatelja je samo za one koji imaju nalog: pronađi igrače preko ID-a korisnika ili korisničkog imena", "Privatno ćaskanje sa prijateljima, sa šifrovanjem s kraja na kraj"]}, prev = UPDATES[0].tr, tr = {};
-    Object.keys(NB).forEach(function (k) { if (prev[k]) tr[k] = prev[k].slice(0, -1).concat(NB[k], FR[k] || [], prev[k].slice(-1)); });
-    UPDATES.unshift({ v: "2026-11-25.2", tr: tr });
+    var NB = {"en": ["Tap a message to copy it, forward it to a friend or report it", "Reporting now asks a quick sum first (like 9 + 6) to stop spam", "Report an account with the 🚩 button in your friends list", "Safer profiles: nobody can fake another player’s ID number anymore", "Safer staff tools: staff can no longer warn or ban the owner or other staff"], "de": ["Tippe auf eine Nachricht, um sie zu kopieren, an einen Freund weiterzuleiten oder zu melden", "Beim Melden musst du jetzt zuerst eine kurze Rechnung lösen (z. B. 9 + 6), damit niemand spammt", "Melde ein Konto mit dem 🚩-Knopf in deiner Freundesliste", "Sicherere Profile: Niemand kann mehr die ID-Nummer eines anderen Spielers fälschen", "Sicherere Mitarbeiter-Werkzeuge: Mitarbeiter können den Besitzer oder andere Mitarbeiter nicht mehr verwarnen oder sperren"], "gsw": ["Tipp uf e Nachricht, zum si kopiere, a en Fründ witerleite oder mälde", "Bim Mälde muesch jetz zersch e churzi Rechnig löse (z. B. 9 + 6), damit niemer spamt", "Mäld es Konto mit em 🚩-Chnopf i dinere Fründesliste", "Sicherer Profil: Niemer cha meh d ID-Nummere vomene andere Spieler fälsche", "Sicherers Mitarbeiter-Züüg: Mitarbeiter chönd de Bsitzer oder anderi Mitarbeiter nüme verwarne oder sperre"], "fr": ["Touche un message pour le copier, le transférer à un ami ou le signaler", "Pour signaler, tu dois d’abord résoudre un petit calcul (comme 9 + 6) afin d’éviter le spam", "Signale un compte avec le bouton 🚩 de ta liste d’amis", "Profils plus sûrs : personne ne peut plus falsifier le numéro d’ID d’un autre joueur", "Outils d’équipe plus sûrs : l’équipe ne peut plus avertir ni bannir le propriétaire ou d’autres membres de l’équipe"], "it": ["Tocca un messaggio per copiarlo, inoltrarlo a un amico o segnalarlo", "Per segnalare ora devi prima risolvere un piccolo calcolo (come 9 + 6) per fermare lo spam", "Segnala un account con il pulsante 🚩 nella tua lista amici", "Profili più sicuri: nessuno può più falsificare il numero ID di un altro giocatore", "Strumenti dello staff più sicuri: lo staff non può più avvisare né bannare il proprietario o altri membri dello staff"], "es": ["Toca un mensaje para copiarlo, reenviarlo a un amigo o denunciarlo", "Para denunciar ahora hay que resolver antes una cuenta fácil (como 9 + 6) para frenar el spam", "Denuncia una cuenta con el botón 🚩 de tu lista de amigos", "Perfiles más seguros: nadie puede falsificar ya el número de ID de otro jugador", "Herramientas de personal más seguras: el personal ya no puede avisar ni bloquear al propietario ni a otros del personal"], "pt": ["Toca numa mensagem para a copiar, reencaminhar a um amigo ou denunciar", "Para denunciar, agora tens de resolver primeiro uma conta fácil (como 9 + 6) para travar o spam", "Denuncia uma conta com o botão 🚩 da tua lista de amigos", "Perfis mais seguros: ninguém pode falsificar o número de ID de outro jogador", "Ferramentas da equipa mais seguras: a equipa já não pode avisar nem banir o proprietário ou outros membros da equipa"], "pt-BR": ["Toque em uma mensagem para copiá-la, encaminhá-la a um amigo ou denunciá-la", "Para denunciar, agora você resolve antes uma continha fácil (como 9 + 6) para barrar spam", "Denuncie uma conta com o botão 🚩 da sua lista de amigos", "Perfis mais seguros: ninguém mais consegue falsificar o número de ID de outro jogador", "Ferramentas da equipe mais seguras: a equipe não pode mais avisar nem banir o dono ou outros membros da equipe"], "ru": ["Нажми на сообщение, чтобы скопировать его, переслать другу или пожаловаться", "Чтобы пожаловаться, теперь нужно сначала решить простой пример (например, 9 + 6) — так мы останавливаем спам", "Пожаловаться на аккаунт можно кнопкой 🚩 в списке друзей", "Безопаснее профили: никто больше не может подделать ID-номер другого игрока", "Безопаснее инструменты персонала: персонал больше не может предупреждать или блокировать владельца и других сотрудников"], "uk": ["Натисни на повідомлення, щоб скопіювати його, переслати другові або поскаржитися", "Щоб поскаржитися, тепер треба спершу розв’язати простий приклад (наприклад, 9 + 6) — так ми зупиняємо спам", "Поскаржитися на акаунт можна кнопкою 🚩 у списку друзів", "Безпечніші профілі: ніхто більше не може підробити ID-номер іншого гравця", "Безпечніші інструменти персоналу: персонал більше не може попереджати чи блокувати власника та інших співробітників"], "zh": ["点按消息即可复制、转发给好友或举报", "举报前现在需要先做一道简单算术题（如 9 + 6），以防止滥用", "在好友列表中用 🚩 按钮举报账号", "资料更安全：再也无法伪造其他玩家的 ID 号码", "工作人员工具更安全：工作人员不能再警告或封禁所有者或其他工作人员"], "ja": ["メッセージをタップすると、コピー・友だちへの転送・通報ができます", "通報する前に、かんたんな計算（9 + 6 など）をとくようになりました。スパムをふせぎます", "友だちリストの 🚩 ボタンでアカウントを通報できます", "プロフィールがより安全に：ほかのプレイヤーのID番号をなりすませなくなりました", "スタッフ用ツールがより安全に：スタッフはオーナーやほかのスタッフに警告やBANができなくなりました"], "ko": ["메시지를 탭하면 복사하거나 친구에게 전달하거나 신고할 수 있어요", "신고하기 전에 간단한 계산(예: 9 + 6)을 먼저 풀어야 해요. 스팸을 막기 위해서예요", "친구 목록의 🚩 버튼으로 계정을 신고할 수 있어요", "더 안전한 프로필: 다른 플레이어의 ID 번호를 더는 위조할 수 없어요", "더 안전한 스태프 도구: 스태프는 이제 소유자나 다른 스태프에게 경고하거나 정지를 걸 수 없어요"], "hi": ["किसी संदेश पर टैप करके उसे कॉपी करें, दोस्त को फ़ॉरवर्ड करें या रिपोर्ट करें", "रिपोर्ट करने से पहले अब एक आसान जोड़ हल करना होगा (जैसे 9 + 6), ताकि स्पैम रुके", "दोस्तों की सूची में 🚩 बटन से किसी खाते की रिपोर्ट करें", "ज़्यादा सुरक्षित प्रोफ़ाइल: अब कोई दूसरे खिलाड़ी का आईडी नंबर नकली नहीं बना सकता", "ज़्यादा सुरक्षित स्टाफ़ टूल: स्टाफ़ अब मालिक या दूसरे स्टाफ़ को चेतावनी या बैन नहीं दे सकता"], "ar": ["اضغط على رسالة لنسخها أو إعادة توجيهها إلى صديق أو الإبلاغ عنها", "الإبلاغ الآن يتطلب حلّ مسألة جمع سهلة أولًا (مثل 9 + 6) لمنع الإزعاج", "أبلغ عن حساب بزر 🚩 في قائمة أصدقائك", "ملفات شخصية أكثر أمانًا: لم يعد بإمكان أحد تزوير رقم ID للاعب آخر", "أدوات طاقم أكثر أمانًا: لم يعد بإمكان الطاقم تحذير المالك أو الطاقم الآخر أو حظرهم"], "hu": ["Koppints egy üzenetre, hogy másold, továbbítsd egy barátnak vagy jelentsd", "Jelentés előtt mostantól meg kell oldanod egy kis számolást (pl. 9 + 6), hogy megállítsuk a spamet", "Jelents egy fiókot a barátlistában lévő 🚩 gombbal", "Biztonságosabb profilok: senki sem hamisíthatja már más játékos azonosítószámát", "Biztonságosabb stábeszközök: a stáb már nem figyelmeztetheti és nem tilthatja ki a tulajdonost vagy más stábtagokat"], "no": ["Trykk på en melding for å kopiere den, videresende den til en venn eller rapportere den", "Når du rapporterer, må du nå først løse et lite regnestykke (som 9 + 6) for å stoppe spam", "Rapporter en konto med 🚩-knappen i vennelisten din", "Tryggere profiler: ingen kan lenger forfalske ID-nummeret til en annen spiller", "Tryggere stabsverktøy: staben kan ikke lenger advare eller utestenge eieren eller andre i staben"], "nl": ["Tik op een bericht om het te kopiëren, door te sturen naar een vriend of te melden", "Bij melden moet je nu eerst een kleine som oplossen (zoals 9 + 6) om spam te stoppen", "Meld een account met de 🚩-knop in je vriendenlijst", "Veiligere profielen: niemand kan het ID-nummer van een andere speler nog vervalsen", "Veiligere staftools: staf kan de eigenaar of andere stafleden niet meer waarschuwen of verbannen"], "pl": ["Dotknij wiadomości, aby ją skopiować, przekazać znajomemu lub zgłosić", "Przy zgłaszaniu trzeba teraz najpierw rozwiązać proste dodawanie (np. 9 + 6), by powstrzymać spam", "Zgłoś konto przyciskiem 🚩 na liście znajomych", "Bezpieczniejsze profile: nikt nie może już podrobić numeru ID innego gracza", "Bezpieczniejsze narzędzia personelu: personel nie może już ostrzegać ani banować właściciela ani innych członków personelu"], "sv": ["Tryck på ett meddelande för att kopiera det, vidarebefordra det till en vän eller rapportera det", "Vid rapportering måste du nu först lösa ett litet räkneexempel (som 9 + 6) för att stoppa spam", "Rapportera ett konto med 🚩-knappen i din vänlista", "Säkrare profiler: ingen kan längre förfalska en annan spelares ID-nummer", "Säkrare personalverktyg: personal kan inte längre varna eller utestänga ägaren eller annan personal"], "el": ["Πάτα ένα μήνυμα για να το αντιγράψεις, να το προωθήσεις σε φίλο ή να το αναφέρεις", "Για να κάνεις αναφορά, πρέπει πλέον να λύσεις πρώτα μια εύκολη πρόσθεση (όπως 9 + 6) για να σταματήσει το spam", "Ανάφερε έναν λογαριασμό με το κουμπί 🚩 στη λίστα φίλων σου", "Ασφαλέστερα προφίλ: κανείς δεν μπορεί πια να πλαστογραφήσει τον αριθμό ID άλλου παίκτη", "Ασφαλέστερα εργαλεία προσωπικού: το προσωπικό δεν μπορεί πια να προειδοποιήσει ή να αποκλείσει τον ιδιοκτήτη ή άλλα μέλη του προσωπικού"], "vi": ["Chạm vào tin nhắn để sao chép, chuyển tiếp cho bạn bè hoặc báo cáo", "Khi báo cáo, giờ bạn phải giải một phép tính nhỏ trước (như 9 + 6) để chặn spam", "Báo cáo tài khoản bằng nút 🚩 trong danh sách bạn bè", "Hồ sơ an toàn hơn: không ai còn có thể giả mạo số ID của người chơi khác", "Công cụ nhân viên an toàn hơn: nhân viên không còn có thể cảnh báo hay cấm chủ sở hữu hoặc nhân viên khác"], "th": ["แตะข้อความเพื่อคัดลอก ส่งต่อให้เพื่อน หรือรายงาน", "ตอนนี้การรายงานต้องแก้โจทย์บวกเลขง่ายๆ ก่อน (เช่น 9 + 6) เพื่อป้องกันสแปม", "รายงานบัญชีด้วยปุ่ม 🚩 ในรายชื่อเพื่อน", "โปรไฟล์ปลอดภัยขึ้น: ไม่มีใครปลอมหมายเลข ID ของผู้เล่นคนอื่นได้อีก", "เครื่องมือทีมงานปลอดภัยขึ้น: ทีมงานไม่สามารถเตือนหรือแบนเจ้าของหรือทีมงานคนอื่นได้อีก"], "id": ["Ketuk pesan untuk menyalin, meneruskannya ke teman, atau melaporkannya", "Sekarang melapor harus menyelesaikan hitungan mudah dulu (seperti 9 + 6) untuk menghentikan spam", "Laporkan akun dengan tombol 🚩 di daftar temanmu", "Profil lebih aman: tidak ada yang bisa memalsukan nomor ID pemain lain lagi", "Alat staf lebih aman: staf tidak bisa lagi memperingatkan atau memblokir pemilik atau staf lain"], "bn": ["কোনো বার্তায় ট্যাপ করে কপি করুন, বন্ধুকে ফরওয়ার্ড করুন বা রিপোর্ট করুন", "রিপোর্ট করার আগে এখন একটা সহজ যোগ কষতে হবে (যেমন 9 + 6), যাতে স্প্যাম আটকানো যায়", "বন্ধু তালিকার 🚩 বোতাম দিয়ে অ্যাকাউন্ট রিপোর্ট করুন", "আরও নিরাপদ প্রোফাইল: আর কেউ অন্য খেলোয়াড়ের আইডি নম্বর জাল করতে পারবে না", "আরও নিরাপদ স্টাফ টুল: স্টাফ আর মালিক বা অন্য স্টাফকে সতর্ক বা ব্যান করতে পারবে না"], "sr": ["Додирни поруку да је копираш, проследиш пријатељу или пријавиш", "За пријаву сада прво треба да решиш лак рачун (као 9 + 6) да би се зауставио спам", "Пријави налог дугметом 🚩 на листи пријатеља", "Безбеднији профили: нико више не може да лажира ИД број другог играча", "Безбеднији алати за особље: особље више не може да упозорава нити блокира власника или друго особље"], "mk": ["Допри порака за да ја копираш, проследиш до пријател или пријавиш", "За пријавување сега прво треба да решиш лесна сметка (како 9 + 6) за да се запре спамот", "Пријави профил со копчето 🚩 во листата на пријатели", "Побезбедни профили: никој повеќе не може да го фалсификува ИД-бројот на друг играч", "Побезбедни алатки за персоналот: персоналот повеќе не може да предупредува или блокира сопственик или друг персонал"], "sr-Latn": ["Dodirni poruku da je kopiraš, proslediš prijatelju ili prijaviš", "Za prijavu sada prvo treba da rešiš lak račun (kao 9 + 6) da bi se zaustavio spam", "Prijavi nalog dugmetom 🚩 na listi prijatelja", "Bezbedniji profili: niko više ne može da lažira ID broj drugog igrača", "Bezbedniji alati za osoblje: osoblje više ne može da upozorava niti blokira vlasnika ili drugo osoblje"]}, prev = UPDATES[0].tr, tr = {};
+    Object.keys(NB).forEach(function (k) { if (prev[k]) tr[k] = prev[k].slice(0, 3).concat(NB[k], prev[k].slice(-1)); });
+    UPDATES.unshift({ v: "2026-11-25.3", tr: tr, pics: { 0: "menu", 1: "sum", 2: "flag" } });
 })();
 function showUpdate() {
     if (document.getElementById("upd"))
@@ -3540,14 +3540,15 @@ function showUpdate() {
     if (!seen && lsGet("tos2") !== "1") {
         return;
     }
-    var U0 = UPDATES[0], LG = (lang === "en" && lsGet("lang") === "fr-CH") ? "fr-CH" : lang, T0 = U0.tr[LG] || U0.tr[LG.split("-")[0]] || U0.tr.en, u = { v: U0.v, t: T0[0], items: T0.slice(3) }, UW = T0[1], OK = T0[2], d = document.createElement("div");
+    var U0 = UPDATES[0], LG = (lang === "en" && lsGet("lang") === "fr-CH") ? "fr-CH" : lang, T0 = U0.tr[LG] || U0.tr[LG.split("-")[0]] || U0.tr.en, u = { v: U0.v, t: T0[0], items: T0.slice(3) }, PICS = U0.pics || {}, UW = T0[1], OK = T0[2], d = document.createElement("div");
     d.id = "upd";
     d.setAttribute("role", "dialog");
     d.setAttribute("aria-modal", "true");
     d.setAttribute("aria-labelledby", "updt");
     var esc = function (x) { return String(x).replace(/[&<>"]/g, function (c) { return ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]); }); };
-    d.innerHTML = "<div class=\"ubox\"><h2 id=\"updt\">\uD83C\uDF89 " + esc(u.t) + '</h2><p class="uv">' + esc(UW) + ' ' + esc(u.v) + '</p><ul>' + u.items.map(function (i) { return "<li>" + esc(i) + "</li>"; }).join("") + '</ul><button class="btn" type="button" id="updok">' + esc(OK) + '</button></div>';
+    d.innerHTML = "<div class=\"ubox\"><h2 id=\"updt\">\uD83C\uDF89 " + esc(u.t) + '</h2><p class="uv">' + esc(UW) + ' ' + esc(u.v) + '</p><ul>' + u.items.map(function (i, n) { return "<li>" + esc(i) + (PICS[n] ? '<div class="upic" data-p="' + PICS[n] + '" aria-hidden="true"></div>' : "") + "</li>"; }).join("") + '</ul><button class="btn" type="button" id="updok">' + esc(OK) + '</button></div>';
     document.body.appendChild(d);
+    Array.prototype.forEach.call(d.querySelectorAll(".upic"), function (h) { try { if (window.UCMsg) UCMsg.pic(h.getAttribute("data-p"), h); } catch (_) { } });
     var close = function () { lsSet("seen_ver", UPDATE_VER); d.remove(); };
     $("updok").onclick = close;
     $("updok").focus();
@@ -4944,6 +4945,13 @@ if ("serviceWorker" in navigator) { window.addEventListener("load", function () 
     C.sendReq = function (to) { return db.doc("friendreqs/" + uref.id + "_" + to).set({ from: uref.id, to: to, status: "pending", created: TS() }); };
     C.acceptReq = function (id) { return db.doc("friendreqs/" + id).update({ status: "accepted" }); };
     C.delReq = function (id) { return db.doc("friendreqs/" + id).delete(); };
+    /* Reports go to the owner only (see "reports" in firestore.rules and reports.html). */
+    C.report = function (r) {
+        var o = { kind: r.kind, by: uref.id, target: r.target, created: TS(), status: "open" };
+        ["byName", "targetName", "where", "text"].forEach(function (k) { if (typeof r[k] === "string" && r[k]) o[k] = r[k]; });
+        ["byNum", "targetNum"].forEach(function (k) { if (typeof r[k] === "number" && isFinite(r[k])) o[k] = r[k]; });
+        return db.collection("reports").add(o);
+    };
     /* Encrypted chat. The server stores only public keys, a password-locked copy of your private key, and ciphertext. */
     function cidOf(a, b) { return [a, b].sort().join("_"); }
     C.getPub = function (fid) { return db.doc("keys/" + fid).get().then(function (d) { return d.exists ? (d.data().pub || null) : null; }); };
@@ -5193,6 +5201,15 @@ if ("serviceWorker" in navigator) { window.addEventListener("load", function () 
             b.style.marginLeft = "4px";
             r.appendChild(b);
         });
+        if (window.UCMsg && p.id && p.id !== Cloud.myFid()) {
+            var fb = el("button", "btn alt", "🚩");
+            fb.type = "button";
+            fb.setAttribute("aria-label", UCMsg.t("ra"));
+            fb.title = UCMsg.t("ra");
+            fb.style.marginLeft = "4px";
+            fb.onclick = function () { UCMsg.reportAccount(p); };
+            r.appendChild(fb);
+        }
         return r;
     }
     function render() {
@@ -5324,6 +5341,219 @@ if ("serviceWorker" in navigator) { window.addEventListener("load", function () 
     setTimeout(badge, 20000);
     setInterval(badge, 45000);
     setInterval(function () { if (ready() && !$f("fr").classList.contains("hide") && !$f("frbox").classList.contains("hide")) load(); }, 12000);
+})();
+</script>
+<script>
+/* ===== Tap a message: Copy / Forward / Report. Also "Report account" (🚩 in the friends list).
+   Every report first asks a tiny sum (like 9 + 6) so nobody can spam the owner with reports. ===== */
+(function () {
+    var TX = {"en": {"c": "Copy", "f": "Forward", "r": "Report", "ra": "Report account", "cd": "Copied!", "ft": "Forward to…", "nf": "No friends to forward to yet.", "fs": "Forwarded!", "sv": "Solve this to send your report", "an": "Answer", "sr": "Send report", "cn": "Cancel", "wr": "Not quite. Try this one!", "th": "Thanks! Your report was sent.", "er": "Something went wrong. Try again.", "lk": "Open a chat with a friend once to unlock chat, then try again.", "mt": "Report this message?", "at": "Report this account?"}, "de": {"c": "Kopieren", "f": "Weiterleiten", "r": "Melden", "ra": "Konto melden", "cd": "Kopiert!", "ft": "Weiterleiten an…", "nf": "Noch keine Freunde zum Weiterleiten.", "fs": "Weitergeleitet!", "sv": "Löse die Aufgabe, um deine Meldung zu senden", "an": "Antwort", "sr": "Meldung senden", "cn": "Abbrechen", "wr": "Nicht ganz. Versuch diese!", "th": "Danke! Deine Meldung wurde gesendet.", "er": "Etwas ist schiefgelaufen. Versuch es nochmal.", "lk": "Öffne einmal einen Chat mit einem Freund, um den Chat zu entsperren, und versuch es dann nochmal.", "mt": "Diese Nachricht melden?", "at": "Dieses Konto melden?"}, "gsw": {"c": "Kopiere", "f": "Witerleite", "r": "Mälde", "ra": "Konto mälde", "cd": "Kopiert!", "ft": "Witerleite a…", "nf": "No kei Fründe zum Witerleite.", "fs": "Witergleitet!", "sv": "Löös d Ufgab, zum dini Mäldig z schicke", "an": "Antwort", "sr": "Mäldig schicke", "cn": "Abbräche", "wr": "Nöd ganz. Probier die!", "th": "Merci! Dini Mäldig isch gschickt worde.", "er": "Es isch öppis schiefgloffe. Probier s nomal.", "lk": "Mach einisch en Chat mit emene Fründ uf, zum de Chat z entsperre, und probier s dänn nomal.", "mt": "Die Nachricht mälde?", "at": "Das Konto mälde?"}, "fr": {"c": "Copier", "f": "Transférer", "r": "Signaler", "ra": "Signaler le compte", "cd": "Copié !", "ft": "Transférer à…", "nf": "Pas encore d’amis à qui transférer.", "fs": "Transféré !", "sv": "Résous ceci pour envoyer ton signalement", "an": "Réponse", "sr": "Envoyer le signalement", "cn": "Annuler", "wr": "Pas tout à fait. Essaie celle-ci !", "th": "Merci ! Ton signalement a été envoyé.", "er": "Un problème est survenu. Réessaie.", "lk": "Ouvre une fois une discussion avec un ami pour déverrouiller le chat, puis réessaie.", "mt": "Signaler ce message ?", "at": "Signaler ce compte ?"}, "it": {"c": "Copia", "f": "Inoltra", "r": "Segnala", "ra": "Segnala account", "cd": "Copiato!", "ft": "Inoltra a…", "nf": "Ancora nessun amico a cui inoltrare.", "fs": "Inoltrato!", "sv": "Risolvi questo per inviare la segnalazione", "an": "Risposta", "sr": "Invia segnalazione", "cn": "Annulla", "wr": "Non proprio. Prova questa!", "th": "Grazie! La tua segnalazione è stata inviata.", "er": "Qualcosa è andato storto. Riprova.", "lk": "Apri una volta una chat con un amico per sbloccare la chat, poi riprova.", "mt": "Segnalare questo messaggio?", "at": "Segnalare questo account?"}, "es": {"c": "Copiar", "f": "Reenviar", "r": "Denunciar", "ra": "Denunciar cuenta", "cd": "¡Copiado!", "ft": "Reenviar a…", "nf": "Aún no tienes amigos a quienes reenviar.", "fs": "¡Reenviado!", "sv": "Resuelve esto para enviar tu denuncia", "an": "Respuesta", "sr": "Enviar denuncia", "cn": "Cancelar", "wr": "Casi. ¡Prueba esta!", "th": "¡Gracias! Tu denuncia se ha enviado.", "er": "Algo salió mal. Inténtalo otra vez.", "lk": "Abre una vez un chat con un amigo para desbloquear el chat y vuelve a intentarlo.", "mt": "¿Denunciar este mensaje?", "at": "¿Denunciar esta cuenta?"}, "pt": {"c": "Copiar", "f": "Reencaminhar", "r": "Denunciar", "ra": "Denunciar conta", "cd": "Copiado!", "ft": "Reencaminhar para…", "nf": "Ainda não tens amigos para reencaminhar.", "fs": "Reencaminhado!", "sv": "Resolve isto para enviar a tua denúncia", "an": "Resposta", "sr": "Enviar denúncia", "cn": "Cancelar", "wr": "Quase. Experimenta esta!", "th": "Obrigado! A tua denúncia foi enviada.", "er": "Algo correu mal. Tenta outra vez.", "lk": "Abre uma vez uma conversa com um amigo para desbloquear o chat e tenta de novo.", "mt": "Denunciar esta mensagem?", "at": "Denunciar esta conta?"}, "pt-BR": {"c": "Copiar", "f": "Encaminhar", "r": "Denunciar", "ra": "Denunciar conta", "cd": "Copiado!", "ft": "Encaminhar para…", "nf": "Você ainda não tem amigos para encaminhar.", "fs": "Encaminhado!", "sv": "Resolva isto para enviar sua denúncia", "an": "Resposta", "sr": "Enviar denúncia", "cn": "Cancelar", "wr": "Quase. Tente esta!", "th": "Obrigado! Sua denúncia foi enviada.", "er": "Algo deu errado. Tente de novo.", "lk": "Abra uma vez uma conversa com um amigo para desbloquear o chat e tente de novo.", "mt": "Denunciar esta mensagem?", "at": "Denunciar esta conta?"}, "ru": {"c": "Копировать", "f": "Переслать", "r": "Пожаловаться", "ra": "Пожаловаться на аккаунт", "cd": "Скопировано!", "ft": "Переслать…", "nf": "Пока некому пересылать: нет друзей.", "fs": "Переслано!", "sv": "Реши пример, чтобы отправить жалобу", "an": "Ответ", "sr": "Отправить жалобу", "cn": "Отмена", "wr": "Не совсем. Попробуй этот!", "th": "Спасибо! Твоя жалоба отправлена.", "er": "Что-то пошло не так. Попробуй ещё раз.", "lk": "Один раз открой чат с другом, чтобы разблокировать чат, и попробуй снова.", "mt": "Пожаловаться на это сообщение?", "at": "Пожаловаться на этот аккаунт?"}, "uk": {"c": "Копіювати", "f": "Переслати", "r": "Поскаржитися", "ra": "Поскаржитися на акаунт", "cd": "Скопійовано!", "ft": "Переслати…", "nf": "Поки нема кому пересилати: немає друзів.", "fs": "Переслано!", "sv": "Розв’яжи приклад, щоб надіслати скаргу", "an": "Відповідь", "sr": "Надіслати скаргу", "cn": "Скасувати", "wr": "Не зовсім. Спробуй цей!", "th": "Дякуємо! Твою скаргу надіслано.", "er": "Щось пішло не так. Спробуй ще раз.", "lk": "Один раз відкрий чат з другом, щоб розблокувати чат, і спробуй знову.", "mt": "Поскаржитися на це повідомлення?", "at": "Поскаржитися на цей акаунт?"}, "zh": {"c": "复制", "f": "转发", "r": "举报", "ra": "举报账号", "cd": "已复制！", "ft": "转发给…", "nf": "还没有可以转发的好友。", "fs": "已转发！", "sv": "请先做一道题，再发送举报", "an": "答案", "sr": "发送举报", "cn": "取消", "wr": "不对哦，再试这一题！", "th": "谢谢！你的举报已发送。", "er": "出错了，请再试一次。", "lk": "请先打开一次与好友的聊天来解锁聊天，然后再试。", "mt": "举报这条消息？", "at": "举报这个账号？"}, "ja": {"c": "コピー", "f": "転送", "r": "通報", "ra": "アカウントを通報", "cd": "コピーしました！", "ft": "転送先…", "nf": "転送できる友だちがまだいません。", "fs": "転送しました！", "sv": "通報するには、この問題をといてね", "an": "こたえ", "sr": "通報を送る", "cn": "キャンセル", "wr": "おしい！ こんどはこの問題だよ", "th": "ありがとう！通報を送りました。", "er": "うまくいきませんでした。もう一度ためしてね。", "lk": "友だちとのチャットを一度ひらいてチャットのロックを解除してから、もう一度ためしてね。", "mt": "このメッセージを通報しますか？", "at": "このアカウントを通報しますか？"}, "ko": {"c": "복사", "f": "전달", "r": "신고", "ra": "계정 신고", "cd": "복사했어요!", "ft": "전달할 대상…", "nf": "전달할 친구가 아직 없어요.", "fs": "전달했어요!", "sv": "신고를 보내려면 이 문제를 풀어 보세요", "an": "정답", "sr": "신고 보내기", "cn": "취소", "wr": "아쉬워요. 이 문제를 풀어 보세요!", "th": "고마워요! 신고가 접수됐어요.", "er": "문제가 생겼어요. 다시 시도해 주세요.", "lk": "친구와의 채팅을 한 번 열어 채팅 잠금을 푼 다음 다시 시도해 주세요.", "mt": "이 메시지를 신고할까요?", "at": "이 계정을 신고할까요?"}, "hi": {"c": "कॉपी करें", "f": "फ़ॉरवर्ड करें", "r": "रिपोर्ट करें", "ra": "खाते की रिपोर्ट करें", "cd": "कॉपी हो गया!", "ft": "इन्हें फ़ॉरवर्ड करें…", "nf": "फ़ॉरवर्ड करने के लिए अभी कोई दोस्त नहीं है।", "fs": "फ़ॉरवर्ड हो गया!", "sv": "रिपोर्ट भेजने के लिए यह हल करें", "an": "जवाब", "sr": "रिपोर्ट भेजें", "cn": "रद्द करें", "wr": "थोड़ा गलत। यह वाला करके देखें!", "th": "शुक्रिया! आपकी रिपोर्ट भेज दी गई।", "er": "कुछ गड़बड़ हो गई। फिर से कोशिश करें।", "lk": "चैट अनलॉक करने के लिए एक बार किसी दोस्त की चैट खोलें, फिर दोबारा कोशिश करें।", "mt": "इस संदेश की रिपोर्ट करें?", "at": "इस खाते की रिपोर्ट करें?"}, "ar": {"c": "نسخ", "f": "إعادة توجيه", "r": "إبلاغ", "ra": "الإبلاغ عن الحساب", "cd": "تم النسخ!", "ft": "إعادة التوجيه إلى…", "nf": "لا يوجد أصدقاء لإعادة التوجيه إليهم بعد.", "fs": "تمت إعادة التوجيه!", "sv": "حلّ هذه المسألة لإرسال بلاغك", "an": "الإجابة", "sr": "إرسال البلاغ", "cn": "إلغاء", "wr": "ليس تمامًا. جرّب هذه!", "th": "شكرًا! تم إرسال بلاغك.", "er": "حدث خطأ. حاول مرة أخرى.", "lk": "افتح دردشة مع صديق مرة واحدة لفتح الدردشة، ثم حاول مرة أخرى.", "mt": "الإبلاغ عن هذه الرسالة؟", "at": "الإبلاغ عن هذا الحساب؟"}, "hu": {"c": "Másolás", "f": "Továbbítás", "r": "Jelentés", "ra": "Fiók jelentése", "cd": "Másolva!", "ft": "Továbbítás ide…", "nf": "Még nincs barát, akinek továbbíthatnál.", "fs": "Továbbítva!", "sv": "Old meg ezt a jelentés elküldéséhez", "an": "Válasz", "sr": "Jelentés küldése", "cn": "Mégse", "wr": "Nem egészen. Próbáld ezt!", "th": "Köszi! A jelentésed elment.", "er": "Hiba történt. Próbáld újra.", "lk": "Nyiss meg egyszer egy csevegést egy baráttal a csevegés feloldásához, aztán próbáld újra.", "mt": "Jelented ezt az üzenetet?", "at": "Jelented ezt a fiókot?"}, "no": {"c": "Kopier", "f": "Videresend", "r": "Rapporter", "ra": "Rapporter konto", "cd": "Kopiert!", "ft": "Videresend til…", "nf": "Ingen venner å videresende til ennå.", "fs": "Videresendt!", "sv": "Løs denne for å sende rapporten", "an": "Svar", "sr": "Send rapport", "cn": "Avbryt", "wr": "Ikke helt. Prøv denne!", "th": "Takk! Rapporten din er sendt.", "er": "Noe gikk galt. Prøv igjen.", "lk": "Åpne en chat med en venn én gang for å låse opp chatten, og prøv igjen.", "mt": "Rapportere denne meldingen?", "at": "Rapportere denne kontoen?"}, "nl": {"c": "Kopiëren", "f": "Doorsturen", "r": "Melden", "ra": "Account melden", "cd": "Gekopieerd!", "ft": "Doorsturen naar…", "nf": "Nog geen vrienden om naar door te sturen.", "fs": "Doorgestuurd!", "sv": "Los dit op om je melding te versturen", "an": "Antwoord", "sr": "Melding versturen", "cn": "Annuleren", "wr": "Net niet. Probeer deze!", "th": "Bedankt! Je melding is verstuurd.", "er": "Er ging iets mis. Probeer het opnieuw.", "lk": "Open één keer een chat met een vriend om de chat te ontgrendelen en probeer het opnieuw.", "mt": "Dit bericht melden?", "at": "Dit account melden?"}, "pl": {"c": "Kopiuj", "f": "Przekaż dalej", "r": "Zgłoś", "ra": "Zgłoś konto", "cd": "Skopiowano!", "ft": "Przekaż do…", "nf": "Nie masz jeszcze znajomych, do których można przekazać.", "fs": "Przekazano!", "sv": "Rozwiąż to, aby wysłać zgłoszenie", "an": "Odpowiedź", "sr": "Wyślij zgłoszenie", "cn": "Anuluj", "wr": "Prawie. Spróbuj tego!", "th": "Dzięki! Twoje zgłoszenie zostało wysłane.", "er": "Coś poszło nie tak. Spróbuj ponownie.", "lk": "Otwórz raz czat ze znajomym, aby odblokować czat, i spróbuj ponownie.", "mt": "Zgłosić tę wiadomość?", "at": "Zgłosić to konto?"}, "sv": {"c": "Kopiera", "f": "Vidarebefordra", "r": "Rapportera", "ra": "Rapportera konto", "cd": "Kopierat!", "ft": "Vidarebefordra till…", "nf": "Inga vänner att vidarebefordra till än.", "fs": "Vidarebefordrat!", "sv": "Lös den här för att skicka rapporten", "an": "Svar", "sr": "Skicka rapport", "cn": "Avbryt", "wr": "Inte riktigt. Försök med den här!", "th": "Tack! Din rapport har skickats.", "er": "Något gick fel. Försök igen.", "lk": "Öppna en chatt med en vän en gång för att låsa upp chatten och försök sedan igen.", "mt": "Rapportera det här meddelandet?", "at": "Rapportera det här kontot?"}, "el": {"c": "Αντιγραφή", "f": "Προώθηση", "r": "Αναφορά", "ra": "Αναφορά λογαριασμού", "cd": "Αντιγράφηκε!", "ft": "Προώθηση σε…", "nf": "Δεν υπάρχουν ακόμα φίλοι για προώθηση.", "fs": "Προωθήθηκε!", "sv": "Λύσε αυτό για να στείλεις την αναφορά σου", "an": "Απάντηση", "sr": "Αποστολή αναφοράς", "cn": "Ακύρωση", "wr": "Όχι ακριβώς. Δοκίμασε αυτό!", "th": "Ευχαριστούμε! Η αναφορά σου στάλθηκε.", "er": "Κάτι πήγε στραβά. Δοκίμασε ξανά.", "lk": "Άνοιξε μία φορά μια συνομιλία με έναν φίλο για να ξεκλειδώσεις τη συνομιλία και δοκίμασε ξανά.", "mt": "Αναφορά αυτού του μηνύματος;", "at": "Αναφορά αυτού του λογαριασμού;"}, "vi": {"c": "Sao chép", "f": "Chuyển tiếp", "r": "Báo cáo", "ra": "Báo cáo tài khoản", "cd": "Đã sao chép!", "ft": "Chuyển tiếp tới…", "nf": "Chưa có bạn bè nào để chuyển tiếp.", "fs": "Đã chuyển tiếp!", "sv": "Giải bài này để gửi báo cáo", "an": "Đáp án", "sr": "Gửi báo cáo", "cn": "Hủy", "wr": "Chưa đúng. Thử bài này nhé!", "th": "Cảm ơn! Báo cáo của bạn đã được gửi.", "er": "Đã xảy ra lỗi. Hãy thử lại.", "lk": "Hãy mở một cuộc trò chuyện với bạn bè một lần để mở khóa trò chuyện, rồi thử lại.", "mt": "Báo cáo tin nhắn này?", "at": "Báo cáo tài khoản này?"}, "th": {"c": "คัดลอก", "f": "ส่งต่อ", "r": "รายงาน", "ra": "รายงานบัญชี", "cd": "คัดลอกแล้ว!", "ft": "ส่งต่อไปยัง…", "nf": "ยังไม่มีเพื่อนให้ส่งต่อ", "fs": "ส่งต่อแล้ว!", "sv": "แก้โจทย์นี้เพื่อส่งรายงานของคุณ", "an": "คำตอบ", "sr": "ส่งรายงาน", "cn": "ยกเลิก", "wr": "ยังไม่ถูก ลองข้อนี้!", "th": "ขอบคุณ! ส่งรายงานของคุณแล้ว", "er": "เกิดข้อผิดพลาด ลองอีกครั้ง", "lk": "เปิดแชตกับเพื่อนสักครั้งเพื่อปลดล็อกแชต แล้วลองอีกครั้ง", "mt": "รายงานข้อความนี้ไหม", "at": "รายงานบัญชีนี้ไหม"}, "id": {"c": "Salin", "f": "Teruskan", "r": "Laporkan", "ra": "Laporkan akun", "cd": "Tersalin!", "ft": "Teruskan ke…", "nf": "Belum ada teman untuk diteruskan.", "fs": "Diteruskan!", "sv": "Selesaikan ini untuk mengirim laporanmu", "an": "Jawaban", "sr": "Kirim laporan", "cn": "Batal", "wr": "Belum tepat. Coba yang ini!", "th": "Terima kasih! Laporanmu sudah terkirim.", "er": "Terjadi kesalahan. Coba lagi.", "lk": "Buka obrolan dengan teman sekali untuk membuka kunci obrolan, lalu coba lagi.", "mt": "Laporkan pesan ini?", "at": "Laporkan akun ini?"}, "bn": {"c": "কপি", "f": "ফরওয়ার্ড", "r": "রিপোর্ট", "ra": "অ্যাকাউন্ট রিপোর্ট করুন", "cd": "কপি হয়েছে!", "ft": "ফরওয়ার্ড করুন…", "nf": "ফরওয়ার্ড করার মতো বন্ধু এখনও নেই।", "fs": "ফরওয়ার্ড হয়েছে!", "sv": "রিপোর্ট পাঠাতে এটি সমাধান করুন", "an": "উত্তর", "sr": "রিপোর্ট পাঠান", "cn": "বাতিল", "wr": "ঠিক হয়নি। এটা চেষ্টা করুন!", "th": "ধন্যবাদ! আপনার রিপোর্ট পাঠানো হয়েছে।", "er": "কিছু ভুল হয়েছে। আবার চেষ্টা করুন।", "lk": "চ্যাট আনলক করতে একবার কোনো বন্ধুর সাথে চ্যাট খুলুন, তারপর আবার চেষ্টা করুন।", "mt": "এই বার্তাটি রিপোর্ট করবেন?", "at": "এই অ্যাকাউন্টটি রিপোর্ট করবেন?"}, "sr": {"c": "Копирај", "f": "Проследи", "r": "Пријави", "ra": "Пријави налог", "cd": "Копирано!", "ft": "Проследи…", "nf": "Још нема пријатеља којима можеш проследити.", "fs": "Прослеђено!", "sv": "Реши ово да би послао пријаву", "an": "Одговор", "sr": "Пошаљи пријаву", "cn": "Откажи", "wr": "Није баш. Пробај ово!", "th": "Хвала! Твоја пријава је послата.", "er": "Нешто је пошло наопако. Покушај поново.", "lk": "Отвори једном ћаскање са пријатељем да откључаш ћаскање, па покушај поново.", "mt": "Пријавити ову поруку?", "at": "Пријавити овај налог?"}, "mk": {"c": "Копирај", "f": "Проследи", "r": "Пријави", "ra": "Пријави профил", "cd": "Копирано!", "ft": "Проследи до…", "nf": "Сè уште нема пријатели до кои може да се проследи.", "fs": "Проследено!", "sv": "Реши го ова за да ја испратиш пријавата", "an": "Одговор", "sr": "Испрати пријава", "cn": "Откажи", "wr": "Не баш. Пробај го овој!", "th": "Благодарам! Твојата пријава е испратена.", "er": "Нешто тргна наопаку. Обиди се повторно.", "lk": "Отвори еднаш разговор со пријател за да го отклучиш разговорот, па обиди се повторно.", "mt": "Да ја пријавиш оваа порака?", "at": "Да го пријавиш овој профил?"}, "sr-Latn": {"c": "Kopiraj", "f": "Prosledi", "r": "Prijavi", "ra": "Prijavi nalog", "cd": "Kopirano!", "ft": "Prosledi…", "nf": "Još nema prijatelja kojima možeš proslediti.", "fs": "Prosleđeno!", "sv": "Reši ovo da bi poslao prijavu", "an": "Odgovor", "sr": "Pošalji prijavu", "cn": "Otkaži", "wr": "Nije baš. Probaj ovo!", "th": "Hvala! Tvoja prijava je poslata.", "er": "Nešto je pošlo naopako. Pokušaj ponovo.", "lk": "Otvori jednom ćaskanje sa prijateljem da otključaš ćaskanje, pa pokušaj ponovo.", "mt": "Prijaviti ovu poruku?", "at": "Prijaviti ovaj nalog?"}};
+    function curLang() {
+        var b = String(window.lang || "en");
+        try { if (b === "en" && localStorage.getItem("lang") === "fr-CH") b = "fr-CH"; } catch (_) { }
+        return b;
+    }
+    function t(k) {
+        var b = curLang(), c = [b, b.split("-")[0], "en"];
+        for (var i = 0; i < c.length; i++)
+            if (TX[c[i]] && TX[c[i]][k])
+                return TX[c[i]][k];
+        return TX.en[k];
+    }
+    var css = document.createElement("style");
+    css.textContent =
+        ".umo{position:fixed;top:0;right:0;bottom:0;left:0;z-index:9000;display:flex;align-items:center;justify-content:center;padding:16px;background:var(--scrim)}" +
+        ".umb{background:var(--surface);color:var(--ink);border:2px solid var(--line);border-radius:20px;width:100%;max-width:360px;max-height:85vh;overflow:auto;padding:16px;box-sizing:border-box;box-shadow:0 10px 30px rgba(0,0,0,.22);text-align:start}" +
+        ".umb h3{margin:0 0 8px;font-size:1.1rem}" +
+        ".umb .ump{background:var(--bg);border:1px solid var(--line);border-radius:12px;padding:8px 12px;margin:0 0 10px;max-height:4.8em;overflow:hidden;white-space:pre-wrap;word-break:break-word;font-size:.95rem}" +
+        ".umb button.ua{display:flex;align-items:center;gap:10px;width:100%;margin:6px 0 0;padding:13px 14px;border-radius:12px;border:2px solid var(--line);background:var(--surface);color:var(--ink);font:inherit;font-weight:700;font-size:1rem;cursor:pointer;text-align:start;box-sizing:border-box}" +
+        ".umb button.ua.d{color:var(--bad)}" +
+        ".umb button.ua.p{background:var(--accent);color:var(--on-accent);border-color:var(--accent);justify-content:center}" +
+        ".umb button.ua:disabled{opacity:.55;cursor:default}" +
+        ".umb button.ua:not(:disabled):hover{border-color:var(--accent)}" +
+        ".umb .uq{font-size:2.3rem;font-weight:800;text-align:center;margin:6px 0 10px;font-variant-numeric:tabular-nums;letter-spacing:.02em}" +
+        ".umb input.ui{display:block;width:100%;box-sizing:border-box;font:inherit;font-size:1.3rem;text-align:center;color:var(--ink);background:var(--bg);border:1.5px solid var(--line);border-radius:10px;padding:10px}" +
+        ".umb .ue{color:var(--bad);font-weight:600;min-height:1.3em;margin:6px 0 0;font-size:.9rem}" +
+        ".umb .us{color:var(--muted);font-size:.92rem;margin:0 0 4px;text-align:center}" +
+        ".umb .un{color:var(--muted);margin:6px 0}" +
+        ".utoast{position:fixed;left:50%;bottom:24px;transform:translateX(-50%);z-index:9100;background:var(--ink);color:var(--bg);padding:10px 16px;border-radius:999px;font-weight:700;max-width:90vw;text-align:center}" +
+        "#upd .upic{pointer-events:none;user-select:none;-webkit-user-select:none;background:var(--bg);border:1px dashed var(--line);border-radius:14px;padding:10px;margin:8px 0 6px}" +
+        "#upd .upic .umb{box-shadow:none;max-width:none;padding:10px;border-width:1.5px}" +
+        "#upd .upic .umb button.ua{padding:8px 12px;font-size:.92rem;margin-top:4px}" +
+        "#upd .upic .umb .ump{margin-bottom:6px}" +
+        ".umk{display:inline-block;background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:6px 12px;margin:0 0 8px;font-size:.95rem}" +
+        ".umr{display:flex;align-items:center;gap:8px;background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:8px 10px}" +
+        ".umr .uav{width:34px;height:34px;border-radius:50%;background:var(--accent);color:var(--on-accent);display:grid;place-items:center;font-weight:800;flex:none}" +
+        ".umr .unm{flex:1;font-weight:700;min-width:0}.umr .unm span{color:var(--muted);font-weight:500}" +
+        ".umr .ubt{border:2px solid var(--line);border-radius:10px;padding:5px 9px;background:var(--surface);font-size:1rem}" +
+        ".umr .ubt.hot{border-color:var(--bad)}";
+    document.head.appendChild(css);
+
+    function el(tag, cls, txt) { var e = document.createElement(tag); if (cls) e.className = cls; if (txt != null) e.textContent = txt; return e; }
+    function toast(x) {
+        var o = document.querySelector(".utoast"); if (o) o.remove();
+        var d = el("div", "utoast", x); d.setAttribute("role", "status"); document.body.appendChild(d);
+        setTimeout(function () { d.remove(); }, 2200);
+    }
+    var cur = null; /* the open dialog: { ov, back } */
+    function closeAll() {
+        if (!cur) return;
+        var c = cur; cur = null;
+        c.ov.remove();
+        document.removeEventListener("keydown", c.key, true);
+        try { if (c.back && c.back.focus) c.back.focus(); } catch (_) { }
+    }
+    function shell() {
+        closeAll();
+        var ov = el("div", "umo"), box = el("div", "umb");
+        ov.setAttribute("role", "dialog"); ov.setAttribute("aria-modal", "true");
+        ov.dir = /^ar(-|$)/.test(curLang()) ? "rtl" : "ltr";
+        ov.appendChild(box);
+        ov.addEventListener("mousedown", function (e) { if (e.target === ov) closeAll(); });
+        var key = function (e) {
+            if (!cur) return;
+            if (e.key === "Escape") { e.stopPropagation(); e.preventDefault(); closeAll(); return; }
+            if (e.key === "Tab") { /* keep focus inside the dialog */
+                var f = box.querySelectorAll("button:not(:disabled),input"); if (!f.length) return;
+                var a = f[0], z = f[f.length - 1];
+                if (e.shiftKey && document.activeElement === a) { e.preventDefault(); z.focus(); }
+                else if (!e.shiftKey && document.activeElement === z) { e.preventDefault(); a.focus(); }
+            }
+        };
+        document.addEventListener("keydown", key, true);
+        cur = { ov: ov, key: key, back: document.activeElement };
+        document.body.appendChild(ov);
+        return box;
+    }
+    function btn(cls, txt, fn) { var b = el("button", "ua " + cls, txt); b.type = "button"; b.onclick = fn; return b; }
+    function copyText(x) {
+        var done = function () { toast(t("cd")); };
+        var fall = function () {
+            try {
+                var ta = el("textarea"); ta.value = x; ta.setAttribute("readonly", ""); ta.style.cssText = "position:fixed;top:0;left:0;opacity:0";
+                document.body.appendChild(ta); ta.select(); document.execCommand("copy"); ta.remove(); done();
+            } catch (_) { toast(t("er")); }
+        };
+        if (navigator.clipboard && navigator.clipboard.writeText) navigator.clipboard.writeText(x).then(done, fall); else fall();
+    }
+
+    /* --- the menu card (also used for the little picture in "What's new") --- */
+    function menuBody(box, text, mine, h) {
+        box.appendChild(el("div", "ump", text));
+        box.appendChild(btn("", "📋 " + t("c"), h.copy));
+        box.appendChild(btn("", "↪️ " + t("f"), h.fwd));
+        if (!mine) box.appendChild(btn("d", "🚩 " + t("r"), h.rep));
+        if (h.cancel) box.appendChild(btn("", t("cn"), h.cancel));
+    }
+
+    /* --- "solve a sum" step, then send the report --- */
+    function newSum() {
+        var r = function (a, b) { return a + Math.floor(Math.random() * (b - a + 1)); };
+        if (Math.random() < .65) { var x = r(2, 9), y = r(2, 9); return { q: x + " + " + y + " = ?", a: x + y }; }
+        var p = r(3, 9), s = r(10, 18); return { q: s + " − " + p + " = ?", a: s - p };
+    }
+    function reporter() {
+        var o = {};
+        try { var u = window.users()[window.uid]; if (u) { if (u.name) o.byName = String(u.name).slice(0, 40); if (u.cnum) o.byNum = u.cnum | 0; } } catch (_) { }
+        return o;
+    }
+    function reportFlow(rep) { /* rep: { kind, target, targetName, targetNum, where, text } */
+        var box = shell(), sum = newSum();
+        box.appendChild(el("h3", "", rep.kind === "account" ? t("at") : t("mt")));
+        if (rep.kind === "account") {
+            box.appendChild(el("div", "ump", (rep.targetName || "?") + (rep.targetNum ? " #" + String(rep.targetNum).padStart(4, "0") : "")));
+        } else box.appendChild(el("div", "ump", rep.text || ""));
+        box.appendChild(el("p", "us", t("sv")));
+        var q = el("div", "uq", sum.q); q.setAttribute("aria-live", "polite"); box.appendChild(q);
+        var inp = el("input", "ui"); inp.type = "text"; inp.inputMode = "numeric"; inp.autocomplete = "off"; inp.maxLength = 3;
+        inp.setAttribute("aria-label", t("an")); inp.placeholder = t("an"); box.appendChild(inp);
+        var er = el("p", "ue"); er.setAttribute("role", "alert"); box.appendChild(er);
+        var go = btn("p", t("sr"), function () {
+            if (parseInt(inp.value, 10) !== sum.a) {
+                sum = newSum(); q.textContent = sum.q; inp.value = ""; er.textContent = t("wr"); inp.focus(); return;
+            }
+            go.disabled = true; er.textContent = "";
+            var o = reporter();
+            Object.keys(rep).forEach(function (k) { o[k] = rep[k]; });
+            Promise.resolve().then(function () { return window.Cloud.report(o); }).then(function () { closeAll(); toast(t("th")); },
+                function () { go.disabled = false; er.textContent = t("er"); });
+        });
+        box.appendChild(go);
+        box.appendChild(btn("", t("cn"), closeAll));
+        inp.addEventListener("keydown", function (e) { if (e.key === "Enter") { e.preventDefault(); go.click(); } });
+        inp.focus();
+    }
+
+    /* --- forward: pick one of your friends --- */
+    function forwardFlow(text) {
+        var box = shell();
+        box.appendChild(el("h3", "", t("ft")));
+        box.appendChild(el("div", "ump", text));
+        var list = el("div"), note = el("p", "un"), er = el("p", "ue"); er.setAttribute("role", "alert");
+        box.appendChild(list); box.appendChild(note); box.appendChild(er);
+        box.appendChild(btn("", t("cn"), closeAll));
+        note.textContent = "…";
+        var me = window.Cloud && Cloud.myFid && Cloud.myFid();
+        if (!me) { note.textContent = t("er"); return; }
+        Cloud.reqs().then(function (rs) {
+            var ids = rs.filter(function (r) { return r.status === "accepted"; }).map(function (r) { return r.from === me ? r.to : r.from; });
+            return Cloud.profiles(ids);
+        }).then(function (ps) {
+            if (!cur || cur.ov.firstChild !== box) return;
+            ps = ps.filter(Boolean); note.textContent = ps.length ? "" : t("nf");
+            ps.forEach(function (p) {
+                var b = btn("", "💬 " + p.name + (p.num ? "  #" + String(p.num).padStart(4, "0") : ""), function () {
+                    Array.prototype.forEach.call(list.children, function (x) { x.disabled = true; }); er.textContent = "";
+                    Promise.resolve().then(function () { return window.UCChat.sendTo(p.id, "↪ " + text); }).then(function () { closeAll(); toast(t("fs")); }, function (e) {
+                        Array.prototype.forEach.call(list.children, function (x) { x.disabled = false; });
+                        er.textContent = e && e.message === "mynokey" ? t("lk") : e && e.message === "nokey" && window.UCChat.t ? window.UCChat.t("nokey", p.name) : t("er");
+                    });
+                });
+                list.appendChild(b);
+            });
+            var f = list.querySelector("button"); if (f) f.focus();
+        }, function () { note.textContent = t("er"); });
+    }
+
+    /* info: { text, mine, from, fromName, fromNum, where } */
+    function open(info) {
+        if (!info || info.text == null) return;
+        var text = String(info.text).slice(0, 500), box = shell();
+        menuBody(box, text, !!info.mine, {
+            copy: function () { closeAll(); copyText(text); },
+            fwd: function () { forwardFlow(text); },
+            rep: function () { reportFlow({ kind: "message", target: info.from, targetName: info.fromName, targetNum: info.fromNum, where: info.where, text: text }); },
+            cancel: closeAll
+        });
+        var f = box.querySelector("button"); if (f) f.focus();
+    }
+    function reportAccount(p) {
+        if (!p || !p.id) return;
+        reportFlow({ kind: "account", target: p.id, targetName: p.name, targetNum: p.num, where: "friends" });
+    }
+
+    /* --- little pictures for the "What's new" window: same look as the real thing, not clickable --- */
+    function pic(name, host) {
+        host.textContent = "";
+        host.dir = /^ar(-|$)/.test(curLang()) ? "rtl" : "ltr";
+        var noop = function () { };
+        if (name === "menu") {
+            host.appendChild(el("div", "umk", "Hello! 👋"));
+            var b = el("div", "umb"); menuBody(b, "Hello! 👋", false, { copy: noop, fwd: noop, rep: noop }); host.appendChild(b);
+            Array.prototype.forEach.call(b.querySelectorAll("button"), function (x) { x.tabIndex = -1; });
+        } else if (name === "sum") {
+            var c = el("div", "umb"); c.appendChild(el("h3", "", t("mt"))); c.appendChild(el("p", "us", t("sv")));
+            c.appendChild(el("div", "uq", "9 + 6 = ?"));
+            var i = el("div", "ui", t("an")); i.style.cssText = "display:block;padding:8px;text-align:center;color:var(--muted);background:var(--bg);border:1.5px solid var(--line);border-radius:10px;font-size:1.1rem";
+            c.appendChild(i); c.appendChild(btn("p", t("sr"), noop)); host.appendChild(c);
+            Array.prototype.forEach.call(c.querySelectorAll("button"), function (x) { x.tabIndex = -1; });
+        } else if (name === "flag") {
+            var r = el("div", "umr"); r.appendChild(el("span", "uav", "A"));
+            var n = el("span", "unm", "Alex "); n.appendChild(el("span", "", "#0007")); r.appendChild(n);
+            r.appendChild(el("span", "ubt", "💬")); r.appendChild(el("span", "ubt hot", "🚩")); host.appendChild(r);
+        }
+    }
+    window.UCMsg = { open: open, reportAccount: reportAccount, t: t, pic: pic };
 })();
 </script>
 <script>
@@ -5552,11 +5782,19 @@ if ("serviceWorker" in navigator) { window.addEventListener("load", function () 
                     del.textContent = "×";
                     del.setAttribute("aria-label", t("del"));
                     del.style.cssText = "background:none;border:0;color:inherit;opacity:.7;font-size:1rem;cursor:pointer;margin-left:8px;padding:0 2px";
-                    del.onclick = function () { Cloud.chatDel(st.friend.id, m.id).then(null, function () { $c("cherr").textContent = t("err"); }); };
+                    del.onclick = function (ev) { ev.stopPropagation(); Cloud.chatDel(st.friend.id, m.id).then(null, function () { $c("cherr").textContent = t("err"); }); };
                     tm.appendChild(del);
                 }
                 d.appendChild(x);
                 d.appendChild(tm);
+                if (texts[i] != null && window.UCMsg) {
+                    var pf = st.friend, openMenu = function () { UCMsg.open({ text: texts[i], mine: mine, from: m.from, fromName: pf.name, fromNum: pf.num, where: "dm" }); };
+                    d.style.cursor = "pointer";
+                    d.tabIndex = 0;
+                    d.setAttribute("role", "button");
+                    d.onclick = function () { var sel = window.getSelection && String(window.getSelection()); if (sel) return; openMenu(); };
+                    d.onkeydown = function (e) { if (e.target === d && (e.key === "Enter" || e.key === " ")) { e.preventDefault(); openMenu(); } };
+                }
                 B.appendChild(d);
             });
             if (near || tk === 1)
@@ -5621,7 +5859,36 @@ if ("serviceWorker" in navigator) { window.addEventListener("load", function () 
             .then(null, function () { if (tok === st.tok) { $c("cherr").textContent = t("err"); inp.value = v; } });
     };
     labels();
-    window.UCChat = { open: open };
+    /* Forward: encrypt a text for any friend and send it, without opening that chat. Needs the chat unlocked once on this device. */
+    function sharedKeyWith(priv, friendPub, cid) {
+        return S.importKey("raw", unb64(friendPub), EC, false, []).then(function (pk) { return S.deriveBits({ name: "ECDH", public: pk }, priv, 256); })
+            .then(function (bits) { return S.importKey("raw", bits, "HKDF", false, ["deriveKey"]); })
+            .then(function (hk) { return S.deriveKey({ name: "HKDF", hash: "SHA-256", salt: enc.encode(cid), info: enc.encode("unlock-color-chat-v1") }, hk, { name: "AES-GCM", length: 256 }, false, ["encrypt", "decrypt"]); });
+    }
+    function myPriv() {
+        if (st.priv && st.privPub && st.privPub === st.myPub)
+            return Promise.resolve(st.priv);
+        var me = Cloud.myFid();
+        return Promise.all([idbGet("priv:" + me).then(function (r) { return r; }, function () { return null; }), Cloud.getPub(me)]).then(function (x) {
+            if (!x[0] || !x[0].key || !x[1] || x[0].pub !== x[1])
+                throw new Error("mynokey");
+            return x[0].key;
+        });
+    }
+    function sendTo(fid, text) {
+        if (!S || !window.indexedDB)
+            return Promise.reject(new Error("nc"));
+        var cid = cidOf(Cloud.myFid(), fid);
+        return Promise.all([myPriv(), Cloud.getPub(fid)]).then(function (r) {
+            if (!r[1])
+                throw new Error("nokey");
+            return sharedKeyWith(r[0], r[1], cid);
+        }).then(function (k) {
+            var iv = crypto.getRandomValues(new Uint8Array(12));
+            return S.encrypt({ name: "AES-GCM", iv: iv, additionalData: enc.encode(cid) }, k, enc.encode(String(text).slice(0, 500))).then(function (ct) { return Cloud.chatSend(fid, { iv: b64(iv), ct: b64(ct) }); });
+        });
+    }
+    window.UCChat = { open: open, sendTo: sendTo, t: t };
 })();
 </script>
 <script>
@@ -5830,10 +6097,17 @@ if ("serviceWorker" in navigator) { window.addEventListener("load", function () 
                 tm.style.cssText = "font-size:.7rem;opacity:.7;margin-top:2px;text-align:right"; tm.textContent = when;
                 if (mine) {
                     var del = el("button", "", "×"); del.type = "button"; del.style.cssText = "background:none;border:0;color:inherit;opacity:.7;font-size:1rem;cursor:pointer;margin-left:8px;padding:0 2px";
-                    del.onclick = function () { Cloud.grpDel(gid, m.id).then(null, function () { err(t("err")); }); };
+                    del.onclick = function (ev) { ev.stopPropagation(); Cloud.grpDel(gid, m.id).then(null, function () { err(t("err")); }); };
                     tm.appendChild(del);
                 }
-                d.appendChild(x); d.appendChild(tm); B.appendChild(d);
+                d.appendChild(x); d.appendChild(tm);
+                if (texts[i] != null && window.UCMsg) {
+                    var openMenu = function () { UCMsg.open({ text: texts[i], mine: mine, from: m.from, fromName: nameOf(m.from), where: "group" }); };
+                    d.style.cursor = "pointer"; d.tabIndex = 0; d.setAttribute("role", "button");
+                    d.onclick = function () { var sel = window.getSelection && String(window.getSelection()); if (sel) return; openMenu(); };
+                    d.onkeydown = function (e) { if (e.target === d && (e.key === "Enter" || e.key === " ")) { e.preventDefault(); openMenu(); } };
+                }
+                B.appendChild(d);
             });
             if (near || !B.scrollTop) B.scrollTop = B.scrollHeight;
         });
