@@ -1852,7 +1852,7 @@ PICS.push({ name: "Bee", r: [
     ] });
 var PORDER = [], PNEW = { "Bee": 1, "Strawberry": 1, "Snail": 1, "Birthday cake": 1, "Camping tent": 1, "Smiling star": 1 };
 /* new pictures are mixed in after every 4th old picture so they show up early */
-function porder() { if (PORDER.length === PICS.length)
+function porder() { if (PORDER.length)
     return PORDER; var o = [], nw = [], dp = [], sn = {}, r = [], k; for (k = 0; k < PICS.length; k++) {
     var pn = PICS[k].name;
     if (PNEW[pn])
@@ -3483,6 +3483,7 @@ function ownerBar() {
         ownerRefresh();
     });
     mk("ownstaff", "Owner panel", function () { window.open("https://unlock-color.github.io/admin/admin.html", "_blank", "noopener"); });
+    mk("ownhide", "Hide \u25B4", function () { ownSetHidden(true); });
     var m = document.querySelector("main");
     m.insertBefore(o, m.firstChild);
     return o;
@@ -3504,18 +3505,44 @@ function staffBar() {
     b.onclick = function () { if (window.__staffFb)
         window.open("https://unlock-color.github.io/admin/admin.html", "_blank", "noopener"); };
     o.appendChild(b);
+    var hb = document.createElement("button");
+    hb.type = "button";
+    hb.className = "btn alt";
+    hb.textContent = "Hide \u25B4";
+    hb.style.cssText = b.style.cssText;
+    hb.onclick = function () { ownSetHidden(true); };
+    o.appendChild(hb);
     var m = document.querySelector("main");
     m.insertBefore(o, m.firstChild);
     return o;
 }
+function ownHidden() { return lsGet("ownhide") === "1"; }
+function ownSetHidden(v) { lsSet("ownhide", v ? "1" : "0"); ownerRefresh(); }
+function ownChip() {
+    var c = document.getElementById("ownchip");
+    if (c)
+        return c;
+    c = document.createElement("button");
+    c.type = "button";
+    c.id = "ownchip";
+    c.className = "btn alt";
+    c.style.cssText = "display:none;margin:0 0 10px;padding:6px 10px;font-size:.85rem;min-height:0;border:1px dashed var(--accent)";
+    c.onclick = function () { ownSetHidden(false); };
+    var m = document.querySelector("main");
+    m.insertBefore(c, m.firstChild);
+    return c;
+}
 function ownerRefresh() {
     var on = isOwnerNow(), o = document.getElementById("ownerbar");
     var st = !on && !!window.__staffFb && !!uid && uid !== "guest", sb = document.getElementById("staffbar");
-    if (st)
+    var hid = ownHidden(), chip = ownChip();
+    chip.style.display = (on || st) && hid ? "" : "none";
+    chip.textContent = (on ? "\uD83D\uDC51 Owner" : "\uD83D\uDEE1\uFE0F Staff") + " \u25B8 Show";
+    if (st && !hid)
         staffBar().classList.remove("hide");
     else if (sb)
         sb.classList.add("hide");
-    if (!on) {
+    if (!on || hid) {
         if (o)
             o.classList.add("hide");
         return;
