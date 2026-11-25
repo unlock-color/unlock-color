@@ -416,7 +416,7 @@ html,body{max-width:100%;overflow-x:hidden}
     <h2 id="st">Your stats</h2>
     <p class="gs" id="who"></p>
     <div class="uidbadge hide" id="uidbadge"><span>Your user ID</span><b id="uidnum"></b></div>
-    <div id="picrow" class="hide"><span class="av big" id="bigav" aria-hidden="true"></span><div><button class="link" id="pchange" type="button">Change picture</button><button class="link" id="premove" type="button">Remove picture</button></div><input id="pfile" type="file" accept="image/*" hidden></div>
+    <div id="picrow" class="hide"><span class="av big" id="bigav" aria-hidden="true"></span><div><button class="link" id="pchange" type="button">Change picture</button><button class="link" id="premove" type="button">Remove picture</button><button class="link" id="nchange" type="button">Change name</button></div><input id="pfile" type="file" accept="image/*" hidden></div>
     <p class="err" id="perr" role="alert"></p>
     <div class="sg" id="sg"></div>
     <button class="btn" id="sclose" type="button">Close</button>
@@ -2910,6 +2910,7 @@ function showStats() {
         $("pchange").textContent = PT(u.pic ? "pic_change" : "pic_add");
         $("premove").textContent = PT("pic_remove");
         $("premove").classList.toggle("hide", !u.pic);
+        $("nchange").textContent = PT("nm_change");
     }
     lock();
     $("stats").classList.remove("hide");
@@ -2932,6 +2933,44 @@ function setPic(pic) {
     setAv($("av"), U[uid].name, U[uid].pic);
     showStats();
 }
+/* Change username (the user ID number never changes) */
+UI.en.nm_change = "Change name";
+UI.en.nm_prompt = "New username (3\u201320 characters). Your user ID stays the same.";
+{
+    var NM = { de: ["Name ändern", "Neuer Benutzername (3–20 Zeichen). Deine Benutzer-ID bleibt gleich."], fr: ["Changer le nom", "Nouveau nom d’utilisateur (3 à 20 caractères). Ton ID utilisateur reste le même."], it: ["Cambia nome", "Nuovo nome utente (3–20 caratteri). Il tuo ID utente resta lo stesso."], es: ["Cambiar nombre", "Nuevo nombre de usuario (3–20 caracteres). Tu ID de usuario no cambia."], "es-MX": ["Cambiar nombre", "Nuevo nombre de usuario (3–20 caracteres). Tu ID de usuario no cambia."], gsw: ["Name ändere", "Neue Benutzername (3–20 Zeiche). Dini Benutzer-ID blibt gliich."], ru: ["Изменить имя", "Новое имя пользователя (3–20 символов). Ваш ID не изменится."], zh: ["更改名称", "新用户名（3–20 个字符）。你的用户 ID 不会改变。"] };
+    Object.keys(NM).forEach(function (c) { if (UI[c]) { UI[c].nm_change = NM[c][0]; UI[c].nm_prompt = NM[c][1]; } });
+}
+$("nchange").onclick = function () {
+    if (!uid || uid === "guest")
+        return;
+    var U = users(), u = U[uid];
+    if (!u)
+        return;
+    var n = prompt(PT("nm_prompt"), u.name || "");
+    if (n === null)
+        return;
+    n = n.trim();
+    if (n === u.name)
+        return;
+    var ne;
+    if (normName(n) === normName(u.name || "")) {
+        /* only capitalisation / spacing changed: it is still your own name */
+        ne = (n.length < 3 || n.length > 20) ? PT("n_len") : !NAME_RE.test(n) ? PT("n_chars") : badWord(n) ? PT("n_bad") : "";
+    }
+    else
+        ne = nameCheck(n);
+    if (ne) {
+        alert(ne);
+        return;
+    }
+    u.name = n;
+    if (!saveUsers(U)) {
+        alert(PT("x_save"));
+        return;
+    }
+    setAv($("av"), n, u.pic);
+    showStats();
+};
 $("pchange").onclick = function () { if (uid && uid !== "guest")
     $("pfile").click(); };
 $("premove").onclick = function () { return setPic(""); };
