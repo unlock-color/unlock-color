@@ -420,6 +420,7 @@ html,body{max-width:100%;overflow-x:hidden}
       <div class="uidbadge" id="frme"><span id="frmel">Your user ID</span><b id="frmen"></b></div>
       <form id="frform" style="display:flex;gap:8px;align-items:stretch;margin:0 0 6px"><input id="frq" type="text" autocomplete="off" autocapitalize="off" spellcheck="false" maxlength="40" style="flex:1 1 auto;min-width:0;font:inherit;font-size:1rem;color:var(--ink);background:var(--bg);border:1.5px solid var(--line);border-radius:10px;padding:12px"><button class="btn" id="frgo" type="submit" style="width:auto;margin:0;flex:none">Search</button></form>
       <p class="err" id="frerr" role="alert"></p>
+      <button class="btn alt" id="grpbtn" type="button" style="margin:0 0 8px">👥 Groups</button>
     </div>
     <div id="frbody" style="overflow-y:auto;min-height:0;flex:1 1 auto"></div>
     <button class="btn" id="frclose" type="button">Close</button>
@@ -446,6 +447,16 @@ html,body{max-width:100%;overflow-x:hidden}
     </div>
     <p class="err" id="cherr" role="alert"></p>
     <button class="btn alt" id="chback" type="button">Back</button>
+  </div>
+</div>
+
+<div id="gchat" class="ov hide" role="dialog" aria-modal="true" aria-labelledby="gt">
+  <div class="gbox">
+    <h2 id="gt">Groups</h2>
+    <p class="shd" id="gnote"></p>
+    <div id="gbody" style="overflow-y:auto;min-height:0;flex:1 1 auto"></div>
+    <p class="err" id="gerr" role="alert"></p>
+    <button class="btn alt" id="gback" type="button">Back</button>
   </div>
 </div>
 
@@ -4911,6 +4922,22 @@ if ("serviceWorker" in navigator) { window.addEventListener("load", function () 
     };
     C.chatSend = function (fid, m) { return db.collection("chats/" + cidOf(uref.id, fid) + "/messages").add({ from: uref.id, iv: m.iv, ct: m.ct, t: TS() }); };
     C.chatDel = function (fid, id) { return db.doc("chats/" + cidOf(uref.id, fid) + "/messages/" + id).delete(); };
+    /* Group chats: the group key lives only as per-member encrypted "wraps"; the server sees ciphertext only. */
+    C.grpNewId = function () { return db.collection("groups").doc().id; };
+    function gm(d) { var x = d.data() || {}; return { id: d.id, name: x.name || "Group", owner: x.owner, members: x.members || [] }; }
+    C.grpWatch = function (cb) { return db.collection("groups").where("members", "array-contains", uref.id).onSnapshot(function (s) { cb(s.docs.map(gm)); }, noop); };
+    C.grpGet = function (gid) { return db.doc("groups/" + gid).get().then(function (d) { return d.exists ? gm(d) : null; }); };
+    C.grpKey = function (gid) { return db.doc("groups/" + gid + "/keys/" + uref.id).get().then(function (d) { return d.exists ? d.data() : null; }); };
+    C.grpCreate = function (gid, name, w) { var b = db.batch(); b.set(db.doc("groups/" + gid), { name: name, owner: uref.id, members: [uref.id], created: TS() }); b.set(db.doc("groups/" + gid + "/keys/" + uref.id), { by: uref.id, iv: w.iv, ct: w.ct }); return b.commit(); };
+    C.grpAdd = function (gid, uid, w) { var b = db.batch(); b.update(db.doc("groups/" + gid), { members: fb.firestore.FieldValue.arrayUnion(uid) }); b.set(db.doc("groups/" + gid + "/keys/" + uid), { by: uref.id, iv: w.iv, ct: w.ct }); return b.commit(); };
+    C.grpRemove = function (gid, uid) { var b = db.batch(); b.update(db.doc("groups/" + gid), { members: fb.firestore.FieldValue.arrayRemove(uid) }); b.delete(db.doc("groups/" + gid + "/keys/" + uid)); return b.commit(); };
+    C.grpListen = function (gid, cb, ecb) {
+        return db.collection("groups/" + gid + "/messages").orderBy("t").limitToLast(200).onSnapshot(function (s) {
+            cb(s.docs.map(function (d) { var x = d.data({ serverTimestamps: "estimate" }); return { id: d.id, from: x.from, iv: x.iv, ct: x.ct, t: x.t && x.t.toMillis ? x.t.toMillis() : Date.now() }; }));
+        }, ecb || noop);
+    };
+    C.grpSend = function (gid, m) { return db.collection("groups/" + gid + "/messages").add({ from: uref.id, iv: m.iv, ct: m.ct, t: TS() }); };
+    C.grpDel = function (gid, id) { return db.doc("groups/" + gid + "/messages/" + id).delete(); };
     C.sync = function () {
         if (!uref || !uid || uid === "guest") return;
         var u = users()[uid];
@@ -5174,7 +5201,7 @@ if ("serviceWorker" in navigator) { window.addEventListener("load", function () 
     function close() { $f("fr").classList.add("hide"); unlock(); }
     $f("frbtn").onclick = open;
     $f("frclose").onclick = close;
-    addEventListener("keydown", function (e) { if (e.key === "Escape" && !$f("fr").classList.contains("hide") && $f("chat").classList.contains("hide"))
+    addEventListener("keydown", function (e) { if (e.key === "Escape" && !$f("fr").classList.contains("hide") && $f("chat").classList.contains("hide") && $f("gchat").classList.contains("hide"))
         close(); });
     $f("frform").onsubmit = function (e) {
         e.preventDefault();
@@ -5489,6 +5516,227 @@ if ("serviceWorker" in navigator) { window.addEventListener("load", function () 
     };
     labels();
     window.UCChat = { open: open };
+})();
+</script>
+<script>
+/* ===== Group chat between friends, end-to-end encrypted (AES-GCM-256 group key, wrapped per member with ECDH P-256 + HKDF).
+   You can only add YOUR OWN friends. Any member can add their own friends too; the server enforces this in firestore.rules. ===== */
+(function () {
+    var $g = function (i) { return document.getElementById(i); };
+    var S = window.crypto && crypto.subtle, enc = new TextEncoder(), dec = new TextDecoder(), EC = { name: "ECDH", namedCurve: "P-256" };
+    var INP = "display:block;font:inherit;font-size:1rem;color:var(--ink);background:var(--bg);border:1.5px solid var(--line);border-radius:10px;padding:12px";
+    var TX = { t: "Groups", mine: "Your groups", none: "No groups yet.", newg: "New group", name: "Group name", pick: "Add friends (only people you added)", create: "Create group", mem: "Members", rm: "Remove", leave: "Leave", addb: "Add", addf: "Add one of your friends", send: "Send", ph: "Write a message", enc: "End-to-end encrypted. Only members can read these messages.", onlyfr: "You can only add your own friends. Members can add their own friends too.", nokey: "Set your chat password first: open a friend chat once, then come back.", fnokey: "That friend has not set up chat yet.", err: "Something went wrong. Try again.", nofr: "No friends to add yet.", cant: "Could not decrypt this message", back: "Back", open: "Open", you: "you", nc: "Encrypted chat is not supported in this browser.", skipped: "Created. These friends have not set up chat yet, add them later: " };
+    function t(k) { return TX[k]; }
+    var G = { groups: [], cur: null, gk: null, raw: null, mk: null, unW: null, unM: null, plain: {}, names: {}, friends: [], tok: 0, rt: 0, view: "" };
+    function el(tag, cls, txt) { var e = document.createElement(tag); if (cls) e.className = cls; if (txt != null) e.textContent = txt; return e; }
+    function err(x) { $g("gerr").textContent = x || ""; }
+    function emsg(e) { return e && e.message === "nokey" ? t("nokey") : e && e.message === "fnokey" ? t("fnokey") : t("err"); }
+    function b64(buf) { var a = new Uint8Array(buf), s = ""; for (var i = 0; i < a.length; i++) s += String.fromCharCode(a[i]); return btoa(s); }
+    function unb64(s) { var r = atob(s), a = new Uint8Array(r.length); for (var i = 0; i < r.length; i++) a[i] = r.charCodeAt(i); return a; }
+    function nameOf(id) { return id === Cloud.myFid() ? t("you") : (G.names[id] || "?"); }
+    /* my private key: the 1:1 chat stores it (non-exportable) in IndexedDB once the chat password was entered on this device */
+    function myKey() {
+        var me = Cloud.myFid();
+        return Promise.all([new Promise(function (res) {
+            var r = indexedDB.open("uc_chat", 1);
+            r.onupgradeneeded = function () { r.result.createObjectStore("k"); };
+            r.onerror = function () { res(null); };
+            r.onsuccess = function () { try { var q = r.result.transaction("k").objectStore("k").get("priv:" + me); q.onsuccess = function () { res(q.result || null); }; q.onerror = function () { res(null); }; } catch (e) { res(null); } };
+        }), Cloud.getPub(me)]).then(function (x) {
+            if (!x[0] || !x[0].key || !x[1] || x[0].pub !== x[1]) throw new Error("nokey");
+            return { priv: x[0].key, pub: x[1] };
+        });
+    }
+    function pair(priv, pub, gid) {
+        return S.importKey("raw", unb64(pub), EC, false, []).then(function (pk) { return S.deriveBits({ name: "ECDH", public: pk }, priv, 256); })
+            .then(function (b) { return S.importKey("raw", b, "HKDF", false, ["deriveKey"]); })
+            .then(function (h) { return S.deriveKey({ name: "HKDF", hash: "SHA-256", salt: enc.encode("grp:" + gid), info: enc.encode("unlock-color-group-v1") }, h, { name: "AES-GCM", length: 256 }, false, ["encrypt", "decrypt"]); });
+    }
+    /* encrypt the group key so that only `to` can open it */
+    function wrap(gid, raw, mk, to) {
+        return Cloud.getPub(to).then(function (p) { if (!p) throw new Error("fnokey"); return pair(mk.priv, p, gid); }).then(function (k) {
+            var iv = crypto.getRandomValues(new Uint8Array(12));
+            return S.encrypt({ name: "AES-GCM", iv: iv, additionalData: enc.encode(gid + "|" + to) }, k, raw).then(function (ct) { return { iv: b64(iv), ct: b64(ct) }; });
+        });
+    }
+    function ensureNames(ids) {
+        var miss = ids.filter(function (i, n) { return i && !G.names[i] && ids.indexOf(i) === n; });
+        if (!miss.length) return Promise.resolve();
+        return Cloud.profiles(miss).then(function (ps) { ps.forEach(function (p) { if (p) G.names[p.id] = p.name; }); }, function () { });
+    }
+    function loadFriends() {
+        var me = Cloud.myFid();
+        return Cloud.reqs().then(function (rs) {
+            return Cloud.profiles(rs.filter(function (r) { return r.status === "accepted"; }).map(function (r) { return r.from === me ? r.to : r.from; }));
+        }).then(function (ps) { G.friends = ps.filter(Boolean); G.friends.forEach(function (p) { G.names[p.id] = p.name; }); }, function () { G.friends = []; });
+    }
+    function mkBtn(txt, fn, alt) {
+        var b = el("button", "btn" + (alt === false ? "" : " alt"), txt);
+        b.type = "button";
+        b.onclick = function () { b.disabled = true; err(""); Promise.resolve().then(fn).then(null, function (e) { b.disabled = false; err(emsg(e)); }); };
+        return b;
+    }
+    function stopGroup() {
+        G.tok++; G.rt++;
+        if (G.unM) { try { G.unM(); } catch (_) { } G.unM = null; }
+        G.gk = G.raw = G.mk = G.cur = null; G.plain = {};
+    }
+    function showList() {
+        stopGroup(); G.view = "list"; err("");
+        $g("gt").textContent = t("t"); $g("gnote").textContent = t("onlyfr"); $g("gback").textContent = t("back");
+        var B = $g("gbody"); B.textContent = "";
+        B.appendChild(el("h3", "sh", t("mine")));
+        var L = el("div"); L.id = "glst"; B.appendChild(L);
+        B.appendChild(el("h3", "sh", t("newg")));
+        var nm = el("input"); nm.type = "text"; nm.maxLength = 30; nm.autocomplete = "off"; nm.placeholder = t("name"); nm.setAttribute("aria-label", t("name")); nm.style.cssText = INP + ";width:100%;margin:0 0 8px";
+        B.appendChild(nm);
+        B.appendChild(el("p", "shd", G.friends.length ? t("pick") : t("nofr")));
+        var checks = [];
+        G.friends.forEach(function (p) {
+            var r = el("label", "srow"), c = el("input"); c.type = "checkbox"; c.value = p.id; checks.push(c);
+            r.appendChild(c); r.appendChild(el("span", "nm2", p.name)); B.appendChild(r);
+        });
+        B.appendChild(mkBtn(t("create"), function () {
+            var name = nm.value.trim().slice(0, 30), picks = checks.filter(function (c) { return c.checked; }).map(function (c) { return c.value; });
+            if (!name) return Promise.reject(new Error("x"));
+            var gid = Cloud.grpNewId(), me = Cloud.myFid(), raw, mk, skipped = [];
+            return myKey().then(function (k) { mk = k; return S.generateKey({ name: "AES-GCM", length: 256 }, true, ["encrypt", "decrypt"]); })
+                .then(function (k) { return S.exportKey("raw", k); })
+                .then(function (r) { raw = r; return wrap(gid, raw, mk, me); })
+                .then(function (w) { return Cloud.grpCreate(gid, name, w); })
+                .then(function () {
+                    return picks.reduce(function (p, id) {
+                        return p.then(function () {
+                            return wrap(gid, raw, mk, id).then(function (w) { return Cloud.grpAdd(gid, id, w); }, function () { skipped.push(nameOf(id)); });
+                        });
+                    }, Promise.resolve());
+                })
+                .then(function () { openGroup(gid); if (skipped.length) err(t("skipped") + skipped.join(", ")); });
+        }, false));
+        drawList();
+    }
+    function drawList() {
+        var L = $g("glst"); if (G.view !== "list" || !L) return;
+        L.textContent = "";
+        if (!G.groups.length) L.appendChild(el("p", "shd", t("none")));
+        G.groups.forEach(function (g) {
+            var r = el("div", "srow");
+            r.appendChild(el("span", "nm2", g.name + " (" + g.members.length + ")"));
+            var b = el("button", "btn", t("open")); b.type = "button"; b.onclick = function () { openGroup(g.id); };
+            r.appendChild(b); L.appendChild(r);
+        });
+    }
+    function openGroup(gid) {
+        stopGroup(); G.view = "group"; var tok = ++G.tok; err("");
+        $g("gbody").textContent = ""; $g("gnote").textContent = t("enc");
+        Promise.all([myKey(), Cloud.grpGet(gid), Cloud.grpKey(gid), loadFriends()]).then(function (x) {
+            if (tok !== G.tok) return;
+            var mk = x[0], g = x[1], w = x[2];
+            if (!g || !w) throw new Error("gone");
+            return Cloud.getPub(w.by).then(function (p) { return pair(mk.priv, p, gid); })
+                .then(function (k) { return S.decrypt({ name: "AES-GCM", iv: unb64(w.iv), additionalData: enc.encode(gid + "|" + Cloud.myFid()) }, k, unb64(w.ct)); })
+                .then(function (raw) { return S.importKey("raw", raw, "AES-GCM", false, ["encrypt", "decrypt"]).then(function (k) { return [raw, k]; }); })
+                .then(function (y) {
+                    if (tok !== G.tok) return;
+                    G.cur = g; G.raw = y[0]; G.gk = y[1]; G.mk = mk;
+                    return ensureNames(g.members).then(function () { if (tok === G.tok) buildView(tok); });
+                });
+        }).then(null, function (e) { if (tok === G.tok) err(emsg(e)); });
+    }
+    function buildView(tok) {
+        var g = G.cur, B = $g("gbody"); $g("gt").textContent = g.name; B.textContent = "";
+        var M = el("div"); M.id = "gmem"; B.appendChild(M);
+        var box = el("div"); box.id = "gmsgs"; box.style.cssText = "display:flex;flex-direction:column;gap:6px;overflow-y:auto;min-height:160px;max-height:40vh;padding:4px 0"; B.appendChild(box);
+        var f = el("form"); f.style.cssText = "display:flex;gap:8px;align-items:stretch;margin:8px 0 0";
+        var inp = el("input"); inp.type = "text"; inp.maxLength = 500; inp.autocomplete = "off"; inp.placeholder = t("ph"); inp.setAttribute("aria-label", t("ph")); inp.style.cssText = INP + ";flex:1 1 auto;min-width:0";
+        var sb = el("button", "btn", t("send")); sb.type = "submit"; sb.style.cssText = "width:auto;margin:0;flex:none";
+        f.appendChild(inp); f.appendChild(sb); B.appendChild(f);
+        f.onsubmit = function (e) {
+            e.preventDefault();
+            var v = inp.value.trim().slice(0, 500); if (!v || !G.gk) return;
+            var iv = crypto.getRandomValues(new Uint8Array(12)), gid = g.id; inp.value = ""; err("");
+            S.encrypt({ name: "AES-GCM", iv: iv, additionalData: enc.encode(gid) }, G.gk, enc.encode(v))
+                .then(function (ct) { return Cloud.grpSend(gid, { iv: b64(iv), ct: b64(ct) }); })
+                .then(null, function () { if (G.cur && G.cur.id === gid) { err(t("err")); inp.value = v; } });
+        };
+        drawMembers();
+        G.unM = Cloud.grpListen(g.id, function (list) { if (tok === G.tok) drawMsgs(list); }, function () { if (tok === G.tok) err(t("err")); });
+    }
+    function reload() {
+        var gid = G.cur.id;
+        return Cloud.grpGet(gid).then(function (g) {
+            if (!g) return showList();
+            G.cur = g;
+            return ensureNames(g.members).then(drawMembers);
+        }, showList);
+    }
+    function drawMembers() {
+        var g = G.cur, me = Cloud.myFid(), M = $g("gmem"); if (!g || !M) return;
+        M.textContent = "";
+        M.appendChild(el("h3", "sh", t("mem") + " (" + g.members.length + ")"));
+        g.members.forEach(function (id) {
+            var r = el("div", "srow"); r.appendChild(el("span", "nm2", nameOf(id) + (id === g.owner ? " ★" : "")));
+            if (id === me) r.appendChild(mkBtn(t("leave"), function () { return Cloud.grpRemove(g.id, me).then(showList); }));
+            else if (g.owner === me) r.appendChild(mkBtn(t("rm"), function () { return Cloud.grpRemove(g.id, id).then(reload); }));
+            M.appendChild(r);
+        });
+        var cand = G.friends.filter(function (p) { return g.members.indexOf(p.id) < 0; });
+        if (cand.length && g.members.length < 20) {
+            var r2 = el("div", "srow"), sel = el("select"); sel.setAttribute("aria-label", t("addf")); sel.style.cssText = INP + ";flex:1;min-width:0;padding:10px";
+            cand.forEach(function (p) { var o = el("option", "", p.name); o.value = p.id; sel.appendChild(o); });
+            r2.appendChild(sel);
+            r2.appendChild(mkBtn(t("addb"), function () {
+                var id = sel.value;
+                return wrap(g.id, G.raw, G.mk, id).then(function (w) { return Cloud.grpAdd(g.id, id, w); }).then(reload);
+            }));
+            M.appendChild(r2);
+        }
+    }
+    function drawMsgs(list) {
+        var tk = ++G.rt, gid = G.cur && G.cur.id; if (!gid) return;
+        ensureNames(list.map(function (m) { return m.from; })).then(function () {
+            return Promise.all(list.map(function (m) {
+                if (G.plain[m.id] !== undefined) return G.plain[m.id];
+                return S.decrypt({ name: "AES-GCM", iv: unb64(m.iv), additionalData: enc.encode(gid) }, G.gk, unb64(m.ct)).then(function (b) { return dec.decode(b); }, function () { return null; }).then(function (x) { G.plain[m.id] = x; return x; });
+            }));
+        }).then(function (texts) {
+            var B = $g("gmsgs"); if (tk !== G.rt || !B) return;
+            var me = Cloud.myFid(), near = B.scrollHeight - B.scrollTop - B.clientHeight < 80;
+            B.textContent = "";
+            list.forEach(function (m, i) {
+                var mine = m.from === me, d = el("div"), x = el("div"), tm = el("div");
+                d.style.cssText = "max-width:82%;padding:8px 12px;border-radius:14px;align-self:" + (mine ? "flex-end" : "flex-start") + ";" + (mine ? "background:var(--accent);color:var(--on-accent)" : "background:var(--bg);border:1px solid var(--line);color:var(--ink)");
+                if (!mine) { var who = el("div", "", nameOf(m.from)); who.style.cssText = "font-size:.72rem;font-weight:700;opacity:.75;margin-bottom:2px"; d.appendChild(who); }
+                x.style.cssText = "white-space:pre-wrap;word-break:break-word";
+                if (texts[i] == null) { x.textContent = "🔒 " + t("cant"); x.style.fontStyle = "italic"; } else x.textContent = texts[i];
+                var when = ""; try { when = new Date(m.t).toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }); } catch (_) { }
+                tm.style.cssText = "font-size:.7rem;opacity:.7;margin-top:2px;text-align:right"; tm.textContent = when;
+                if (mine) {
+                    var del = el("button", "", "×"); del.type = "button"; del.style.cssText = "background:none;border:0;color:inherit;opacity:.7;font-size:1rem;cursor:pointer;margin-left:8px;padding:0 2px";
+                    del.onclick = function () { Cloud.grpDel(gid, m.id).then(null, function () { err(t("err")); }); };
+                    tm.appendChild(del);
+                }
+                d.appendChild(x); d.appendChild(tm); B.appendChild(d);
+            });
+            if (near || !B.scrollTop) B.scrollTop = B.scrollHeight;
+        });
+    }
+    function openGroups() {
+        err(""); lock(); $g("gchat").classList.remove("hide");
+        if (!S || !window.indexedDB) { $g("gnote").textContent = t("nc"); return; }
+        if (G.unW) G.unW();
+        G.unW = Cloud.grpWatch(function (l) { G.groups = l; drawList(); });
+        loadFriends().then(showList, showList);
+    }
+    function closeAll() {
+        stopGroup(); G.view = "";
+        if (G.unW) { try { G.unW(); } catch (_) { } G.unW = null; }
+        $g("gchat").classList.add("hide");
+        if ($g("fr").classList.contains("hide")) unlock();
+    }
+    $g("gback").onclick = function () { if (G.view === "group") showList(); else closeAll(); };
+    $g("grpbtn").onclick = openGroups;
+    addEventListener("keydown", function (e) { if (e.key === "Escape" && !$g("gchat").classList.contains("hide")) $g("gback").click(); });
 })();
 </script>
 </body>
