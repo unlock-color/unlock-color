@@ -2142,7 +2142,7 @@ function saveUsers(u) { var ok = lsSet("users", JSON.stringify(u)); if (ok && wi
 var SHOW_PLAYERS_MENU = false; /* set to false to hide the Players menu (👥) */
 var pad4 = function (n) { return String(n).padStart(4, "0"); };
 /* The ID shown to players: the permanent cloud ID when cloud mode is on, otherwise the local one. */
-function idOf(u) { return u ? (window.Cloud && Cloud.on ? u.cnum : u.num) : 0; }
+function idOf(u) { if (!u) return 0; if (u.cnum) return u.cnum; return (window.Cloud && Cloud.on) ? 0 : (u.num || 0); }
 function nextNum(U) {
     var m = parseInt(lsGet("uc_next") || "0", 10) || 0;
     Object.keys(U).forEach(function (k) { if (U[k] && U[k].num > m)
@@ -4743,10 +4743,11 @@ if ("serviceWorker" in navigator) { window.addEventListener("load", function () 
     C.refreshId = function () {
         var u = uid && uid !== "guest" ? users()[uid] : null;
         showName();
-        if (u && $("uidnum")) {
-            $("uidnum").textContent = u.cnum ? "#" + pad4(u.cnum) : "";
-            $("uidbadge").classList.toggle("hide", !u.cnum);
+        if ($("uidnum")) {
+            $("uidnum").textContent = u && idOf(u) ? "#" + pad4(idOf(u)) : "";
+            $("uidbadge").classList.toggle("hide", !u || !idOf(u));
         }
+        try { if (document.getElementById("players") && window.renderPlayers) window.renderPlayers(); } catch (e) { }
     };
     function fbEmail(email, pw) {
         return auth.signInWithEmailAndPassword(email, pw).then(function (r) { return r.user; }, function (e) {
