@@ -367,6 +367,7 @@ html,body{max-width:100%;overflow-x:hidden}
       <label class="fld"><span data-i="a_pw">Password</span><input id="apw" type="password" autocomplete="new-password" autocapitalize="off" enterkeyhint="go" maxlength="100"></label>
       <p class="err" id="aerr" role="alert"></p>
       <button class="btn" id="asubmit" type="submit" style="margin-top:4px">Create account</button>
+      <p style="text-align:center;margin:10px 0 0"><a href="#" id="aforgot" class="hide" style="color:inherit;text-decoration:underline">Forgot password?</a></p>
     </form>
     <div id="vpanel" class="hide">
       <label class="fld"><span id="vlbl">Verification code</span><input id="vcode" type="text" inputmode="numeric" autocomplete="one-time-code" maxlength="6" pattern="[0-9]*" placeholder="000000"></label>
@@ -2382,7 +2383,7 @@ function nameTaken(n) { var k = normName(n); if (!k)
     if (g && normName(g) === k)
         return true;
 } return Object.keys(U).some(function (id) { return U[id] && U[id].name && normName(U[id].name) === k; }); }
-var err = function (m) { $("aerr").textContent = m || ""; return false; };
+var err = function (m) { var e = $("aerr"); e.style.color = ""; e.textContent = m || ""; return false; };
 function enter(id, gname) {
     clearTimeout(drawT);
     locked = false;
@@ -2428,6 +2429,7 @@ function setMode(m) {
     $("nrow").classList.toggle("hide", !c);
     $("asubmit").textContent = CH(c ? "a_tc" : "a_tl");
     $("apw").setAttribute("autocomplete", c ? "new-password" : "current-password");
+    $("aforgot").classList.toggle("hide", c);
     err("");
     if (window.__vfy)
         vText();
@@ -2457,6 +2459,27 @@ $("aguest").onclick = function () {
     }
     logEv("guest", "guest");
     enter("guest", n);
+};
+$("aforgot").onclick = function (ev) {
+    ev.preventDefault();
+    var email = $("aemail").value.trim().toLowerCase();
+    if (!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(email)) {
+        $("aemail").focus();
+        return err("Type your email above first, then tap Forgot password.");
+    }
+    if (!window.Cloud || !Cloud.on || !Cloud.resetPw)
+        return err("Password reset is not available right now.");
+    err("");
+    var a = $("aforgot");
+    a.style.pointerEvents = "none";
+    Cloud.resetPw(email).then(function () {
+        err("");
+        var e = $("aerr");
+        e.style.color = "#6ee7a0";
+        e.textContent = "If this email has an account, we sent a link to set a new password. Check your inbox and spam folder.";
+    }, function (x) {
+        err(x && x.code === "auth/too-many-requests" ? "Too many tries. Please wait a few minutes." : "Could not send the email. Please try again.");
+    }).then(function () { a.style.pointerEvents = ""; });
 };
 /* Email log-in: check this device first, then the online (Firebase) account, so it also works on a new phone/browser. */
 function emailLogin(email, pw, id) {
@@ -5104,6 +5127,15 @@ if ("serviceWorker" in navigator) { window.addEventListener("load", function () 
         uref = null;
         if (auth)
             Promise.race([Promise.resolve(pf), new Promise(function (r) { setTimeout(r, 3000); })]).then(function () { if (seq === mySeq) auth.signOut().catch(noop); });
+    };
+    C.resetPw = function (email) {
+        return load().then(function () {
+            return auth.sendPasswordResetEmail(email).catch(function (e) {
+                if (e && (e.code === "auth/user-not-found" || e.code === "auth/invalid-email"))
+                    return;
+                throw e;
+            });
+        });
     };
     C.emailLogin = function (email, pw) {
         var bad = { "auth/user-not-found": 1, "auth/wrong-password": 1, "auth/invalid-credential": 1, "auth/invalid-login-credentials": 1, "auth/invalid-email": 1 };
