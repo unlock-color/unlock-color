@@ -2458,6 +2458,54 @@ $("aguest").onclick = function () {
     logEv("guest", "guest");
     enter("guest", n);
 };
+/* Email log-in: check this device first, then the online (Firebase) account, so it also works on a new phone/browser. */
+function emailLogin(email, pw, id) {
+    var U = users(), u = U[id], bad = CH("e_bad");
+    if (lfGet(email).t > Date.now())
+        return Promise.resolve(err(PT("x_wait")));
+    var local = (u && u.hash) ? hashPw(pw, u.salt).then(function (h) { return h.hash === u.hash; }) : Promise.resolve(false);
+    return local.then(function (ok) {
+        if (ok) {
+            lsDel("lf:" + email);
+            logEv("login", "email", id);
+            if (window.Cloud)
+                Cloud.pw = pw;
+            enter(id);
+            return;
+        }
+        if (!window.Cloud || !Cloud.on || !Cloud.emailLogin) {
+            lfFail(email);
+            return err(bad);
+        }
+        return Cloud.emailLogin(email, pw).then(function (r) {
+            if (!r) {
+                lfFail(email);
+                return err(bad);
+            }
+            return hashPw(pw).then(function (h) {
+                var U2 = users(), cur = U2[id];
+                if (cur) {
+                    cur.salt = h.salt;
+                    cur.hash = h.hash;
+                    cur.verified = true;
+                    if (!cur.name && r.name)
+                        cur.name = r.name;
+                }
+                else
+                    U2[id] = { id: id, provider: "email", name: r.name || autoName("", email), email: email, salt: h.salt, hash: h.hash, verified: true, created: Date.now(), num: nextNum(U2), logins: 0 };
+                if (!saveUsers(U2))
+                    return err(PT("x_save"));
+                lsDel("lf:" + email);
+                logEv("login", "email", id);
+                Cloud.pw = pw;
+                enter(id);
+            });
+        }, function (e) {
+            console.warn("email login", e);
+            err(e && e.code === "auth/too-many-requests" ? "Too many tries. Please wait a few minutes and try again." : PT("x_wrong"));
+        });
+    });
+}
 $("af").onsubmit = function (e) { return __awaiter(void 0, void 0, void 0, function () {
     var email, pw, name, U, id, btn, ne, ee, h, r, u, bad, h, _1;
     return __generator(this, function (_a) {
@@ -2504,21 +2552,9 @@ $("af").onsubmit = function (e) { return __awaiter(void 0, void 0, void 0, funct
                 showVerify();
                 return [3 /*break*/, 7];
             case 5:
-                u = U[id], bad = CH("e_bad");
-                if (lfGet(email).t > Date.now())
-                    return [2 /*return*/, err(PT("x_wait"))];
-                if (!u || !u.hash)
-                    return [2 /*return*/, err(bad)];
-                return [4 /*yield*/, hashPw(pw, u.salt)];
+                return [4 /*yield*/, emailLogin(email, pw, id)];
             case 6:
-                h = _a.sent();
-                if (h.hash !== u.hash) {
-                    lfFail(email);
-                    return [2 /*return*/, err(bad)];
-                }
-                lsDel("lf:" + email);
-                logEv("login", "email", id);
-                enter(id);
+                _a.sent();
                 _a.label = 7;
             case 7: return [3 /*break*/, 10];
             case 8:
@@ -5068,6 +5104,18 @@ if ("serviceWorker" in navigator) { window.addEventListener("load", function () 
         uref = null;
         if (auth)
             Promise.race([Promise.resolve(pf), new Promise(function (r) { setTimeout(r, 3000); })]).then(function () { if (seq === mySeq) auth.signOut().catch(noop); });
+    };
+    C.emailLogin = function (email, pw) {
+        var bad = { "auth/user-not-found": 1, "auth/wrong-password": 1, "auth/invalid-credential": 1, "auth/invalid-login-credentials": 1, "auth/invalid-email": 1 };
+        return load().then(function () {
+            return auth.signInWithEmailAndPassword(email, pw).then(function (r) {
+                return db.collection("users").doc(r.user.uid).get().then(function (s) { return { name: (s.exists && s.data().name) || "" }; }, function () { return { name: "" }; });
+            }, function (e) {
+                if (e && bad[e.code])
+                    return null;
+                throw e;
+            });
+        });
     };
     C.google = function () {
         if (authMode === "create" && $("aname").value.trim()) {
