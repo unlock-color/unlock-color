@@ -4879,6 +4879,7 @@ if ("serviceWorker" in navigator) { window.addEventListener("load", function () 
             C.pubSync(true);
             subs.push(uref.onSnapshot(function (s) { if (s.exists)
                 handle(s.data()); }, noop));
+            ["to", "from"].forEach(function (k) { subs.push(db.collection("friendreqs").where(k, "==", uref.id).onSnapshot(function () { try { window.dispatchEvent(new Event("uc-reqs")); } catch (_) { } }, noop)); });
             clearInterval(beat);
             C.progInit(localId, my);
             beat = setInterval(function () { if (!document.hidden && uref)
@@ -5091,7 +5092,7 @@ if ("serviceWorker" in navigator) { window.addEventListener("load", function () 
 /* ===== Friends list: only for players with an account. Find players by user ID (#0007 or 7) or by username. ===== */
 (function () {
     var T = {
-        en: { chatb: "Chat", acc: "Accept", dec: "Decline", cn: "Cancel", rqd: "Requested", rin: "Friend requests", rout: "Sent requests", wait2: "Could not connect to your account. Log out, log in again, then try once more.", b: "Friends", t: "Friends", s: "Find players by their user ID or username.", me: "Your user ID", ph: "User ID or username", go: "Search", none: "No player found.", add: "Add", rm: "Remove", on: "Online", empty: "No friends yet. Search for a player above.", guest: "The friends list is only for players with an account. Create an account to add friends.", off: "Friends need the online connection. Try again in a moment.", err: "Could not reach the server. Please try again.", self: "That is you!", list: "Your friends", res: "Search results", wait: "Still connecting to your account. Try again in a moment.", full: "Your friends list is full (100 friends).", close: "Close" },
+        en: { chatb: "Chat", acc: "Accept", dec: "Decline", cn: "Cancel", rqd: "Requested", rin: "Friend requests", rout: "Sent requests", wait2: "Could not connect to your account. Log out, log in again, then try once more.", b: "Friends", t: "Friends", s: "Find players by their user ID or username.", me: "Your user ID", ph: "User ID or username", go: "Search", none: "No player found.", add: "Add", rm: "Remove", on: "Online", empty: "No friends yet. Search for a player above.", guest: "The friends list is only for players with an account. Create an account to add friends.", off: "Friends need the online connection. Try again in a moment.", err: "Could not reach the server. Please try again.", self: "That is you!", list: "Your friends", res: "Search results", wait: "Connecting to your account…", newreq: "New friend request", own: "Owner", wait3: "Still connecting… tap ↻ to try again.", full: "Your friends list is full (100 friends).", close: "Close" },
         de: { chatb: "Chat", acc: "Annehmen", dec: "Ablehnen", cn: "Abbrechen", rqd: "Angefragt", rin: "Freundschaftsanfragen", rout: "Gesendete Anfragen", wait2: "Dein Konto konnte nicht verbunden werden. Melde dich ab und wieder an und versuch es nochmal.", b: "Freunde", t: "Freunde", s: "Finde Spieler mit ihrer Benutzer-ID oder ihrem Benutzernamen.", me: "Deine Benutzer-ID", ph: "Benutzer-ID oder Benutzername", go: "Suchen", none: "Kein Spieler gefunden.", add: "Hinzufügen", rm: "Entfernen", on: "Online", empty: "Noch keine Freunde. Suche oben nach einem Spieler.", guest: "Die Freundesliste gibt es nur für Spieler mit einem Konto. Erstelle ein Konto, um Freunde hinzuzufügen.", off: "Für Freunde brauchst du die Online-Verbindung. Versuch es gleich nochmal.", err: "Der Server ist nicht erreichbar. Bitte versuch es nochmal.", self: "Das bist du!", list: "Deine Freunde", res: "Suchergebnisse", wait: "Dein Konto wird noch verbunden. Versuch es gleich nochmal.", full: "Deine Freundesliste ist voll (100 Freunde).", close: "Schliessen" },
         gsw: { chatb: "Chat", acc: "Aanäh", dec: "Ablehne", cn: "Abbräche", rqd: "Aagfrögt", rin: "Fründschaftsaafrage", rout: "Gschickti Aafrage", wait2: "Dis Konto het nöd chönne verbunde werde. Meld di ab und wieder aa und probier s nomal.", b: "Fründe", t: "Fründe", s: "Find Spieler mit ihrer Benutzer-ID oder ihrem Benutzername.", me: "Dini Benutzer-ID", ph: "Benutzer-ID oder Benutzername", go: "Sueche", none: "Kei Spieler gfunde.", add: "Zuefüege", rm: "Entferne", on: "Online", empty: "No kei Fründe. Sueche obe nach emne Spieler.", guest: "D Fründesliste gits nur für Spieler mit emne Konto. Mach es Konto, zum Fründe zuefüege.", off: "Für Fründe bruchsch d Online-Verbindig. Probier s grad nomal.", err: "De Server isch nöd erreichbar. Probier s bitte nomal.", self: "Das bisch du!", list: "Dini Fründe", res: "Suechergebnis", wait: "Dis Konto wird no verbunde. Probier s grad nomal.", full: "Dini Fründesliste isch voll (100 Fründe).", close: "Schliesse" },
         fr: { chatb: "Discussion", acc: "Accepter", dec: "Refuser", cn: "Annuler", rqd: "Demandé", rin: "Demandes d’ami", rout: "Demandes envoyées", wait2: "Impossible de connecter ton compte. Déconnecte-toi, reconnecte-toi, puis réessaie.", b: "Amis", t: "Amis", s: "Trouve des joueurs avec leur ID utilisateur ou leur nom d’utilisateur.", me: "Ton ID utilisateur", ph: "ID utilisateur ou nom d’utilisateur", go: "Chercher", none: "Aucun joueur trouvé.", add: "Ajouter", rm: "Retirer", on: "En ligne", empty: "Pas encore d’amis. Cherche un joueur ci-dessus.", guest: "La liste d’amis est réservée aux joueurs avec un compte. Crée un compte pour ajouter des amis.", off: "Les amis ont besoin de la connexion en ligne. Réessaie dans un instant.", err: "Impossible de joindre le serveur. Réessaie.", self: "C’est toi !", list: "Tes amis", res: "Résultats", wait: "Connexion à ton compte en cours. Réessaie dans un instant.", full: "Ta liste d’amis est pleine (100 amis).", close: "Fermer" },
@@ -5127,12 +5128,43 @@ if ("serviceWorker" in navigator) { window.addEventListener("load", function () 
                 return T[c[i]][k];
         return T.en[k];
     }
+    window.UC_OWNER_NUM = 6; /* #0006 = the game owner (XED) */
     var $f = function (id) { return document.getElementById(id); };
-    var reqs = [], cache = {}, lastResults = null, inN = 0, loadTok = 0;
+    var reqs = [], cache = {}, lastResults = null, inN = 0, loadTok = 0, seenOnce = false;
     function me() { return uid && uid !== "guest" ? users()[uid] : null; }
     function ready() { var u = me(); return !!(u && u.cnum && window.Cloud && Cloud.on && Cloud.myFid()); }
+    /* quietly reconnect the cloud link, so you never have to log out and in again */
+    var healN = 0, healT = 0, healU = null;
+    function heal() {
+        if (uid !== healU) { healU = uid; healN = 0; healT = 0; }
+        if (ready() || !uid || uid === "guest" || !window.Cloud || !Cloud.on || !Cloud.attach) return;
+        if (healN >= 6 || performance.now() < 6000 || Date.now() - healT < 8000) return;
+        healT = Date.now(); healN++;
+        try { Cloud.attach(uid); } catch (_) { }
+    }
+    /* red app-style number on the Friends button (and on the home-screen icon where the phone allows it) */
+    var _bs = document.createElement("style");
+    _bs.textContent = ".frbadge{position:absolute;top:-7px;right:-7px;min-width:21px;height:21px;padding:0 6px;border-radius:999px;background:#ff3b30;color:#fff;font-size:.74rem;font-weight:800;line-height:21px;text-align:center;box-shadow:0 0 0 2px #101322;pointer-events:none}.frbadge.hide{display:none}.frtoast{position:fixed;left:50%;top:calc(env(safe-area-inset-top,0px) + 10px);transform:translateX(-50%);z-index:99999;background:#7f8cf8;color:#10162b;font-weight:800;padding:12px 18px;border-radius:999px;box-shadow:0 6px 24px rgba(0,0,0,.4);cursor:pointer;max-width:90vw}";
+    document.head.appendChild(_bs);
+    function setBadge() {
+        var b = $f("frbtn"), bd = $f("frbadge");
+        if (!b) return;
+        if (!bd) { bd = document.createElement("span"); bd.id = "frbadge"; bd.className = "frbadge hide"; bd.setAttribute("aria-hidden", "true"); b.style.position = "relative"; b.style.overflow = "visible"; b.appendChild(bd); }
+        bd.textContent = inN > 9 ? "9+" : String(inN);
+        bd.classList.toggle("hide", !inN);
+        try { if (inN && navigator.setAppBadge) navigator.setAppBadge(inN); else if (navigator.clearAppBadge) navigator.clearAppBadge(); } catch (_) { }
+    }
+    function toastReq() {
+        var d = document.createElement("div");
+        d.className = "frtoast"; d.setAttribute("role", "status");
+        d.textContent = "🤝 " + t("newreq");
+        d.onclick = function () { d.remove(); open(); };
+        document.body.appendChild(d);
+        setTimeout(function () { d.remove(); }, 5000);
+    }
     function labels() {
-        $f("frlbl").textContent = t("b") + (inN ? " (" + inN + ")" : "");
+        $f("frlbl").textContent = t("b");
+        setBadge();
         $f("frt").textContent = t("t");
         $f("frs").textContent = t("s");
         $f("frmel").textContent = t("me");
@@ -5159,7 +5191,7 @@ if ("serviceWorker" in navigator) { window.addEventListener("load", function () 
         }
         return { k: "", r: null };
     }
-    function chatBtn(p) { return { txt: "💬", aria: t("chatb"), now: 1, alt: 1, fn: function () { if (window.UCChat) UCChat.open(p); } }; }
+    function chatBtn(p) { return { txt: "💬", aria: t("chatb"), now: 1, chat: 1, fn: function () { if (window.UCChat) UCChat.open(p); } }; }
     function act(fn) {
         $f("frbody").querySelectorAll("button").forEach(function (b) { b.disabled = true; });
         msg("");
@@ -5180,15 +5212,23 @@ if ("serviceWorker" in navigator) { window.addEventListener("load", function () 
         }
         r.appendChild(av);
         nm.appendChild(document.createTextNode(p.name));
-        var id = el("span", "", " #" + pad4(p.num));
-        id.style.cssText = "color:var(--muted);font-weight:500";
-        nm.appendChild(id);
+        if (p.num) {
+            var id = el("span", "", " #" + pad4(p.num));
+            id.style.cssText = "color:var(--muted);font-weight:500";
+            nm.appendChild(id);
+            if (p.num === window.UC_OWNER_NUM) {
+                var ow = el("span", "", " 👑 " + t("own"));
+                ow.style.cssText = "color:#f5b942;font-weight:800;font-size:.8rem";
+                nm.appendChild(ow);
+            }
+        }
         if (p.seen && Date.now() - p.seen < 4 * 60 * 1000) {
             var d = el("span", "", " ● " + t("on"));
             d.style.cssText = "color:var(--good);font-weight:600;font-size:.8rem";
             nm.appendChild(d);
         }
         r.appendChild(nm);
+        btns.forEach(function (x) { if (x.chat) { nm.style.cursor = "pointer"; nm.onclick = x.fn; } });
         btns.forEach(function (x) {
             var b = el("button", "btn" + (x.alt ? " alt" : ""), x.txt);
             b.type = "button";
@@ -5236,9 +5276,7 @@ if ("serviceWorker" in navigator) { window.addEventListener("load", function () 
         }
         var inc = [], fr = [], out = [];
         reqs.forEach(function (r) {
-            var p = cache[other(r)];
-            if (!p)
-                return;
+            var p = cache[other(r)] || { id: other(r), name: "Player", num: 0 };
             if (r.status === "accepted")
                 fr.push([p, r]);
             else if (r.to === mine)
@@ -5269,8 +5307,11 @@ if ("serviceWorker" in navigator) { window.addEventListener("load", function () 
             reqs = rs;
             var ids = {};
             rs.forEach(function (r) { ids[other(r)] = 1; });
+            var prevN = inN;
             inN = rs.filter(function (r) { return r.status === "pending" && r.to === Cloud.myFid(); }).length;
             labels();
+            if (seenOnce && inN > prevN && $f("fr").classList.contains("hide")) toastReq();
+            seenOnce = true;
             return Cloud.profiles(Object.keys(ids)).then(function (ps) {
                 if (tok !== loadTok)
                     return;
@@ -5308,9 +5349,14 @@ if ("serviceWorker" in navigator) { window.addEventListener("load", function () 
                     clearInterval(iv);
                     return open();
                 }
-                if (++n > 24) {
+                heal();
+                if (++n > 60) {
                     clearInterval(iv);
-                    wp.textContent = t("wait2");
+                    wp.textContent = t("wait3");
+                    var rb = el("button", "btn", "↻");
+                    rb.type = "button"; rb.setAttribute("aria-label", "Retry");
+                    rb.onclick = function () { healN = 0; healT = 0; heal(); open(); };
+                    B.appendChild(rb);
                 }
             }, 500);
             return $f("frclose").focus();
@@ -5337,9 +5383,11 @@ if ("serviceWorker" in navigator) { window.addEventListener("load", function () 
     };
     /* new requests show up as a number on the Friends button, and live while the screen is open */
     function badge() { if (ready() && $f("fr").classList.contains("hide")) load(); }
-    setTimeout(badge, 6000);
-    setTimeout(badge, 20000);
-    setInterval(badge, 45000);
+    var warm = setInterval(function () { if (ready()) { clearInterval(warm); load(); } else heal(); }, 1000);
+    setInterval(badge, 30000);
+    var liveT = 0;
+    addEventListener("uc-reqs", function () { clearTimeout(liveT); liveT = setTimeout(function () { if (ready()) load(); }, 300); });
+    document.addEventListener("visibilitychange", function () { if (!document.hidden) badge(); });
     setInterval(function () { if (ready() && !$f("fr").classList.contains("hide") && !$f("frbox").classList.contains("hide")) load(); }, 12000);
 })();
 </script>
@@ -5815,7 +5863,7 @@ if ("serviceWorker" in navigator) { window.addEventListener("load", function () 
         st.shared = null;
         var tok = st.tok;
         labels();
-        $c("cht").textContent = t("t", p.name);
+        $c("cht").textContent = t("t", p.name) + (p.num && p.num === window.UC_OWNER_NUM ? " 👑" : "");
         $c("chenc").textContent = t("enc", p.name);
         $c("chcode").textContent = "";
         $c("cherr").textContent = "";
@@ -5900,13 +5948,14 @@ if ("serviceWorker" in navigator) { window.addEventListener("load", function () 
     var INP = "display:block;font:inherit;font-size:1rem;color:var(--ink);background:var(--bg);border:1.5px solid var(--line);border-radius:10px;padding:12px";
     var TX = { t: "Groups", safe: "Safety code:", safeh: "All members should see the same code. If it differs, someone’s key was swapped.", delg: "Delete group", delc: "Delete this group for everyone?", mine: "Your groups", none: "No groups yet.", newg: "New group", name: "Group name", pick: "Add friends (only people you added)", create: "Create group", mem: "Members", rm: "Remove", leave: "Leave", addb: "Add", addf: "Add one of your friends", send: "Send", ph: "Write a message", enc: "End-to-end encrypted. Only members can read these messages.", onlyfr: "You can only add your own friends. Members can add their own friends too.", nokey: "Set your chat password first: open a friend chat once, then come back.", fnokey: "That friend has not set up chat yet.", err: "Something went wrong. Try again.", nofr: "No friends to add yet.", cant: "Could not decrypt this message", back: "Back", open: "Open", you: "you", nc: "Encrypted chat is not supported in this browser.", skipped: "Created. These friends have not set up chat yet, add them later: " };
     function t(k) { return TX[k]; }
-    var G = { groups: [], cur: null, gk: null, raw: null, mk: null, unW: null, unM: null, plain: {}, names: {}, miss: {}, friends: [], tok: 0, rt: 0, view: "" };
+    var G = { groups: [], cur: null, gk: null, raw: null, mk: null, unW: null, unM: null, plain: {}, names: {}, owners: {}, miss: {}, friends: [], tok: 0, rt: 0, view: "" };
     function el(tag, cls, txt) { var e = document.createElement(tag); if (cls) e.className = cls; if (txt != null) e.textContent = txt; return e; }
     function err(x) { $g("gerr").textContent = x || ""; }
     function emsg(e) { return e && e.message === "nokey" ? t("nokey") : e && e.message === "fnokey" ? t("fnokey") : t("err"); }
     function b64(buf) { var a = new Uint8Array(buf), s = ""; for (var i = 0; i < a.length; i++) s += String.fromCharCode(a[i]); return btoa(s); }
     function unb64(s) { var r = atob(s), a = new Uint8Array(r.length); for (var i = 0; i < r.length; i++) a[i] = r.charCodeAt(i); return a; }
     function nameOf(id) { return id === Cloud.myFid() ? t("you") : (G.names[id] || "?"); }
+    function dispName(id) { return nameOf(id) + (G.owners[id] ? " 👑" : ""); }
     /* my private key: the 1:1 chat stores it (non-exportable) in IndexedDB once the chat password was entered on this device */
     function myKey() {
         var me = Cloud.myFid();
@@ -5943,13 +5992,13 @@ if ("serviceWorker" in navigator) { window.addEventListener("load", function () 
     function ensureNames(ids) {
         var miss = ids.filter(function (i, n) { return i && !G.names[i] && !G.miss[i] && ids.indexOf(i) === n; });
         if (!miss.length) return Promise.resolve();
-        return Cloud.profiles(miss).then(function (ps) { ps.forEach(function (p) { if (p) G.names[p.id] = p.name; }); miss.forEach(function (i) { if (!G.names[i]) G.miss[i] = 1; }); }, function () { });
+        return Cloud.profiles(miss).then(function (ps) { ps.forEach(function (p) { if (p) { G.names[p.id] = p.name; if (p.num === window.UC_OWNER_NUM) G.owners[p.id] = 1; } }); miss.forEach(function (i) { if (!G.names[i]) G.miss[i] = 1; }); }, function () { });
     }
     function loadFriends() {
         var me = Cloud.myFid();
         return Cloud.reqs().then(function (rs) {
             return Cloud.profiles(rs.filter(function (r) { return r.status === "accepted"; }).map(function (r) { return r.from === me ? r.to : r.from; }));
-        }).then(function (ps) { G.ffail = false; G.friends = ps.filter(Boolean); G.friends.forEach(function (p) { G.names[p.id] = p.name; }); }, function () { G.friends = []; G.ffail = true; });
+        }).then(function (ps) { G.ffail = false; G.friends = ps.filter(Boolean); G.friends.forEach(function (p) { G.names[p.id] = p.name; if (p.num === window.UC_OWNER_NUM) G.owners[p.id] = 1; }); }, function () { G.friends = []; G.ffail = true; });
     }
     function mkBtn(txt, fn, alt) {
         var b = el("button", "btn" + (alt === false ? "" : " alt"), txt);
@@ -6056,7 +6105,7 @@ if ("serviceWorker" in navigator) { window.addEventListener("load", function () 
         M.textContent = "";
         M.appendChild(el("h3", "sh", t("mem") + " (" + g.members.length + ")"));
         g.members.forEach(function (id) {
-            var r = el("div", "srow"); r.appendChild(el("span", "nm2", nameOf(id) + (id === g.owner ? " ★" : "")));
+            var r = el("div", "srow"); r.appendChild(el("span", "nm2", dispName(id) + (id === g.owner ? " ★" : "")));
             if (id === me && g.owner === me) { var dg = el("button", "btn alt", t("delg")); dg.type = "button"; dg.onclick = function () { if (!confirm(t("delc"))) return; dg.disabled = true; err(""); Cloud.grpDelete(g.id, g.members).then(showList, function () { dg.disabled = false; err(t("err")); }); }; r.appendChild(dg); }
             else if (id === me) r.appendChild(mkBtn(t("leave"), function () { return Cloud.grpRemove(g.id, me).then(showList); }));
             else if (g.owner === me) r.appendChild(mkBtn(t("rm"), function () { return Cloud.grpRemove(g.id, id).then(reload); }));
@@ -6090,7 +6139,7 @@ if ("serviceWorker" in navigator) { window.addEventListener("load", function () 
             list.forEach(function (m, i) {
                 var mine = m.from === me, d = el("div"), x = el("div"), tm = el("div");
                 d.style.cssText = "max-width:82%;padding:8px 12px;border-radius:14px;align-self:" + (mine ? "flex-end" : "flex-start") + ";" + (mine ? "background:var(--accent);color:var(--on-accent)" : "background:var(--bg);border:1px solid var(--line);color:var(--ink)");
-                if (!mine) { var who = el("div", "", nameOf(m.from)); who.style.cssText = "font-size:.72rem;font-weight:700;opacity:.75;margin-bottom:2px"; d.appendChild(who); }
+                if (!mine) { var who = el("div", "", dispName(m.from)); who.style.cssText = "font-size:.72rem;font-weight:700;opacity:.75;margin-bottom:2px"; d.appendChild(who); }
                 x.style.cssText = "white-space:pre-wrap;word-break:break-word";
                 if (texts[i] == null) { x.textContent = "🔒 " + t("cant"); x.style.fontStyle = "italic"; } else x.textContent = texts[i];
                 var when = ""; try { when = new Date(m.t).toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }); } catch (_) { }
