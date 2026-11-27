@@ -2013,6 +2013,8 @@ function answer(n, btn) {
         Music.no();
         track(false);
         wrongs++;
+        if (wrongs === 3)
+            addCoins(-1);
         $("hint").textContent = U().no;
         $("hint").style.color = "var(--bad)";
     }
